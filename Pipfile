@@ -8,8 +8,13 @@ fastapi = "*"
 aiofiles = "*"
 uvicorn = "*"
 python-multipart = "*"
+pylint = "*"
+requests = "*"
+gunicorn = "*"
+redis = "*"
 
 [dev-packages]
+pytest = "*"
 
 [requires]
 python_version = "3.9"

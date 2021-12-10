@@ -3,3 +3,7 @@ __pycache__/
 .DStore
 Pipfile.lock
 server/__pycache__/
+server/.pytest_cache
+server/.env
+.pytest_cache
+.server

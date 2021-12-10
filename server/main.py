@@ -7,6 +7,7 @@ run application
 
 uvicorn main:app --port 8500 --host 0.0.0.0
 """
+import os
 from functools import lru_cache
 from routers import users
 from fastapi import FastAPI, Depends
@@ -23,12 +24,12 @@ def get_settings():
     return Settings()
 
 
-@app.get("/info")
+@app.get('/info')
 async def info(settings: Settings = Depends(get_settings)):
     return {
-        "app_name": settings.app_name,
-        "admin_email": settings.admin_email,
-        "items_per_user": settings.items_per_user,
+        'app_name': settings.app_name,
+        'admin_email': settings.admin_email,
+        'items_per_user': settings.items_per_user,
     }
 
 

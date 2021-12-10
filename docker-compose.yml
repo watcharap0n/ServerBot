@@ -1,0 +1,15 @@
+version: "3.9"
+
+services:
+  app:
+    build: .
+    image: kaneai/mango-server-crm
+    container_name: container-server-crm
+    restart: always
+    env_file:
+      - server/.env
+    ports:
+      - 80:80
+    volumes:
+      - ./server:/server
+
