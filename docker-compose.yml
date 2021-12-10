@@ -1,8 +1,20 @@
 version: "3.9"
 
 services:
+  redis:
+    image: "redis:alpine"
+    container_name: container-redis-crm
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes:
+      - "./server:/redis:/data"
+
+
   app:
     build: .
+    depends_on:
+      - 'redis'
     image: kaneai/mango-server-crm
     container_name: container-server-crm
     restart: always

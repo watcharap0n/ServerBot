@@ -40,6 +40,19 @@ app.include_router(
     responses={418: {'description': "I'm teapot"}}
 )
 
+description = """
+CRM APP API helps you do awesome stuff. 🚀
+
+## APIs
+
+You can **read items each API**.
+
+You will be able to:
+
+
+***OpenAPI Public only prefix /api**
+"""
+
 
 def custom_openapi():
     """
@@ -52,7 +65,7 @@ def custom_openapi():
     openapi_schema = get_openapi(
         title="Server-Mango AI.CRM",
         version="2.0.0",
-        description="This is OpenAPI Public only using prefix path /api",
+        description=description,
         routes=app.routes,
     )
     openapi_schema["info"]["x-logo"] = {
