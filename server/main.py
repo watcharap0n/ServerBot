@@ -4,10 +4,9 @@ Interactive API /localhost/docs
 Alternative API /localhost/redoc
 
 run application
-
-uvicorn main:app --port 8500 --host 0.0.0.0
+    uvicorn main:app --port 8500 --host 0.0.0.0 --reload
 """
-import os
+
 from functools import lru_cache
 from routers import users
 from fastapi import FastAPI, Depends
@@ -15,7 +14,11 @@ from internal import Settings
 from fastapi.staticfiles import StaticFiles
 from fastapi.openapi.utils import get_openapi
 
-app = FastAPI()
+app = FastAPI(
+    openapi_url='/mango/openapi.json',
+    redoc_url='/mango/redoc/',
+    docs_url='/mango/docs'
+)
 app.mount('/static', StaticFiles(directory='static'), name='static')
 
 
@@ -24,7 +27,7 @@ def get_settings():
     return Settings()
 
 
-@app.get('/info')
+@app.get('/info', tags=['Info'])
 async def info(settings: Settings = Depends(get_settings)):
     return {
         'app_name': settings.app_name,
@@ -63,7 +66,7 @@ def custom_openapi():
     if app.openapi_schema:
         return app.openapi_schema
     openapi_schema = get_openapi(
-        title="Server-Mango AI.CRM",
+        title="Server-Mango CRM",
         version="2.0.0",
         description=description,
         routes=app.routes,
