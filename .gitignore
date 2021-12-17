@@ -8,4 +8,4 @@ server/.env
 .pytest_cache
 .server
 *.ipynb
-server/internal/environ
+server/config/environ/
