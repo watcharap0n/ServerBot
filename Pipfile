@@ -12,6 +12,8 @@ pylint = "*"
 requests = "*"
 gunicorn = "*"
 redis = "*"
+pymongo = "*"
+jupyter = "*"
 
 [dev-packages]
 pytest = "*"

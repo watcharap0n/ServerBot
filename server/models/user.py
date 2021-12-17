@@ -1,19 +1,13 @@
-"""
-
-model for routers.users.py
-for Database MongoDB Query Data from frontend to save Database
-
-"""
-
-from pydantic import BaseModel
 from typing import Optional
+from pydantic import BaseModel
 
 
 class User(BaseModel):
-    ID: Optional[int] = None
-    Year_Birth: Optional[int] = None
-    Education: Optional[str] = None
-    Marital_Status: Optional[str] = None
-    Income: Optional[int] = None
-    Age: Optional[int] = None
-    Gen: Optional[str] = None
+    username: str
+    email: Optional[str] = None
+    full_name: Optional[str] = None
+    disabled: Optional[bool] = True
+
+
+class UserInDB(User):
+    hashed_password: str

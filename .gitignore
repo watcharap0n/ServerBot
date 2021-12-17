@@ -7,3 +7,5 @@ server/.pytest_cache
 server/.env
 .pytest_cache
 .server
+*.ipynb
+server/internal/environ

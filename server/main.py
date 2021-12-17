@@ -8,7 +8,9 @@ run application
 """
 
 from functools import lru_cache
-from routers import users
+from routers import secure
+from routers.secure import get_current_active_user
+from models.user import User
 from fastapi import FastAPI, Depends
 from internal import Settings
 from fastapi.staticfiles import StaticFiles
@@ -28,18 +30,19 @@ def get_settings():
 
 
 @app.get('/info', tags=['Info'])
-async def info(settings: Settings = Depends(get_settings)):
+async def info(settings: Settings = Depends(get_settings), current_user: User = Depends(get_current_active_user)):
     return {
         'app_name': settings.app_name,
         'admin_email': settings.admin_email,
         'items_per_user': settings.items_per_user,
+        'current_user_data': current_user
     }
 
 
 app.include_router(
-    users.router,
-    prefix='/users',
-    tags=['Users'],
+    secure.router,
+    prefix='/secure',
+    tags=['Secure'],
     responses={418: {'description': "I'm teapot"}}
 )
 

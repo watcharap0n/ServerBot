@@ -4,4 +4,3 @@ RouterAPI
 """
 
 from . import secure
-from . import users
