@@ -1,6 +1,6 @@
 .idea
 __pycache__/
-.DStore
+*.DS_Store
 Pipfile.lock
 server/__pycache__/
 server/.pytest_cache
@@ -8,4 +8,4 @@ server/.env
 .pytest_cache
 .server
 *.ipynb
-server/internal/environ
+server/config/environ/

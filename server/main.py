@@ -9,9 +9,8 @@ run application
 
 from functools import lru_cache
 from routers import secure
-from routers.secure import get_current_active_user
-from models.user import User
 from fastapi import FastAPI, Depends
+from fastapi.middleware.cors import CORSMiddleware
 from internal import Settings
 from fastapi.staticfiles import StaticFiles
 from fastapi.openapi.utils import get_openapi
@@ -23,6 +22,22 @@ app = FastAPI(
 )
 app.mount('/static', StaticFiles(directory='static'), name='static')
 
+origins = [
+    "http://127.0.0.1:5000",
+    "http://localhost:3000",
+    "http://localhost:8000",
+    "https://www.mangoconsultant.net",
+    'https://mangoserverbot.herokuapp.com'
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 
 @lru_cache()
 def get_settings():
@@ -30,12 +45,11 @@ def get_settings():
 
 
 @app.get('/info', tags=['Info'])
-async def info(settings: Settings = Depends(get_settings), current_user: User = Depends(get_current_active_user)):
+async def info(settings: Settings = Depends(get_settings)):
     return {
         'app_name': settings.app_name,
         'admin_email': settings.admin_email,
         'items_per_user': settings.items_per_user,
-        'current_user_data': current_user
     }
 
 
@@ -43,11 +57,11 @@ app.include_router(
     secure.router,
     prefix='/secure',
     tags=['Secure'],
-    responses={418: {'description': "I'm teapot"}}
+    responses={418: {'description': "I'm teapot"}},
 )
 
 description = """
-CRM APP API helps you do awesome stuff. 🚀
+SERVER BOT APP API helps you do awesome stuff. 🚀
 
 ## APIs
 
@@ -70,7 +84,7 @@ def custom_openapi():
         return app.openapi_schema
     openapi_schema = get_openapi(
         title="Server-Mango CRM",
-        version="2.0.0",
+        version="2.1.0",
         description=description,
         routes=app.routes,
     )

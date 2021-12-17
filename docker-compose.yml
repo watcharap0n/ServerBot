@@ -11,10 +11,26 @@ services:
       - "./server:/redis:/data"
 
 
+  mongodb:
+    image: mongo
+    container_name: mongodb
+    environment:
+      - PUID=1000
+      - PGID=1000
+    ports:
+      - 27017:27017
+    env_file:
+      - server/.env
+    volumes:
+        - "./server:/mongo:/data"
+    restart: always
+
+
   app:
     build: .
     depends_on:
       - 'redis'
+      - 'mongodb'
     image: kaneai/mango-server-crm
     container_name: container-server-crm
     restart: always
