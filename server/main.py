@@ -14,6 +14,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from internal import Settings
 from fastapi.staticfiles import StaticFiles
 from fastapi.openapi.utils import get_openapi
+import uvicorn
 
 app = FastAPI(
     openapi_url='/mango/openapi.json',
@@ -84,7 +85,7 @@ def custom_openapi():
         return app.openapi_schema
     openapi_schema = get_openapi(
         title="Server-Mango CRM",
-        version="2.0.0",
+        version="2.1.0",
         description=description,
         routes=app.routes,
     )
@@ -96,3 +97,6 @@ def custom_openapi():
 
 
 app.openapi = custom_openapi
+
+if __name__ == '__main__':
+    uvicorn.run('main:app', port=8500, host='0.0.0.0', debug=True)
