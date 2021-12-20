@@ -3,12 +3,13 @@ version: "3.9"
 services:
   redis:
     image: "redis:alpine"
-    container_name: container-redis-crm
+    container_name: container-redis
     restart: always
     ports:
       - "6379:6379"
     volumes:
       - "./server:/redis:/data"
+
 
   mongodb:
     image: mongo
@@ -20,15 +21,19 @@ services:
       - 27017:27017
     env_file:
       - server/.env
+    volumes:
+        - "./server:/mongo:/data"
     restart: always
 
-  app:
+
+  web:
     build: .
     depends_on:
       - 'redis'
       - 'mongodb'
-    image: kaneai/mango-server
-    container_name: container-server
+    image: kaneai/mango-server-bot
+    container_name: container-server-bot
+    restart: always
     env_file:
       - server/.env
     ports:

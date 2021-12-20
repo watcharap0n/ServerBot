@@ -1,15 +1,15 @@
 import os
 import pytz
 from typing import Optional
+from pydantic import BaseModel
 from firebase_admin import auth, exceptions
 from internal import db, Id
 from config.firebase_auth import ConfigFirebase
 from config import firebaseConfig, firebaseAuth
 from datetime import datetime, timedelta
-from fastapi.encoders import jsonable_encoder
 from passlib.context import CryptContext
 from starlette.responses import JSONResponse
-from fastapi import APIRouter, HTTPException, status, Depends, Form, File, UploadFile, Request
+from fastapi import APIRouter, HTTPException, status, Depends, Form, File, UploadFile, Request, Response
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 
 SECRET_KEY = "09d25e094faa6ca2556c818166b7a9563b93f7099f6f0f4caa6cf63b88e8d3e7"
@@ -25,6 +25,24 @@ config = ConfigFirebase(path_auth=firebaseAuth, path_db=firebaseConfig)
 pb = config.authentication()
 pwd_context = CryptContext(schemes=['bcrypt'], deprecated='auto')
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/secure/login")
+
+
+class Permission(BaseModel):
+    id: str
+    uid: str
+    username: str
+    email: str
+    hashed_password: str
+    full_name: Optional[str] = None
+    img_path: Optional[str] = None
+    date: str
+    time: str
+    disabled: Optional[bool] = None
+    _data: Optional[dict] = None
+
+
+class User(BaseModel):
+    data: Optional[Permission] = None
 
 
 def verify_password(plain_password, hashed_password):
@@ -58,7 +76,7 @@ async def get_current_user(token: str = Depends(oauth2_scheme)):
         headers={"WWW-Authenticate": "Bearer"},
     )
     try:
-        refresh = auth.verify_session_cookie(token, check_revoked=True)
+        refresh = auth.verify_session_cookie(token)
         auth.revoke_refresh_tokens(refresh['sub'])
         return refresh
     except auth.RevokedSessionCookieError:
@@ -67,37 +85,43 @@ async def get_current_user(token: str = Depends(oauth2_scheme)):
         raise credentials_exception
 
 
-async def authentication_cookie(form_data: OAuth2PasswordRequestForm = Depends()):
+async def get_current_active(current_user: dict = Depends(get_current_user)):
+    uid = current_user.get('uid')
+    user = db.find_one(collection=collection, query={'uid': uid})
+    user = User(data=user)
+    return user
+
+
+async def authentication_cookie(response: Response,
+                                form_data: OAuth2PasswordRequestForm = Depends()):
     """
 
-    :param form_data:
-    :return:
-    """
-    sign_user = pb.sign_in_with_email_and_password(form_data.username, form_data.password)
-    check_verify = auth.get_user_by_email(form_data.username)
-    if not check_verify.email_verified:
-        pb.send_email_verification(sign_user.get('idToken'))
-        return HTTPException(
-            status_code=status.HTTP_202_ACCEPTED,
-            detail={'status': True, 'message': 'email verification!',
-                    '_data': check_verify._data}
-        )
-    credentials_exception = HTTPException(
-        status_code=status.HTTP_202_ACCEPTED,
-        detail={'status': True, 'message': 'login success!',
-                '_data': check_verify._data},
-        headers={"WWW-Authenticate": "Bearer"}
-    )
+     :param response:
+     :param form_data:
+     :return:
+     """
     try:
-        content = jsonable_encoder(credentials_exception)
-        session_cookie = auth.create_session_cookie(id_token=sign_user.get('idToken'), expires_in=timedelta(hours=1))
-        response = JSONResponse(content=content)
-        response.set_cookie(key='session', value=str(session_cookie),
-                            expires=EXPIRES_TOKEN)
-        return {"access_token": session_cookie, "token_type": "bearer"}
+        sign_user = pb.sign_in_with_email_and_password(form_data.username, form_data.password)
     except exceptions.FirebaseError:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
                             detail='Failed to create a session cookie')
+    except Exception:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
+                            detail='email not found')
+    check_verify = auth.get_user_by_email(form_data.username)
+    if not check_verify.email_verified:
+        pb.send_email_verification(sign_user.get('idToken'))
+
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail={'status': False, 'message': 'email not verification!',
+                    '_data': check_verify._data}
+        )
+    session_cookie = auth.create_session_cookie(id_token=sign_user.get('idToken'),
+                                                expires_in=timedelta(hours=1))
+    response.set_cookie(key='session', value=str(session_cookie),
+                        expires=EXPIRES_TOKEN)
+    return {"access_token": session_cookie, "token_type": "bearer"}
 
 
 def payload_register(**val):
@@ -110,7 +134,7 @@ def payload_register(**val):
 
 
 @router.get('/user')
-async def read_users_me(current_user=Depends(get_current_user)):
+async def read_users_me(current_user: User = Depends(get_current_active)):
     """
 
     :param current_user:
@@ -119,7 +143,7 @@ async def read_users_me(current_user=Depends(get_current_user)):
     return current_user
 
 
-@router.post('/login', status_code=status.HTTP_202_ACCEPTED)
+@router.post('/login')
 async def login(user=Depends(authentication_cookie)):
     """
 
@@ -169,6 +193,8 @@ async def register(
         date = _d.strftime('%d/%m/%y')
         time = _d.strftime('%H:%M:%S')
         data = payload_register(
+            id=Id,
+            uid=user.__dict__['_data']['localId'],
             username=username,
             email=email,
             hashed_password=get_password_hash(hashed_password),
@@ -219,3 +245,12 @@ async def socket_auth(request: Request):
             headers={'WWW-Authenticate': 'Bearer'},
         )
         raise exception
+
+
+@router.get('/logout')
+async def logout():
+    response = JSONResponse(content={'message': 'delete session'})
+    response.delete_cookie('session')
+    response.delete_cookie("Authorization")
+    response.headers['Authorization'] = ''
+    return response
