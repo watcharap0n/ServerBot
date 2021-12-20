@@ -6,13 +6,15 @@ Alternative API /localhost/redoc
 run application
     uvicorn main:app --port 8500 --host 0.0.0.0 --reload
 """
-
+import secrets
 from functools import lru_cache
-from routers import secure
-from fastapi import FastAPI, Depends
+from routers import secure, callback
+from routers.secure import get_current_active, User
+from fastapi import FastAPI, Depends, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
 from internal import Settings
 from fastapi.staticfiles import StaticFiles
+from fastapi.security import HTTPBasic, HTTPBasicCredentials
 from fastapi.openapi.utils import get_openapi
 
 app = FastAPI(
@@ -21,6 +23,8 @@ app = FastAPI(
     docs_url='/mango/docs'
 )
 app.mount('/static', StaticFiles(directory='static'), name='static')
+
+security = HTTPBasic()
 
 origins = [
     "http://127.0.0.1:5000",
@@ -44,12 +48,32 @@ def get_settings():
     return Settings()
 
 
+def get_current_username(credentials: HTTPBasicCredentials = Depends(security)):
+    correct_username = secrets.compare_digest(credentials.username, 'mango')
+    correct_password = secrets.compare_digest(credentials.password, 'mango!@#$')
+    if not (correct_username and correct_password):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect email or password",
+            headers={"WWW-Authenticate": "Basic"},
+        )
+    return credentials.username
+
+
+@app.get('/')
+async def homepage():
+    return "Welcome to the Server BOT!"
+
+
 @app.get('/info', tags=['Info'])
-async def info(settings: Settings = Depends(get_settings)):
+async def info(current_user: User = Depends(get_current_active),
+               settings: Settings = Depends(get_settings)):
+
     return {
         'app_name': settings.app_name,
         'admin_email': settings.admin_email,
         'items_per_user': settings.items_per_user,
+        'current_user': current_user
     }
 
 
@@ -59,6 +83,14 @@ app.include_router(
     tags=['Secure'],
     responses={418: {'description': "I'm teapot"}},
 )
+
+app.include_router(
+    callback.router,
+    prefix='/callback',
+    tags=['Callback'],
+    responses={418: {'description': "I'm teapot"}},
+)
+
 
 description = """
 SERVER BOT APP API helps you do awesome stuff. 🚀
@@ -83,13 +115,13 @@ def custom_openapi():
     if app.openapi_schema:
         return app.openapi_schema
     openapi_schema = get_openapi(
-        title="Server-Mango CRM",
+        title="Mango-Server BOT",
         version="2.1.0",
         description=description,
         routes=app.routes,
     )
-    openapi_schema["info"]["x-logo"] = {
-        "url": "https://fastapi.tiangolo.com/img/logo-margin/logo-teal.png"
+    openapi_schema['info']['x-logo'] = {
+        'url': 'https://fastapi.tiangolo.com/img/logo-margin/logo-teal.png'
     }
     app.openapi_schema = openapi_schema
     return app.openapi_schema

@@ -9,3 +9,4 @@ server/.env
 .server
 *.ipynb
 server/config/environ/
+.vscode
