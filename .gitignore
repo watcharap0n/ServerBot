@@ -8,5 +8,5 @@ server/.env
 .pytest_cache
 .server
 *.ipynb
-server/config/environ/
+server/db/environ/
 .vscode

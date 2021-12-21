@@ -1,18 +1,18 @@
 import json
 from random import randint
 from typing import Optional
+from bson import ObjectId
 from pydantic import BaseModel, Field
 from fastapi import APIRouter, Depends, Body, Request, status, HTTPException
-from fastapi.encoders import jsonable_encoder
 from routers.secure import get_current_active, User
 from fastapi.encoders import jsonable_encoder
-from internal import db, Id
+from db import db, generate_token
 from linebot import LineBotApi, WebhookHandler
-from linebot.models import StickerSendMessage
+from linebot.models import StickerSendMessage, TextSendMessage
 from linebot.exceptions import InvalidSignatureError
 
 router = APIRouter()
-collection = 'follwer_linebot'
+collection = 'webhook'
 
 
 class CreateWebhook(BaseModel):
@@ -27,7 +27,7 @@ class ModelWebhook(CreateWebhook):
 
 
 def get_webhook(token):
-    user = db.find_one(collection='webhook',
+    user = db.find_one(collection=collection,
                        query={'token': token})
     user = ModelWebhook(**user)
     return user
@@ -49,15 +49,58 @@ def get_profile(userId: str, access_token: str) -> dict:
     return result
 
 
-@router.post('/webhook/create', response_model=CreateWebhook)
-async def create_url_webhook(item: CreateWebhook,
+async def check_access_token(item: CreateWebhook):
+    user = db.find_one(collection=collection, query={'access_token': item.access_token})
+    if not user:
+        return item
+    raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
+                        detail={'message': 'Access token have already', 'data': user})
+
+
+@router.get('/webhook/get')
+async def get_url_all_token(uid: Optional[str] = None,
+                            current_user: User = Depends(get_current_active)):
+    """
+
+    :param uid:
+    :param current_user:
+    :return:
+    """
+    user = db.find(collection=collection, query={'uid': uid})
+    user = list(user)
+    return user
+
+
+@router.post('/webhook/create', response_model=ModelWebhook)
+async def create_url_webhook(item: CreateWebhook = Depends(check_access_token),
                              current_user: User = Depends(get_current_active)):
+    """
+
+    :param item:
+    :param current_user:
+    :return:
+    """
+    Id = generate_token(engine=ObjectId())
     item_model = jsonable_encoder(item)
     item_model['url'] = f'https://mangoserverbot.herokuapp.com/callback/{Id}'
     item_model['uid'] = current_user.data.uid
     item_model['token'] = Id
-    db.insert_one(collection='webhook', data=item_model)
-    return item_model
+    db.insert_one(collection=collection, data=item_model)
+    store_model = ModelWebhook(**item_model)
+    return store_model
+
+
+@router.delete('/webhook/delete/{token}')
+async def delete_url_webhook(token: Optional[str] = None,
+                             current_user: User = Depends(get_current_active)):
+    """
+
+    :param token:
+    :param current_user:
+    :return:
+    """
+    user = db.delete_one(collection=collection, query={'token': token})
+    return str(user)
 
 
 @router.post('/{token}/')
@@ -66,6 +109,13 @@ async def client_webhook(
         token: str,
         payload: Optional[dict] = Body(None),
 ):
+    """
+
+    :param request:
+    :param token:
+    :param payload:
+    :return:
+    """
     model = get_webhook(token)
     handler = WebhookHandler(model.secret_token)
     create_file_json('static/log/line.json', payload)
@@ -109,6 +159,10 @@ async def client_webhook(
     return payload
 
 
+def event_postback(events, model):
+    pass
+
+
 def event_handler(events, model):
     line_bot_api = LineBotApi(model.access_token)
     replyToken = events['replyToken']
@@ -118,8 +172,7 @@ def event_handler(events, model):
 
 
 def handler_message(events, model):
-    pass
-
-
-def event_postback(events, model):
-    pass
+    line_bot_api = LineBotApi(model.access_token)
+    text = events['message']['text']
+    reply_token = events['replyToken']
+    line_bot_api.reply_message(reply_token, TextSendMessage(text=text))
