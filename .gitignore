@@ -1,8 +1,6 @@
 .idea
-*DS_Store
-
 __pycache__/
-.DStore
+*.DS_Store
 Pipfile.lock
 server/__pycache__/
 server/.pytest_cache
@@ -12,3 +10,5 @@ server/.env
 .server
 *.ipynb
 server/config/environ/
+.vscode
+server/db/environ

@@ -3,9 +3,10 @@ import pytz
 from typing import Optional
 from pydantic import BaseModel
 from firebase_admin import auth, exceptions
-from internal import db, Id
-from config.firebase_auth import ConfigFirebase
-from config import firebaseConfig, firebaseAuth
+from bson import ObjectId
+from db import db, generate_token
+from db.firebase_auth import ConfigFirebase
+from db import firebaseConfig, firebaseAuth
 from datetime import datetime, timedelta
 from passlib.context import CryptContext
 from starlette.responses import JSONResponse
@@ -88,6 +89,12 @@ async def get_current_user(token: str = Depends(oauth2_scheme)):
 async def get_current_active(current_user: dict = Depends(get_current_user)):
     uid = current_user.get('uid')
     user = db.find_one(collection=collection, query={'uid': uid})
+    if not user:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                            detail={
+                                'message': 'Please contact developer',
+                                'email_dev': 'wera.watcharapon@gmail.com',
+                            })
     user = User(data=user)
     return user
 
@@ -107,14 +114,20 @@ async def authentication_cookie(response: Response,
                             detail='Failed to create a session cookie')
     except Exception:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
-                            detail='email not found')
+                            detail='Email not found')
     check_verify = auth.get_user_by_email(form_data.username)
+    user = db.find_one(collection='secure', query={'email': form_data.username})
+    if not user:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                            detail={'message': 'Please contact developer',
+                                    'email_dev': 'wera.watcharapon@gmail.com'}
+                            )
     if not check_verify.email_verified:
         pb.send_email_verification(sign_user.get('idToken'))
 
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
-            detail={'status': False, 'message': 'email not verification!',
+            detail={'status': False, 'message': 'Email not verification!',
                     '_data': check_verify._data}
         )
     session_cookie = auth.create_session_cookie(id_token=sign_user.get('idToken'),
@@ -192,6 +205,7 @@ async def register(
         _d = datetime.now(tz)
         date = _d.strftime('%d/%m/%y')
         time = _d.strftime('%H:%M:%S')
+        Id = generate_token(engine=ObjectId())
         data = payload_register(
             id=Id,
             uid=user.__dict__['_data']['localId'],
