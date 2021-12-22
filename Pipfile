@@ -128,8 +128,6 @@ Send2Trash = "==1.8.0"
 line-bot-sdk = "*"
 scikit-learn = "*"
 torch = "*"
-torchvision = "*"
-torchaudio = "*"
 attacut = "*"
 pandas = "*"
 
