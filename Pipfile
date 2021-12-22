@@ -126,6 +126,12 @@ Pyrebase4 = "==4.5.0"
 QtPy = "==1.11.3"
 Send2Trash = "==1.8.0"
 line-bot-sdk = "*"
+scikit-learn = "*"
+torch = "*"
+torchvision = "*"
+torchaudio = "*"
+attacut = "*"
+pandas = "*"
 
 [dev-packages]
 
