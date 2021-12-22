@@ -8,7 +8,7 @@ run application
 """
 import secrets
 from functools import lru_cache
-from routers import secure, callback
+from routers import secure, callback, intents
 from routers.secure import get_current_active, User
 from fastapi import FastAPI, Depends, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
@@ -68,7 +68,6 @@ async def homepage():
 @app.get('/info', tags=['Info'])
 async def info(current_user: User = Depends(get_current_active),
                settings: Settings = Depends(get_settings)):
-
     return {
         'app_name': settings.app_name,
         'admin_email': settings.admin_email,
@@ -91,6 +90,12 @@ app.include_router(
     responses={418: {'description': "I'm teapot"}},
 )
 
+app.include_router(
+    intents.router,
+    prefix='/intents',
+    tags=['Intents'],
+    responses={418: {'description': "I'm teapot"}},
+)
 
 description = """
 SERVER BOT APP API helps you do awesome stuff. 🚀
