@@ -45,6 +45,12 @@ async def verify_name_intent(intent: Intent):
 @router.post('/create', response_model=TokenUser)
 async def create_intent(intent: Intent = Depends(verify_name_intent),
                         current_user: User = Depends(get_current_active)):
+    """
+
+    :param intent:
+    :param current_user:
+    :return:
+    """
     Id = generate_token(engine=ObjectId())
     item_model = jsonable_encoder(intent)
     item_model['id'] = Id
@@ -57,6 +63,12 @@ async def create_intent(intent: Intent = Depends(verify_name_intent),
 @router.get('/get')
 async def get_intents(access_token: Optional[str] = None,
                       current_user: User = Depends(get_current_active)):
+    """
+
+    :param access_token:
+    :param current_user:
+    :return:
+    """
     user = db.find(collection=collection, query={'access_token': access_token})
     user = list(user)
     if not user:
@@ -68,6 +80,13 @@ async def get_intents(access_token: Optional[str] = None,
 @router.put('/query/update/{id}')
 async def update_intent(id: str, intent: Intent,
                         current_user: User = Depends(get_current_active)):
+    """
+
+    :param id:
+    :param intent:
+    :param current_user:
+    :return:
+    """
     data = jsonable_encoder(intent)
     query = {'id': id}
     values = {'$set': data}
@@ -78,6 +97,12 @@ async def update_intent(id: str, intent: Intent,
 @router.delete('/query/delete/{id}')
 async def delete_intent(id: str,
                         current_user: User = Depends(get_current_active)):
+    """
+
+    :param id:
+    :param current_user:
+    :return:
+    """
     try:
         db.delete_one(collection=collection, query={'id': id})
         return {'detail': f'Delete success {id}'}
