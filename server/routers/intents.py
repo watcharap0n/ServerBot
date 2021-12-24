@@ -1,6 +1,6 @@
-from typing import Optional
+from typing import Optional, List
 from bson import ObjectId
-from pydantic import BaseModel
+from pydantic import BaseModel, parse_obj_as
 from db import db, generate_token
 from routers.secure import User, get_current_active
 from fastapi import APIRouter, HTTPException, Depends, status
@@ -25,21 +25,25 @@ class TokenUser(Intent):
     uid: Optional[str] = None
 
 
+class UserList(BaseModel):
+    __root__: List[TokenUser]
+
+
 def get_intent(access_token):
-    user = db.find_one(collection=collection,
-                       query={'access_token': access_token})
-    if not user:
-        return False
-    user = TokenUser(**user)
-    return user
+    user = db.find(collection=collection,
+                   query={'access_token': access_token})
+    user = list(user)
+    users = parse_obj_as(List[TokenUser], user)
+    return users
 
 
 async def verify_name_intent(intent: Intent):
-    user = get_intent(intent.access_token)
-    if user:
-        if user.name == intent.name:
-            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
-                                detail='Invalid value key name duplicate')
+    users = get_intent(intent.access_token)
+    if users:
+        for user in users:
+            if user.name == intent.name:
+                raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
+                                    detail='Invalid name duplicate')
     return intent
 
 
