@@ -15,12 +15,13 @@ class Intent(BaseModel):
     name: str
     access_token: str
     status_flex: Optional[bool] = False
-    flex_message: Optional[str] = None
+    content: Optional[str] = None
     question: Optional[list] = []
     answer: Optional[list] = []
 
 
 class TokenUser(Intent):
+    id: Optional[str] = None
     uid: Optional[str] = None
 
 
