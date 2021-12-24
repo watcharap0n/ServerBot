@@ -21,6 +21,7 @@ class CreateWebhook(BaseModel):
 
 
 class ModelWebhook(CreateWebhook):
+    id: Optional[str] = None
     uid: Optional[str] = None
     url: Optional[str] = None
     token: Optional[str] = None
