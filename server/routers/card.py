@@ -56,6 +56,7 @@ async def get_flex(uid: Optional[str] = None):
     if not user:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
                             detail='Not found flex message')
+    return user
 
 
 @router.post('/create', response_model=TokenUser)
