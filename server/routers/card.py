@@ -28,9 +28,9 @@ class UserList(BaseModel):
 
 
 def get_flex_user(uid):
-    user = db.find(collection=collection, query={'uid': uid})
-    user = list(user)
-    users = parse_obj_as(List[TokenUser], user)
+    users = db.find(collection=collection, query={'uid': uid})
+    users = list(users)
+    users = UserList.parse_obj(users)
     return users
 
 
@@ -42,32 +42,34 @@ async def check_flex_user(item: FlexModel,
     item_model['id'] = Id
     user = TokenUser(**item_model)
     users = get_flex_user(user.uid)
+    users = jsonable_encoder(users)
     for i in users:
-        if i.name == item.name:
+        if i['name'] == item.name:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
                                 detail='Invalid name duplicate')
     return user
 
 
-@router.get('/')
-async def get_flex(uid: Optional[str] = None):
-    user = db.find(collection=collection, query={'uid': uid})
-    user = list(user)
-    if not user:
+@router.get('/', response_model=UserList)
+async def get_flex(current_user: User = Depends(get_current_active)):
+    items = get_flex_user(current_user.data.uid)
+    if not items:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
                             detail='Not found flex message')
-    return user
+    return items
 
 
 @router.post('/create', response_model=TokenUser)
-async def create_flex(user: TokenUser = Depends(check_flex_user)):
+async def create_flex(user: TokenUser = Depends(check_flex_user),
+                      current_user: User = Depends(get_current_active)):
     item_store = jsonable_encoder(user)
     db.insert_one(collection=collection, data=item_store)
     return item_store
 
 
 @router.put('/query/update/{id}')
-async def update_flex(id: str, flex: FlexModel):
+async def update_flex(id: str, flex: FlexModel,
+                      current_user: User = Depends(get_current_active)):
     data = jsonable_encoder(flex)
     query = {'id': id}
     values = {'$set': data}
@@ -76,7 +78,8 @@ async def update_flex(id: str, flex: FlexModel):
 
 
 @router.delete('/query/delete/{id}')
-async def delete_flex(id: str):
+async def delete_flex(id: str,
+                      current_user: User = Depends(get_current_active)):
     try:
         db.delete_one(collection=collection, query={'id': id})
         return {'detail': f'Delete success {id}'}
