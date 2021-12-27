@@ -29,26 +29,27 @@ class UserList(BaseModel):
     __root__: List[TokenUser]
 
 
-def get_intent(access_token):
-    user = db.find(collection=collection,
-                   query={'access_token': access_token})
-    user = list(user)
-    users = parse_obj_as(List[TokenUser], user)
+def get_intents_user(access_token):
+    users = db.find(collection=collection,
+                    query={'access_token': access_token})
+    users = list(users)
+    users = UserList.parse_obj(users)
     return users
 
 
-async def verify_name_intent(intent: Intent):
-    users = get_intent(intent.access_token)
+async def verify_name_intents(intent: Intent):
+    users = get_intents_user(intent.access_token)
+    users = jsonable_encoder(users)
     if users:
         for user in users:
-            if user.name == intent.name:
+            if user['name'] == intent.name:
                 raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
                                     detail='Invalid name duplicate')
     return intent
 
 
 @router.post('/create', response_model=TokenUser)
-async def create_intent(intent: Intent = Depends(verify_name_intent),
+async def create_intent(intent: Intent = Depends(verify_name_intents),
                         current_user: User = Depends(get_current_active)):
     Id = generate_token(engine=ObjectId())
     item_model = jsonable_encoder(intent)
@@ -59,15 +60,14 @@ async def create_intent(intent: Intent = Depends(verify_name_intent),
     return store_model
 
 
-@router.get('/get')
+@router.get('/', response_model=UserList)
 async def get_intents(access_token: Optional[str] = None,
                       current_user: User = Depends(get_current_active)):
-    user = db.find(collection=collection, query={'access_token': access_token})
-    user = list(user)
-    if not user:
+    users = get_intents_user(access_token)
+    if not users:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
                             detail='Not found intents')
-    return user
+    return users
 
 
 @router.put('/query/update/{id}')
