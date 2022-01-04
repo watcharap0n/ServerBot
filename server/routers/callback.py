@@ -1,4 +1,5 @@
 import json
+from datetime import datetime
 from random import randint
 from typing import Optional
 from bson import ObjectId
@@ -25,6 +26,8 @@ class ModelWebhook(CreateWebhook):
     uid: Optional[str] = None
     url: Optional[str] = None
     token: Optional[str] = None
+    date: Optional[str] = None
+    time: Optional[str] = None
 
 
 def get_webhook(token):
@@ -82,10 +85,13 @@ async def create_url_webhook(item: CreateWebhook = Depends(check_access_token),
     :return:
     """
     Id = generate_token(engine=ObjectId())
+    _d = datetime.now()
     item_model = jsonable_encoder(item)
     item_model['url'] = f'https://mangoserverbot.herokuapp.com/callback/{Id}'
     item_model['uid'] = current_user.data.uid
     item_model['token'] = Id
+    item_model["date"] = _d.strftime("%d/%m/%y")
+    item_model["time"] = _d.strftime("%H:%M:%S")
     db.insert_one(collection=collection, data=item_model)
     store_model = ModelWebhook(**item_model)
     return store_model
