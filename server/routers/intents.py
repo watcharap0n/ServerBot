@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import Optional, List
 from bson import ObjectId
 from pydantic import BaseModel, parse_obj_as
@@ -14,6 +15,7 @@ collection = 'intents'
 class Intent(BaseModel):
     name: str
     access_token: str
+    ready: Optional[bool] = True
     status_flex: Optional[bool] = False
     content: Optional[str] = None
     question: Optional[list] = []
@@ -23,6 +25,8 @@ class Intent(BaseModel):
 class TokenUser(Intent):
     id: Optional[str] = None
     uid: Optional[str] = None
+    date: Optional[str] = None
+    time: Optional[str] = None
 
 
 class UserList(BaseModel):
@@ -52,9 +56,12 @@ async def verify_name_intents(intent: Intent):
 async def create_intent(intent: Intent = Depends(verify_name_intents),
                         current_user: User = Depends(get_current_active)):
     Id = generate_token(engine=ObjectId())
+    _d = datetime.now()
     item_model = jsonable_encoder(intent)
     item_model['id'] = Id
     item_model['uid'] = current_user.data.uid
+    item_model["date"] = _d.strftime("%d/%m/%y")
+    item_model["time"] = _d.strftime("%H:%M:%S")
     db.insert_one(collection=collection, data=item_model)
     store_model = TokenUser(**item_model)
     return store_model
