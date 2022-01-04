@@ -1,4 +1,5 @@
 import json
+from datetime import datetime
 from typing import Optional, List
 from pydantic import BaseModel, parse_obj_as
 from bson import ObjectId
@@ -21,6 +22,8 @@ class FlexModel(BaseModel):
 class TokenUser(FlexModel):
     id: Optional[str] = None
     uid: Optional[str] = None
+    date: Optional[str] = None
+    time: Optional[str] = None
 
 
 class UserList(BaseModel):
@@ -37,9 +40,12 @@ def get_flex_user(uid):
 async def check_flex_user(item: FlexModel,
                           current_user: User = Depends(get_current_active)):
     Id = generate_token(engine=ObjectId())
+    _d = datetime.now()
     item_model = jsonable_encoder(item)
     item_model['uid'] = current_user.data.uid
     item_model['id'] = Id
+    item_model["date"] = _d.strftime("%d/%m/%y")
+    item_model["time"] = _d.strftime("%H:%M:%S")
     user = TokenUser(**item_model)
     users = get_flex_user(user.uid)
     users = jsonable_encoder(users)
