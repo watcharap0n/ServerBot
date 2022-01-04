@@ -16,6 +16,7 @@ collection = 'webhook'
 
 
 class CreateWebhook(BaseModel):
+    name: str = Field(..., example='name line official')
     access_token: str = Field(..., example='channel access token long live')
     secret_token: str = Field(..., example='channel secret token webhook')
 
