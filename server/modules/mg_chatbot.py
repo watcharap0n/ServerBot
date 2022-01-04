@@ -11,9 +11,12 @@ from sklearn.linear_model import SGDClassifier
 from sklearn.feature_extraction.text import TfidfVectorizer, CountVectorizer, TfidfTransformer
 
 
-def chatbot_pipeline(X: list, y: list, X_test: Optional[list] = None) -> dict:
+def chatbot_pipeline(X: list, y: list,
+                     message: str,
+                     X_test: Optional[list] = None) -> dict:
     """
 
+    :param message:
     :param X:
     :param y:
     :param X_test:
@@ -32,13 +35,17 @@ def chatbot_pipeline(X: list, y: list, X_test: Optional[list] = None) -> dict:
         acc = np.mean(predicted == y)
         return {'accuracy': acc, 'pred_prob': pred_prob,
                 'predicted': predicted}
-    predicted = text_clf_logis.predict(X_test)
+    message = list(message)
+    predicted = text_clf_logis.predict(message)
     return {'predicted': predicted}
 
 
-def chatbot_standard(X: list, y: list, X_test: Optional[list] = None) -> dict:
+def chatbot_standard(X: list, y: list,
+                     message: str,
+                     X_test: Optional[list] = None) -> dict:
     """
 
+    :param message:
     :param X:
     :param y:
     :param X_test:
@@ -50,7 +57,8 @@ def chatbot_standard(X: list, y: list, X_test: Optional[list] = None) -> dict:
     x_train_vect = tf_vect.fit_transform(X)
     clf = LogisticRegression(penalty='none')
     clf.fit(x_train_vect, y)
-    x_test_vect = tf_vect.transform(X_test)
+    message = list(message)
+    x_test_vect = tf_vect.transform(message)
     if X_test:
         predicted = clf.predict(x_test_vect)
         pred_prob = clf.predict_proba(x_test_vect)[0][predicted]
