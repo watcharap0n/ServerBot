@@ -65,9 +65,6 @@ async def create_intent(intent: Intent = Depends(verify_name_intents),
 async def get_intents(access_token: Optional[str] = None,
                       current_user: User = Depends(get_current_active)):
     users = get_intents_user(access_token)
-    if not users:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
-                            detail='Not found intents')
     return users
 
 
