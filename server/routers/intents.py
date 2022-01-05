@@ -1,7 +1,6 @@
-from datetime import datetime
 from typing import Optional, List
-from bson import ObjectId
-from pydantic import BaseModel, parse_obj_as
+from pydantic import BaseModel
+from modules.item_static import item_user
 from db import db, generate_token
 from routers.secure import User, get_current_active
 from fastapi import APIRouter, HTTPException, Depends, status
@@ -55,13 +54,8 @@ async def verify_name_intents(intent: Intent):
 @router.post('/create', response_model=TokenUser)
 async def create_intent(intent: Intent = Depends(verify_name_intents),
                         current_user: User = Depends(get_current_active)):
-    Id = generate_token(engine=ObjectId())
-    _d = datetime.now()
     item_model = jsonable_encoder(intent)
-    item_model['id'] = Id
-    item_model['uid'] = current_user.data.uid
-    item_model["date"] = _d.strftime("%d/%m/%y")
-    item_model["time"] = _d.strftime("%H:%M:%S")
+    item_model = item_user(data=item_model, current_user=current_user)
     db.insert_one(collection=collection, data=item_model)
     store_model = TokenUser(**item_model)
     return store_model
