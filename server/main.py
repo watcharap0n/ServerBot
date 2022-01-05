@@ -60,7 +60,7 @@ def get_current_username(credentials: HTTPBasicCredentials = Depends(security)):
     return credentials.username
 
 
-@app.get('/')
+@app.get('/', tags=['HomePage'])
 async def homepage():
     return "Welcome to the Server BOT!"
 
