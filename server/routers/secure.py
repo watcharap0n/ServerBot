@@ -20,7 +20,7 @@ router = APIRouter()
 config = ConfigFirebase(path_auth=firebaseAuth, path_db=firebaseConfig)
 pb = config.authentication()
 pwd_context = CryptContext(schemes=['bcrypt'], deprecated='auto')
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/secure/login")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/secure/token")
 
 
 class Permission(BaseModel):
@@ -151,7 +151,7 @@ async def read_users_me(current_user: User = Depends(get_current_active)):
     return current_user
 
 
-@router.post('/login')
+@router.post('/token')
 async def login(user=Depends(authentication_cookie)):
     """
 
