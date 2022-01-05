@@ -1,9 +1,7 @@
-import json
-from datetime import datetime
 from typing import Optional, List
-from pydantic import BaseModel, parse_obj_as
-from bson import ObjectId
+from pydantic import BaseModel
 from db import db, generate_token
+from modules.item_static import item_user
 from fastapi import APIRouter, Depends, status, HTTPException
 from routers.secure import User, get_current_active
 from fastapi.encoders import jsonable_encoder
@@ -39,13 +37,8 @@ def get_flex_user(uid):
 
 async def check_flex_user(item: FlexModel,
                           current_user: User = Depends(get_current_active)):
-    Id = generate_token(engine=ObjectId())
-    _d = datetime.now()
     item_model = jsonable_encoder(item)
-    item_model['uid'] = current_user.data.uid
-    item_model['id'] = Id
-    item_model["date"] = _d.strftime("%d/%m/%y")
-    item_model["time"] = _d.strftime("%H:%M:%S")
+    item_model = item_user(data=item_model, current_user=current_user)
     user = TokenUser(**item_model)
     users = get_flex_user(user.uid)
     users = jsonable_encoder(users)
