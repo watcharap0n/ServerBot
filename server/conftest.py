@@ -14,6 +14,8 @@ def get_settings_override():
 
 app.dependency_overrides[get_settings] = get_settings_override
 
+headers = {}
+
 USER = {
     'username': 'wera.watcharapon@gmail.com',
     'password': 'kane!@#$'
@@ -33,31 +35,29 @@ PAYLOAD_INTENT = {
 def get_token():
     token = client.post('/secure/token', data=USER)
     token = token.json()['access_token']
-    headers = {
-        'Authorization': 'Bearer ' + token,
-    }
-    return headers
+    headers['Authorization'] = 'Bearer ' + token
 
 
 def test_intent_create():
-    response = client.post('/intents/create', json=PAYLOAD_INTENT, headers=get_token())
+    get_token()
+    response = client.post('/intents/create', json=PAYLOAD_INTENT, headers=headers)
     assert response.status_code == 200
 
 
 def test_intent_duplicate():
-    response = client.post('/intents/create', json=PAYLOAD_INTENT, headers=get_token())
+    response = client.post('/intents/create', json=PAYLOAD_INTENT, headers=headers)
     assert response.status_code == 400
 
 
 def test_intent_find():
     response = client.get('/intents?access_token={}'.format(PAYLOAD_INTENT.get('access_token')),
-                          headers=get_token())
+                          headers=headers)
     assert response.status_code == 200
 
 
 def test_intent_find_empty():
     response = client.get('/intents?access_token=fake access token',
-                          headers=get_token())
+                          headers=headers)
     assert response.status_code == 200
     assert isinstance(response.json(), list)
 
@@ -67,7 +67,7 @@ def test_intent_update():
                            query={'access_token': PAYLOAD_INTENT['access_token']})
     PAYLOAD_INTENT['name'] = 'test update unit'
     response = client.put(f'/intents/query/update/{query_id["id"]}',
-                          json=PAYLOAD_INTENT, headers=get_token())
+                          json=PAYLOAD_INTENT, headers=headers)
     assert response.status_code == 200
     assert response.json() == {'detail': f'Update success {query_id["id"]}'}
 
@@ -76,7 +76,7 @@ def test_intent_delete():
     query_id = db.find_one(collection='intents',
                            query={'access_token': PAYLOAD_INTENT['access_token']})
     response = client.delete(f'/intents/query/delete/{query_id["id"]}',
-                             headers=get_token())
+                             headers=headers)
     assert response.status_code == 200
     assert response.json() == {'detail': f'Delete success {query_id["id"]}'}
 
@@ -94,7 +94,7 @@ PAYLOAD_CALLBACK = {
 
 def test_callback_create():
     response = client.post('/callback/channel/create', json=PAYLOAD_CALLBACK,
-                           headers=get_token())
+                           headers=headers)
     assert response.status_code == 200
 
 
@@ -103,7 +103,7 @@ def test_callback_find():
                           query={'access_token': PAYLOAD_CALLBACK['access_token']})
     uid = channel['uid']
     response = client.get(f'/callback/channel/get?uid={uid}',
-                          headers=get_token())
+                          headers=headers)
     assert response.status_code == 200
     assert isinstance(response.json(), list)
 
@@ -111,13 +111,13 @@ def test_callback_find():
 def test_callback_find_one():
     access_token = PAYLOAD_CALLBACK['access_token']
     response = client.get(f'/callback/channel/get/{access_token}',
-                          headers=get_token())
+                          headers=headers)
     assert response.status_code == 200
 
 
 def test_callback_find_one_not_found():
     response = client.get(f'/callback/channel/get/fake_user_access_token',
-                          headers=get_token())
+                          headers=headers)
     assert response.status_code == 400
 
 
@@ -126,7 +126,7 @@ def test_callback_delete():
                           query={'access_token': PAYLOAD_CALLBACK['access_token']})
     token = channel['token']
     response = client.delete(f'/callback/channel/delete/{token}',
-                             headers=get_token())
+                             headers=headers)
     assert response.status_code == 200
     assert response.json() == {'detail': f'Delete success {token}'}
 
@@ -144,12 +144,12 @@ PAYLOAD_CARD = {
 
 def test_card_create():
     response = client.post('/card/create', json=PAYLOAD_CARD,
-                           headers=get_token())
+                           headers=headers)
     assert response.status_code == 200
 
 
 def test_card_get():
-    response = client.get('/card', headers=get_token())
+    response = client.get('/card', headers=headers)
     assert response.status_code == 200
 
 
@@ -159,7 +159,7 @@ def test_card_update():
     id_card = card['id']
     PAYLOAD_CARD['name'] = 'test unit update name'
     response = client.put(f'/card/query/update/{id_card}', json=PAYLOAD_CARD,
-                          headers=get_token())
+                          headers=headers)
     assert response.status_code == 200
     assert {'detail': f'Update success {id_card}'}
 
@@ -169,6 +169,6 @@ def test_card_delete():
                        query={'content': PAYLOAD_CARD['content']})
     id_card = card['id']
     response = client.delete(f'/card/query/delete/{id_card}',
-                             headers=get_token())
+                             headers=headers)
     assert response.status_code == 200
     assert response.json() == {'detail': f'Delete success {id_card}'}
