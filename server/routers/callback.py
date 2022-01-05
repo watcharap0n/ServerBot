@@ -1,7 +1,7 @@
 import json
 from datetime import datetime
 from random import randint
-from typing import Optional
+from typing import Optional, List
 from bson import ObjectId
 from pydantic import BaseModel, Field
 from fastapi import APIRouter, Depends, Body, Request, status, HTTPException
@@ -16,13 +16,13 @@ router = APIRouter()
 collection = 'webhook'
 
 
-class CreateWebhook(BaseModel):
+class LineToken(BaseModel):
     name: str = Field(..., example='name line official')
     access_token: str = Field(..., example='channel access token long live')
     secret_token: str = Field(..., example='channel secret token webhook')
 
 
-class ModelWebhook(CreateWebhook):
+class Webhook(LineToken):
     uid: Optional[str] = None
     url: Optional[str] = None
     token: Optional[str] = None
@@ -30,10 +30,14 @@ class ModelWebhook(CreateWebhook):
     time: Optional[str] = None
 
 
+class ListWebhook(BaseModel):
+    __root__: List[Webhook]
+
+
 def get_webhook(token):
     user = db.find_one(collection=collection,
                        query={'token': token})
-    user = ModelWebhook(**user)
+    user = Webhook(**user)
     return user
 
 
@@ -53,7 +57,7 @@ def get_profile(userId: str, access_token: str) -> dict:
     return result
 
 
-async def check_access_token(item: CreateWebhook):
+async def check_access_token(item: LineToken):
     user = db.find_one(collection=collection, query={'access_token': item.access_token})
     if not user:
         return item
@@ -61,9 +65,9 @@ async def check_access_token(item: CreateWebhook):
                         detail={'message': 'Access token have already', 'data': user})
 
 
-@router.get('/webhook/get')
-async def get_url_all_token(uid: Optional[str] = None,
-                            current_user: User = Depends(get_current_active)):
+@router.get('/channel/get', response_model=ListWebhook)
+async def get_all_token(uid: Optional[str] = None,
+                        current_user: User = Depends(get_current_active)):
     """
 
     :param uid:
@@ -72,12 +76,23 @@ async def get_url_all_token(uid: Optional[str] = None,
     """
     user = db.find(collection=collection, query={'uid': uid})
     user = list(user)
-    return user
+    channels = ListWebhook.parse_obj(user)
+    return channels
 
 
-@router.post('/webhook/create', response_model=ModelWebhook)
-async def create_url_webhook(item: CreateWebhook = Depends(check_access_token),
-                             current_user: User = Depends(get_current_active)):
+@router.get('/channel/get/{access_token}', response_model=Webhook)
+async def get_query_token(access_token: str):
+    channel = db.find_one(collection=collection, query={'access_token': access_token})
+    if not channel:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
+                            detail='not found channel')
+    channel = Webhook(**channel)
+    return channel
+
+
+@router.post('/channel/create', response_model=Webhook)
+async def create_channel(item: LineToken = Depends(check_access_token),
+                         current_user: User = Depends(get_current_active)):
     """
 
     :param item:
@@ -93,21 +108,21 @@ async def create_url_webhook(item: CreateWebhook = Depends(check_access_token),
     item_model["date"] = _d.strftime("%d/%m/%y")
     item_model["time"] = _d.strftime("%H:%M:%S")
     db.insert_one(collection=collection, data=item_model)
-    store_model = ModelWebhook(**item_model)
+    store_model = Webhook(**item_model)
     return store_model
 
 
-@router.delete('/webhook/delete/{token}')
-async def delete_url_webhook(token: Optional[str] = None,
-                             current_user: User = Depends(get_current_active)):
+@router.delete('/channel/delete/{token}')
+async def delete_channel(token: Optional[str] = None,
+                         current_user: User = Depends(get_current_active)):
     """
 
     :param token:
     :param current_user:
     :return:
     """
-    user = db.delete_one(collection=collection, query={'token': token})
-    return str(user)
+    db.delete_one(collection=collection, query={'token': token})
+    return {'detail': f'Delete success {token}'}
 
 
 @router.post('/{token}')
