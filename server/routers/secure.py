@@ -27,6 +27,7 @@ class Permission(BaseModel):
     id: str
     uid: str
     username: str
+    role: Optional[str] = None
     email: str
     hashed_password: str
     full_name: Optional[str] = None
@@ -109,7 +110,7 @@ async def authentication_cookie(response: Response,
                             detail='Failed to create a session cookie')
     except Exception:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
-                            detail='Email not found')
+                            detail='Email or Password invalid')
     check_verify = auth.get_user_by_email(form_data.username)
     user = db.find_one(collection='secure', query={'email': form_data.username})
     if not user:
@@ -211,6 +212,7 @@ async def register(
             img_path=http,
             date=date,
             time=time,
+            role='member',
             disabled=disabled,
             _data=user.__dict__.get('_data')
         )
@@ -244,8 +246,9 @@ async def socket_auth(request: Request):
             detail='session cookie is null'
         )
     try:
-        refresh = auth.verify_session_cookie(session_cookie, check_revoked=True)
+        refresh = auth.verify_session_cookie(session_cookie)
         auth.revoke_refresh_tokens(refresh['sub'])
+        refresh['session_cookie'] = session_cookie
         return refresh
     except auth.InvalidSessionCookieError:
         exception = HTTPException(
