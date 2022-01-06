@@ -8,7 +8,7 @@ run application
 """
 import secrets
 from functools import lru_cache
-from routers import secure, callback, intents, card, rule_based
+from routers import secure, callback, intents, card, rule_based, quick_reply
 from routers.secure import get_current_active, User
 from fastapi import FastAPI, Depends, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
@@ -108,6 +108,13 @@ app.include_router(
     rule_based.router,
     prefix='/keyword',
     tags=['Rule Based'],
+    responses={418: {'description': "I'm teapot"}},
+)
+
+app.include_router(
+    quick_reply.router,
+    prefix='/students',
+    tags=['Students'],
     responses={418: {'description': "I'm teapot"}},
 )
 
