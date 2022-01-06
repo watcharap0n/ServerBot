@@ -11,7 +11,7 @@ from bson import ObjectId
 from . import firebase_auth
 from .environ.client_firebase import firebaseConfig, firebaseAuth
 from .database import MongoDB
-from .object_str import CutId
+from .object_str import CutId, PyObjectId
 
 client = os.getenv('MONGODB_URI', 'mongodb://localhost:27017')
 db = MongoDB(database_name='MangoBOT', uri=client)

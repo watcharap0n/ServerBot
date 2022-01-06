@@ -15,19 +15,19 @@ class MongoDB:
         return programming.find(query)
 
     def find_one(self, collection: str, query: dict):
-        return self.database[collection].find_one(query, {'_id': False})
+        return self.database[collection].find_one(query)
 
     def find_one_lasted(self, collection: str, query: dict):
         return self.database[collection].find_one(query, sort=[('_id', pymongo.DESCENDING)])
 
     def find(self, collection: str, query: dict):
-        return self.database[collection].find(query, {'_id': False})
+        return self.database[collection].find(query)
 
     def insert_one(self, collection: str, data: dict):
         ids = None
         try:
             result = self.database[collection].insert_one(data)
-            ids = result.inserted_ids
+            ids = result.inserted_id
         except Exception as e:
             print(str(e))
         return ids
@@ -36,7 +36,7 @@ class MongoDB:
         ids = None
         try:
             result = self.database[collection].insert_many(data)
-            ids = result.inserted_ids
+            ids = result.inserted_id
         except Exception as e:
             print(str(e))
         return ids
