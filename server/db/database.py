@@ -14,16 +14,16 @@ class MongoDB:
     def find_dictionary(programming, query):
         return programming.find(query)
 
-    async def find_one(self, collection: str, query: dict):
-        return self.database[collection].find_one(query)
+    async def find_one(self, collection: str, query: dict, on_id=True):
+        return self.database[collection].find_one(query, {"_id": on_id})
 
     async def find_one_lasted(self, collection: str, query: dict):
         return self.database[collection].find_one(
             query, sort=[("_id", pymongo.DESCENDING)]
         )
 
-    async def find(self, collection: str, query: dict):
-        return self.database[collection].find(query)
+    async def find(self, collection: str, query: dict, on_id=True):
+        return self.database[collection].find(query, {"_id": on_id})
 
     async def insert_one(self, collection: str, data: dict):
         ids = None
