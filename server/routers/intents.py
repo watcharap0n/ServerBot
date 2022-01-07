@@ -34,7 +34,7 @@ async def get_intents(
     return items
 
 
-@router.post("/create", response_model=TokenUser)
+@router.post("/create", response_model=TokenUser, status_code=status.HTTP_201_CREATED)
 async def create_intents(
     intent: Intent = Depends(check_intent_duplicate),
     current_user: User = Depends(get_current_active),
@@ -53,6 +53,7 @@ async def update_query_intent(
     data = jsonable_encoder(payload)
     query = {"_id": id}
     values = {"$set": data}
+
     if (await db.update_one(collection=collection, query=query, values=values)) == 0:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST, detail=f"Intent not found {id}"
