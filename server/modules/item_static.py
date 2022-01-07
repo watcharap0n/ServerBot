@@ -5,15 +5,13 @@ def function -> static item model
     - time
     - uid
 """
-from bson import ObjectId
 import logging
 from typing import Optional
 from datetime import datetime
-from db import generate_token
 
 
 def item_user(data: dict, current_user,
-               change_id: Optional[str] = None) -> dict:
+               change_id: Optional[str] = None):
     """
 
     :param change_id:
@@ -23,9 +21,7 @@ def item_user(data: dict, current_user,
     """
 
     try:
-        Id = generate_token(engine=ObjectId())
         _d = datetime.now()
-        data['id'] = Id
         data['uid'] = current_user.data.uid
         data["date"] = _d.strftime("%d/%m/%y")
         data["time"] = _d.strftime("%H:%M:%S")
