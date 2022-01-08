@@ -1,5 +1,5 @@
-from . import firebase_auth
 import os
+from . import firebase_auth
 
 firebaseConfig = {
     "apiKey": os.environ['apiKey'],
