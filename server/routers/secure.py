@@ -1,7 +1,7 @@
 import os
 import pytz
 from typing import Optional
-from pydantic import BaseModel
+from models.secure import Permission, User
 from bson import ObjectId
 from firebase_admin import auth, exceptions
 from db import db, generate_token
@@ -21,25 +21,6 @@ config = ConfigFirebase(path_auth=firebaseAuth, path_db=firebaseConfig)
 pb = config.authentication()
 pwd_context = CryptContext(schemes=['bcrypt'], deprecated='auto')
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/secure/token")
-
-
-class Permission(BaseModel):
-    id: str
-    uid: str
-    username: str
-    role: Optional[str] = None
-    email: str
-    hashed_password: str
-    full_name: Optional[str] = None
-    img_path: Optional[str] = None
-    date: str
-    time: str
-    disabled: Optional[bool] = None
-    _data: Optional[dict] = None
-
-
-class User(BaseModel):
-    data: Optional[Permission] = None
 
 
 def verify_password(plain_password, hashed_password):
