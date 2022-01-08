@@ -1,7 +1,7 @@
 import os
 import pytz
 from typing import Optional
-from pydantic import BaseModel
+from models.secure import Permission, User
 from bson import ObjectId
 from firebase_admin import auth, exceptions
 from db import db, generate_token
@@ -21,25 +21,6 @@ config = ConfigFirebase(path_auth=firebaseAuth, path_db=firebaseConfig)
 pb = config.authentication()
 pwd_context = CryptContext(schemes=['bcrypt'], deprecated='auto')
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/secure/token")
-
-
-class Permission(BaseModel):
-    id: str
-    uid: str
-    username: str
-    role: Optional[str] = None
-    email: str
-    hashed_password: str
-    full_name: Optional[str] = None
-    img_path: Optional[str] = None
-    date: str
-    time: str
-    disabled: Optional[bool] = None
-    _data: Optional[dict] = None
-
-
-class User(BaseModel):
-    data: Optional[Permission] = None
 
 
 def verify_password(plain_password, hashed_password):
@@ -84,7 +65,7 @@ async def get_current_user(token: str = Depends(oauth2_scheme)):
 
 async def get_current_active(current_user: dict = Depends(get_current_user)):
     uid = current_user.get('uid')
-    user = await db.find_one(collection=collection, query={'uid': uid}, on_id=False)
+    user = await db.find_one(collection=collection, query={'uid': uid})
     if not user:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                             detail={
@@ -112,7 +93,7 @@ async def authentication_cookie(response: Response,
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
                             detail='Email or Password invalid')
     check_verify = auth.get_user_by_email(form_data.username)
-    user = await db.find_one(collection='secure', query={'email': form_data.username}, on_id=False)
+    user = await db.find_one(collection='secure', query={'email': form_data.username})
     if not user:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                             detail={'message': 'Please contact developer',
