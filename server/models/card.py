@@ -13,9 +13,11 @@ class Card(BaseModel):
     class Config:
         json_encoders = {ObjectId: str}
         schema_extra = {
-            "name": "flex hello",
-            "content": "input your flex message json",
-            "message": "description flex message",
+            "example": {
+                "name": "flex hello",
+                "content": "input your flex message json",
+                "message": "description flex message",
+            }
         }
 
 
