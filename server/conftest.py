@@ -85,6 +85,57 @@ def test_intent_delete():
 Testing Intent success
 """
 
+PAYLOAD_RuleBased = {
+    "name": "test unit",
+    "access_token": "test unit access token",
+    "ready": True,
+    "status_flex": False,
+    "content": "content test unit",
+    "question": ['a', 'b', 'c', 'd'],
+    "answer": ['1', '2', '3', '4', '5']
+}
+
+def test_rulebased_create():
+    get_token()
+    response = client.post('/rule_based/create', json=PAYLOAD_RuleBased, headers=headers)
+    assert response.status_code == 200
+
+def test_rulebased_duplicate():
+    response = client.post('/rule_based/create', json=PAYLOAD_RuleBased, headers=headers)
+    assert response.status_code == 400
+
+def test_rulebased_find():
+    response = client.get('/rule_based?access_token={}'.format(PAYLOAD_RuleBased.get('access_token')),
+                          headers=headers)
+    assert response.status_code == 200
+
+def test_rulebased_find_empty():
+    response = client.get('/rule_based?access_token=fake access token',
+                          headers=headers)
+    assert response.status_code == 200
+    assert isinstance(response.json(), list)
+
+def test_rulebased_update():
+    query_id = db.find_one(collection='rule_based',
+                           query={'access_token': PAYLOAD_RuleBased['access_token']})
+    PAYLOAD_RuleBased['keyword'] = 'test update unit'
+    response = client.put(f'/rule_based/query/update/{query_id["id"]}',
+                          json=PAYLOAD_RuleBased, headers=headers)
+    assert response.status_code == 200
+    assert response.json() == {'detail': f'Update success {query_id["id"]}'}
+
+def test_rulebased_delete():
+    query_id = db.find_one(collection='rule_based',
+                           query={'access_token': PAYLOAD_RuleBased['access_token']})
+    response = client.delete(f'/rule_based/query/delete/{query_id["id"]}',
+                             headers=headers)
+    assert response.status_code == 200
+    assert response.json() == {'detail': f'Delete success {query_id["id"]}'}
+
+"""
+Testing RuleBased success
+"""
+
 PAYLOAD_CALLBACK = {
     'name': 'test unit name',
     'access_token': 'test unit access token',

@@ -97,6 +97,12 @@ app.include_router(
     responses={418: {"description": "I'm teapot"}},
 )
 
+app.include_router(
+    rule_based.router,
+    prefix="/rulebased",
+    tags=["RuleBased"],
+    responses={418: {"description": "I'm teapot"}},
+)
 
 description = """
 SERVER BOT APP API helps you do awesome stuff. 🚀
