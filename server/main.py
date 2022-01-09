@@ -104,6 +104,13 @@ app.include_router(
     responses={418: {"description": "I'm teapot"}},
 )
 
+app.include_router(
+    card.router,
+    prefix="/card",
+    tags=["Card"],
+    responses={418: {"description": "I'm teapot"}},
+)
+
 description = """
 SERVER BOT APP API helps you do awesome stuff. 🚀
 
