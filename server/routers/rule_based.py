@@ -11,17 +11,19 @@ router = APIRouter()
 
 collection = 'rule_based'
 
-async def check_rulebased_duplicate(rulebased:RuleBased):
+
+async def check_rule_based_duplicate(rule_based: RuleBased):
     items = await db.find(collection=collection,
-                         query={"access_token": rulebased.access_token}
-                         )
+                          query={"access_token": rule_based.access_token}
+                          )
     items = list(items)
     for item in items:
-        if item["keyword"] == rulebased.keyword:
+        if item["keyword"] == rule_based.keyword:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST, detail="item keyword duplicate"
             )
-    return rulebased
+    return rule_based
+
 
 @router.get("/", response_model=List[TokenUser])
 async def get_rule_based(access_token: Optional[str] = None,
@@ -33,36 +35,36 @@ async def get_rule_based(access_token: Optional[str] = None,
     return items
 
 
-
 @router.post("/create", response_model=TokenUser, status_code=status.HTTP_201_CREATED)
-async def create_rule_based(rulebased: RuleBased = Depends(check_rulebased_duplicate),
-                             current_user: User = Depends(get_current_active)):
-    item_model = jsonable_encoder(rulebased)
+async def create_rule_based(rule_based: RuleBased = Depends(check_rule_based_duplicate),
+                            current_user: User = Depends(get_current_active)):
+    item_model = jsonable_encoder(rule_based)
     item_model = item_user(data=item_model, current_user=current_user)
     await db.insert_one(collection=collection, data=item_model)
     item_store = TokenUser(**item_model)
     return item_store
 
+
 @router.put("/query/update/{id}", response_model=UpdateRuleBased)
-async def update_rulebased(id: str,
-                           payload: UpdateRuleBased,
-                           current_user: User = Depends(get_current_active)
-                           ):
+async def update_query_rule_based(id: str,
+                                  payload: UpdateRuleBased,
+                                  current_user: User = Depends(get_current_active)
+                                  ):
     data = jsonable_encoder(payload)
     query = {"_id": id}
     values = {"$set": data}
-
-    if(await db.update_one(collection=collection,query=query, values=values)) == 0:
+    if (await db.update_one(collection=collection, query=query, values=values)) == 0:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST, detail=f"Rule Based not found {id}"
         )
     return payload
 
-@router.delete("/query/dalete/{id}")
+
+@router.delete("/query/delete/{id}")
 async def delete_query_rule_based(id: str,
                                   current_user: User = Depends(get_current_active)
                                   ):
-    if(await db.delete_one(collection=collection,query={"_id":id})) == 0:
+    if (await db.delete_one(collection=collection, query={"_id": id})) == 0:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST, detail=f"Rule Based not found {id}"
         )
