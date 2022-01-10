@@ -78,10 +78,12 @@ jobs:
           HEROKU_API_TOKEN: ${{ secrets.HEROKU_API_TOKEN }}
           HEROKU_SERVER_NAME: ${{ secrets.HEROKU_SERVER_NAME }}
           
-        run: git remote add heroku-server https://heroku:$HEROKU_API_TOKEN@git.heroku.com/mangoserverbot.git
+        run: git remote add origin https://heroku:$HEROKU_API_TOKEN@git.heroku.com/mangoserverbot.git
         
       - name: Deploy Server to Heroku
-        run: git push heroku-server HEAD:master -f
+        run: |
+          git fetch --unshallow origin
+          git push origin HEAD:master -f
 
           
 
