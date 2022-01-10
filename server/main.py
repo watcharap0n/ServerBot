@@ -99,7 +99,7 @@ app.include_router(
 
 app.include_router(
     rule_based.router,
-    prefix="/rulebased",
+    prefix="/rule_based",
     tags=["RuleBased"],
     responses={418: {"description": "I'm teapot"}},
 )
