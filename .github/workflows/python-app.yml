@@ -44,7 +44,7 @@ jobs:
         databaseURL: ${{ secrets.DATABASEURL }}
         projectId: ${{ secrets.PROJECTID }}
         storageBucket: ${{ secrets.STORAGEBUCKET }}
-        messageingSenderId: ${{ secrets.MESSAGEINGSENDERID }}
+        messagingSenderId: ${{ secrets.MESSAGINGSENDERID }}
         appId: ${{ secrets.APPID }}
         measurementId: ${{ secrets.MEASUREMENTID }}
         type: ${{ secrets.TYPE }}
@@ -60,6 +60,6 @@ jobs:
         MONGODB_URI: ${{ secrets.MONGODB_URI }}
 
       run: |
-        pip install -r requirements.txt
+        pip install -r no-requirements.txt
         pip list
         pytest
