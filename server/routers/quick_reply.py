@@ -57,7 +57,7 @@ async def update_query_quick_reply(
     if (await db.update_one(collection=collection, query=query, values=values)) == 0:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Quick_Reply not found {id}",
+            detail=f"Quick Reply not found {id}",
         )
     return payload
 
@@ -69,6 +69,6 @@ async def delete_query_quick_reply(
     if (await db.delete_one(collection=collection, query={"_id": id})) == 0:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Quick_reply not found {id}",
+            detail=f"Quick Reply not found {id}",
         )
     return JSONResponse(status_code=status.HTTP_204_NO_CONTENT)
