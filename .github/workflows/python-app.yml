@@ -50,5 +50,6 @@ jobs:
         databaseURL: ${{ secrets.DATABASEURL }}
 
       run: |
+        pip list
         pip install pytest
         pytest
