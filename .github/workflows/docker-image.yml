@@ -20,7 +20,7 @@ jobs:
         HEROKU_USERNAME: ${{ HEROKU_USERNAME }}
         HEROKU_API_TOKEN: ${{ HEROKU_API_TOKEN }}
       run: |
-        docker login --username=$HEROKU_USERNAME --password=$(heroku auth:$HEROKU_API_TOKEN) registry.heroku.com
+        echo $HEROKU_USERNAME $HEROKU_API_TOKEN
 
     - name: Build the Docker image
       env:
