@@ -6,6 +6,7 @@ Alternative API /localhost/redoc
 run application
     uvicorn main:app --port 8500 --host 0.0.0.0 --reload
 """
+import os
 import secrets
 from functools import lru_cache
 from routers import secure, callback, intents, card, rule_based, quick_reply
@@ -20,7 +21,9 @@ from fastapi.openapi.utils import get_openapi
 app = FastAPI(
     openapi_url="/mango/openapi.json", redoc_url="/mango/redoc/", docs_url="/mango/docs"
 )
-app.mount("/static", StaticFiles(directory="static"), name="static")
+script_dir = os.path.dirname(__file__)
+st_abs_file_path = os.path.join(script_dir, "static/")
+app.mount("/static", StaticFiles(directory=st_abs_file_path), name="static")
 
 security = HTTPBasic()
 
