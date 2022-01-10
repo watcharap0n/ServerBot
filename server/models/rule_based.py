@@ -56,11 +56,11 @@ class UpdateRuleBased(BaseModel):
         json_encoders = {ObjectId: str}
         schema_extra = {
             "example": {
-                "name": "rule based",
+                "name": "update rule based",
                 "access_token": "access token long live",
                 "status_flex": False,
                 "ready": True,
-                "content": "request flex message content {}",
+                "content": "update request flex message content {}",
                 "keyword": ["erp"],
                 "answer": ["answer bot"],
             }
