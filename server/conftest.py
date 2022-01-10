@@ -1,12 +1,7 @@
-import json
-
-from requests.api import head
-from db import db
 from fastapi import status
 from fastapi.testclient import TestClient
 from main import app, get_settings
 from internal.config import Settings
-import logging
 
 client = TestClient(app)
 
@@ -322,7 +317,8 @@ def test_card_create_invalid():
 
 
 def test_card_get():
-    response = client.get("/card", headers=headers)
+    access_token = PAYLOAD_CARD["access_token"]
+    response = client.get(f"/card?access_token={access_token}", headers=headers)
     assert response.status_code == status.HTTP_200_OK
     assert isinstance(response.json(), list)
 
@@ -359,3 +355,85 @@ def test_card_delete_not_found():
     assert response.json() == {"detail": f"Card not found {id}"}
 
 
+"""
+Testing Card success
+"""
+
+PAYLOAD_QUICK_REPLY = {
+    "name": "test unit name",
+    "access_token": "test access token long live",
+    "intent": "test unit hello world",
+    "texts": ["what name", "what product"],
+    "labels": ["name", "product"],
+    "reply": ["hello ja", "swadee ja"],
+}
+
+
+def test_button_create():
+    response = client.post("/button/create", json=PAYLOAD_QUICK_REPLY, headers=headers)
+    global ids_quick_reply
+    ids_quick_reply = response.json()["_id"]
+    assert response.status_code == status.HTTP_201_CREATED
+
+
+def test_button_duplicate():
+    response = client.post("/button/create", json=PAYLOAD_QUICK_REPLY, headers=headers)
+    assert response.status_code == status.HTTP_400_BAD_REQUEST
+    assert response.json() == {"detail": "item name duplicate"}
+
+
+def test_button_create_invalid():
+    response = client.post(
+        "/button/create", json=PAYLOAD_QUICK_REPLY.pop("name"), headers=headers
+    )
+    assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
+    assert response.json()["detail"][0]["msg"] == "value is not a valid dict"
+
+
+def test_button_find():
+    response = client.get(
+        "/button?access_token={}".format(PAYLOAD_QUICK_REPLY.get("access_token")),
+        headers=headers,
+    )
+    assert response.status_code == status.HTTP_200_OK
+    assert len(response.json()) >= 1
+
+
+def test_button_find_empty():
+    response = client.get("/button?access_token=fake access token", headers=headers)
+    assert response.status_code == status.HTTP_200_OK
+    assert isinstance(response.json(), list)
+
+
+def test_button_update():
+    PAYLOAD_QUICK_REPLY["name"] = "test update unit"
+    response = client.put(
+        f"/button/query/update/{ids_quick_reply}",
+        json=PAYLOAD_QUICK_REPLY,
+        headers=headers,
+    )
+    assert response.status_code == status.HTTP_200_OK
+
+
+def test_button_delete():
+    response = client.delete(f"/button/query/delete/{ids_quick_reply}", headers=headers)
+    assert response.status_code == status.HTTP_204_NO_CONTENT
+
+
+def test_button_update_not_found():
+    id = "fake_id_quick_reply"
+    PAYLOAD_QUICK_REPLY["name"] = "update name quick_reply test unit"
+    response = client.put(
+        f"/button/query/update/{id}",
+        json=PAYLOAD_QUICK_REPLY,
+        headers=headers,
+    )
+    assert response.status_code == status.HTTP_400_BAD_REQUEST
+    assert response.json() == {"detail": f"Quick Reply not found {id}"}
+
+
+def test_button_delete_not_found():
+    id = "fake_id_quick_reply"
+    response = client.delete(f"/button/query/delete/{id}", headers=headers)
+    assert response.status_code == status.HTTP_400_BAD_REQUEST
+    assert response.json() == {"detail": f"Quick Reply not found {id}"}
