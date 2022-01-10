@@ -26,7 +26,7 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install flake8 pytest
-        if [ -f no-pytorch-requirements.txt ]; then pip install -r no-pytorch-requirements.txt; fi
+        if [ -f no-requirements.txt ]; then pip install -r no-requirements.txt; fi
       
     - name: Lint with flake8
       run: |
@@ -60,6 +60,5 @@ jobs:
         MONGODB_URI: ${{ secrets.MONGODB_URI }}
 
       run: |
-        pip install -r no-requirements.txt
         pip list
-        pytest
+        pytest -v
