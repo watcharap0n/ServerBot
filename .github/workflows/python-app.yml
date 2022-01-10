@@ -20,11 +20,7 @@ jobs:
     - name: Set up Python 3.9.6
       uses: actions/setup-python@v2
       with:
-        python-version: "3.9"
-
-    - name: Docker
-      run: |
-        docker compose up -d
+        python-version: "3.9.6"
 
     - name: Install dependencies
       run: |
@@ -66,3 +62,18 @@ jobs:
       run: |
         pip list
         pytest -v
+
+
+  Deployment:
+
+    runs-on: ubuntu-latest
+    environment: DEPLOY
+    needs: PROD
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Deployment on Heroku
+        run: |
+          heroku container:login
+
