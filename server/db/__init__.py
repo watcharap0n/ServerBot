@@ -7,9 +7,7 @@ database and authentication master
 """
 
 import os
-from bson import ObjectId
 from . import firebase_auth
-from .environ.client_firebase import firebaseConfig, firebaseAuth
 from .database import MongoDB
 from .object_str import CutId, PyObjectId
 

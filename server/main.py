@@ -10,7 +10,8 @@ import os
 import secrets
 from functools import lru_cache
 from routers import secure, callback, intents, card, rule_based, quick_reply
-from routers.secure import get_current_active, User
+from models.secure import User
+from routers.secure import get_current_active
 from fastapi import FastAPI, Depends, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
 from internal import Settings
