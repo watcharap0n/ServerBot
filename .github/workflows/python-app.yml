@@ -22,12 +22,6 @@ jobs:
       with:
         python-version: "3.9"
         
-    - name: RUN a one-line script
-      run: |
-        echo $apiKey
-      env:
-        apiKey: ${{ secrets.APIKEY }}
-
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
@@ -41,15 +35,31 @@ jobs:
         # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
 
-    - name: Test with pytest
+    - name: Unit Test
       env:
         HEROKU_API_TOKEN: ${{ secrets.HEROKU_API_TOKEN }}
         PYTHONPATH: ${{ secrets.PYTHONPATH }}
         apiKey: ${{ secrets.APIKEY }}
         authDomain: ${{ secrets.AUTHDOMAIN }}
         databaseURL: ${{ secrets.DATABASEURL }}
+        projectId: ${{ secrets.PROJECTID }}
+        storageBucket: ${{ secrets.STORAGEBUCKET }}
+        messageingSenderId: ${{ secrets.MESSAGEINGSENDERID }}
+        appId: ${{ secrets.APPID }}
+        measurementId: ${{ secrets.MEASUREMENTID }}
+        type: ${{ secrets.TYPE }}
+        project_id: ${{ secrets.PROJECT_ID }}
+        private_key_id: ${{ secrets.PRIVATE_KEY_ID }}
+        private_key: ${{ secrets.PRIVATE_KEY }}
+        client_email: ${{ secrets.CLIENT_EMAIL }}
+        client_id: ${{ secrets.CLIENT_ID }}
+        auth_uri: ${{ secrets.AUTH_URI }}
+        token_uri: ${{ secrets.TOKEN_URI }}
+        auth_provider_x509_cert_url: ${{ secrets.AUTH_PROVIDER_X509_CERT_URL }}
+        client_x509_cert_url: ${{ secrets.CLIENT_X509_CERT_URL }}
+        MONGODB_URI: ${{ secrets.MONGODB_URI }}
 
       run: |
+        pip install -r requirements.txt
         pip list
-        pip install pytest
         pytest
