@@ -130,6 +130,7 @@ scikit-learn = "*"
 torch = "*"
 attacut = "*"
 pandas = "*"
+httpx = "*"
 
 [dev-packages]
 
