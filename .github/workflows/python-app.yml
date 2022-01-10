@@ -29,7 +29,7 @@ jobs:
         if [ -f no-pytorch-requirements.txt ]; then pip install -r no-pytorch-requirements.txt; fi
 
     - name: RUN a one-line script
-      run: env
+      run: ${{ PROD.APIKEY }}
 
     - name: Lint with flake8
       run: |
