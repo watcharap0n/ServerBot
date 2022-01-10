@@ -4,10 +4,7 @@
 name: Python application
 
 on:
-  push:
-    branches: [ master ]
-  pull_request:
-    branches: [ master ]
+  workflow_dispatch:
 
 jobs:
   PROD:
@@ -73,7 +70,14 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Deployment on Heroku
-        run: |
-          heroku container:login
+      - name: Add server remote origin
+        env:
+          HEROKU_API_TOKEN: ${{ secrets.HEROKU_API_TOKEN }}
+          HEROKU_SERVER_NAME: ${{ secrets.HEROKU_SERVER_NAME }}
+        run: git remote add heroku-server https://heroku:${{ secrets.HEROKU_API_TOKEN }}@git.heroku.com/${{ secrets.HEROKU_SERVER_NAME }}.git
+        
+      - name: Deploy Server to Heroku
+        run: git push heroku-server `git subtree split --prefix server master`:refs/heads/master --force
+
+          
 
