@@ -38,6 +38,7 @@ class TokenUser(Card):
 
 class UpdateCard(BaseModel):
     name: str
+    access_token: str
     content: Optional[str] = None
     message: Optional[str] = None
 
@@ -45,7 +46,10 @@ class UpdateCard(BaseModel):
         arbitrary_types_allowed = True
         json_encoders = {ObjectId: str}
         schema_extra = {
-            "name": "flex hello",
-            "content": "input your flex message json",
-            "message": "description flex message",
+            "example": {
+                "name": "update flex hello",
+                "access_token": "access token long live",
+                "content": "update input your flex message json",
+                "message": "update description flex message",
+            }
         }
