@@ -65,6 +65,10 @@ async def get_all_token(
     :param current_user:
     :return:
     """
+    if not uid:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail="Access Token is null"
+        )
     channels = await db.find(collection=collection, query={"uid": uid})
     channels = list(channels)
     return channels
@@ -77,7 +81,8 @@ async def get_query_token(access_token: str):
     )
     if not channel:
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, detail="not found channel"
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"not found channel {access_token}",
         )
     channel = Webhook(**channel)
     return channel
