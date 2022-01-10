@@ -1,14 +1,13 @@
 import json
-from datetime import datetime
+from db import db
+from starlette.responses import JSONResponse
 from modules.item_static import item_user
-from models.callback import Webhook, LineToken
+from models.callback import Webhook, LineToken, UpdateLineToken
 from random import randint
 from typing import Optional, List
-from bson import ObjectId
 from fastapi import APIRouter, Depends, Body, Request, status, HTTPException
 from routers.secure import get_current_active, User
 from fastapi.encoders import jsonable_encoder
-from db import db, generate_token
 from linebot import LineBotApi, WebhookHandler
 from linebot.models import StickerSendMessage, TextSendMessage
 from linebot.exceptions import InvalidSignatureError
@@ -52,7 +51,7 @@ async def check_access_token(item: LineToken):
         return item
     raise HTTPException(
         status_code=status.HTTP_400_BAD_REQUEST,
-        detail={"message": "Access token have already", "data": user},
+        detail="Access token have already",
     )
 
 
@@ -66,6 +65,10 @@ async def get_all_token(
     :param current_user:
     :return:
     """
+    if not uid:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail="Access Token is null"
+        )
     channels = await db.find(collection=collection, query={"uid": uid})
     channels = list(channels)
     return channels
@@ -73,10 +76,13 @@ async def get_all_token(
 
 @router.get("/channel/{access_token}", response_model=Webhook)
 async def get_query_token(access_token: str):
-    channel = await db.find_one(collection=collection, query={"access_token": access_token})
+    channel = await db.find_one(
+        collection=collection, query={"access_token": access_token}
+    )
     if not channel:
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, detail="not found channel"
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"not found channel {access_token}",
         )
     channel = Webhook(**channel)
     return channel
@@ -100,6 +106,24 @@ async def create_channel(
     return store_model
 
 
+@router.put("/channel/update/{token}", response_model=UpdateLineToken)
+async def update_channel(
+    payload: UpdateLineToken,
+    token: Optional[str] = None,
+    current_user: User = Depends(get_current_active),
+):
+    data = jsonable_encoder(payload)
+    query = {"token": token}
+    values = {"$set": data}
+
+    if (await db.update_one(collection=collection, query=query, values=values)) == 0:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Callback not found {token} or Update Already exits",
+        )
+    return payload
+
+
 @router.delete("/channel/delete/{token}")
 async def delete_channel(
     token: Optional[str] = None, current_user: User = Depends(get_current_active)
@@ -110,8 +134,12 @@ async def delete_channel(
     :param current_user:
     :return:
     """
-    await db.delete_one(collection=collection, query={"token": token})
-    return {"detail": f"Delete success {token}"}
+    if (await db.delete_one(collection=collection, query={"token": token})) == 0:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Callback not found {token} or Delete Already exits",
+        )
+    return JSONResponse(status_code=status.HTTP_204_NO_CONTENT)
 
 
 @router.post("/{token}")

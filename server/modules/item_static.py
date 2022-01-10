@@ -25,7 +25,9 @@ def item_user(data: dict, current_user, url: Optional[bool] = False):
         data["date"] = _d.strftime("%d/%m/%y")
         data["time"] = _d.strftime("%H:%M:%S")
         if url:
-            data["url"] = f"https://mangoserverbot.herokuapp.com/callback/{data['_id']}"
+            data[
+                "url"
+            ] = f"https://mangoserverbot.herokuapp.com/callback/{data['token']}"
         return data
     except KeyError:
         raise logging.exception("your key error")

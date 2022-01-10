@@ -46,7 +46,7 @@ class UpdateLineToken(BaseModel):
         json_encoders = {ObjectId: str}
         schema_extra = {
             "example": {
-                "name": "name callback",
+                "name": "update name callback",
                 "access_token": "access token long live",
                 "secret_token": "secret token",
             }
