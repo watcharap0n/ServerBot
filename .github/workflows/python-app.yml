@@ -62,26 +62,38 @@ jobs:
 #         pip list
 #         pytest -v
 
-
-  Deployment:
-
-    runs-on: ubuntu-latest
-    environment: DEPLOY
-    env:
-        HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
-        APP_NAME: ${{ secrets.HEROKU_SERVER_NAME }}
-        
+  build:
+    name: Pytest in Pipenv    # runs on the latest Ubuntu
+    runs-on: ubuntu-latest     # runs within your Docker container
+    container:
+      image: docker://<hub-username>/<repo-name>:latest   
     steps:
-      - name: Checkout
-        uses: actions/checkout@v2
+    - uses: actions/checkout@v2
+    - name: Test with pytest
+      run: |
+        pytest -v
+
+
+
+#   Deployment:
+
+#     runs-on: ubuntu-latest
+#     environment: DEPLOY
+#     env:
+#         HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+#         APP_NAME: ${{ secrets.HEROKU_SERVER_NAME }}
         
-      - name: Docker build
-        run: docker login --username=_ --password=$HEROKU_API_KEY registry.heroku.com
+#     steps:
+#       - name: Checkout
+#         uses: actions/checkout@v2
+        
+#       - name: Docker build
+#         run: docker login --username=_ --password=$HEROKU_API_KEY registry.heroku.com
       
-      - name: Publish
-        run: |
-          heroku container:push web -a $APP_NAME
-          heroku container:release web -a $APP_NAME
+#       - name: Publish
+#         run: |
+#           heroku container:push web -a $APP_NAME
+#           heroku container:release web -a $APP_NAME
 
     
    
