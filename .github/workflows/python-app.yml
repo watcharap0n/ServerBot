@@ -70,12 +70,19 @@ jobs:
     environment: DEPLOY
     steps:
     
-      - uses: actions/checkout@v2
-      - uses: akhileshns/heroku-deploy@v3.12.12 # This is the action
-        with:
-          heroku_api_key: ${{secrets.HEROKU_API_TOKEN}}
-          heroku_app_name: ${{ secrets.HEROKU_SERVER_NAME }}
-          heroku_email: ${{ secrets.HEROKU_EMAIL }}
-    
+      - name: Checkout
+        uses: actions/checkout@v2
+        
+      - name: Docker build
+        env:
+          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+          APP_NAME: ${{ secrets.HEROKU_SERVER_NAME }}
+        run: docker login --username=_ --password=$HEROKU_API_KEY registry.heroku.com
+      
+      - name: Publish
+        run: |
+          heroku container:push web -a $APP_NAME
+          heroku container:release web -a $APP_NAME
+
     
    
