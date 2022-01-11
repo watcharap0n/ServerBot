@@ -6,11 +6,9 @@ name: MANGO Server BOT
 on:
   push:
     branches: [ master ]
-  pull_request:
-    branches: [ master ]
 
 jobs:
-  PROD:
+  LINTER:
 
     runs-on: ubuntu-latest
     environment: PROD
@@ -26,7 +24,7 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install flake8 pytest
-          if [ -f pytest-requirements.txt ]; then pip install -r pytest-requirements.txt; fi
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
       - name: Lint with flake8
         run: |
@@ -67,6 +65,7 @@ jobs:
 
     runs-on: ubuntu-latest
     environment: DEPLOY
+    needs: PROD
     env:
       HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
       APP_NAME: ${{ secrets.HEROKU_SERVER_NAME }}
