@@ -65,7 +65,7 @@ jobs:
 
     runs-on: ubuntu-latest
     environment: DEPLOY
-    needs: PROD
+    needs: LINTER
     env:
       HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
       APP_NAME: ${{ secrets.HEROKU_SERVER_NAME }}
