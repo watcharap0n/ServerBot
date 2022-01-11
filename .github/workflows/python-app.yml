@@ -69,23 +69,19 @@ jobs:
     runs-on: ubuntu-latest
     environment: DEPLOY
     needs: PROD
-
     steps:
-      - uses: actions/checkout@v2
+    
+      - name: Build, Push and Release a Docker container to Heroku
+        uses: gonuit/heroku-docker-deploy@v1.3.3 
+        with:
+          email: ${{ secrets.HEROKU_EMAIL }}
+          heroku_api_key: ${{ secrets.HEROKU_API_TOKEN }}
+          heroku_app_name: ${{ secrets.HEROKU_SERVER_NAME }}
 
-      - name: Add server remote origin & Deploy
-        env:
-          HEROKU_API_TOKEN: ${{ secrets.HEROKU_API_TOKEN }}
-          HEROKU_SERVER_NAME: ${{ secrets.HEROKU_SERVER_NAME }}
-          
-        run: |
-          git remote add heroku_server https://heroku:$HEROKU_API_TOKEN@git.heroku.com/mangoserverbot.git
-          git remote -v
-          git pull
-          git checkout master
-          git filter-branch -- --all
-          git push heroku_server master
-
+          dockerfile_directory: ./
+          dockerfile_name: Dockerfile
+          docker_options: "--no-cache"
+          process_type: web
     
       
           
