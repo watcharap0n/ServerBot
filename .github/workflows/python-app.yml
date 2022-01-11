@@ -37,7 +37,6 @@ jobs:
 
 #     - name: Unit Test
 #       env:
-#         HEROKU_API_TOKEN: ${{ secrets.HEROKU_API_TOKEN }}
 #         PYTHONPATH: ${{ secrets.PYTHONPATH }}
 #         apiKey: ${{ secrets.APIKEY }}
 #         authDomain: ${{ secrets.AUTHDOMAIN }}
@@ -68,15 +67,15 @@ jobs:
 
     runs-on: ubuntu-latest
     environment: DEPLOY
+    env:
+        HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+        APP_NAME: ${{ secrets.HEROKU_SERVER_NAME }}
+        
     steps:
-    
       - name: Checkout
         uses: actions/checkout@v2
         
       - name: Docker build
-        env:
-          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
-          APP_NAME: ${{ secrets.HEROKU_SERVER_NAME }}
         run: docker login --username=_ --password=$HEROKU_API_KEY registry.heroku.com
       
       - name: Publish
