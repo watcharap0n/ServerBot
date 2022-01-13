@@ -12,3 +12,4 @@ server/.env
 server/config/environ/
 .vscode
 server/db/environ
+Pipfile

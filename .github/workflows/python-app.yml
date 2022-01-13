@@ -56,7 +56,6 @@ jobs:
           MONGODB_URI: ${{ secrets.MONGODB_URI }}
 
         run: |
-          pip list
           pytest -v
 
   DockerImage:
