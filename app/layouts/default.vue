@@ -1,11 +1,11 @@
 <template>
   <div>
     <v-app style="font-family: 'Prompt', sans-serif;">
+      <v-container justify="center">
 
-      <v-container justify="center" align="center">
         <Nuxt/>
-      </v-container>
 
+      </v-container>
     </v-app>
   </div>
 </template>
@@ -15,8 +15,9 @@
 export default {
   data() {
     return {
+
     }
-  }
+  },
 }
 
 </script>
