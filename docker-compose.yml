@@ -10,6 +10,17 @@ services:
     volumes:
       - "./server:/redis:/data"
 
+  mongodb:
+    image: mongo
+    container_name: container-db
+    environment:
+      - PUID=1000
+      - PGID=1000
+    ports:
+      - 27017:27017
+    restart: always
+    volumes:
+      - ./db:/data/db
 
   app:
     build: .
