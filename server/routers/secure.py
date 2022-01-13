@@ -6,7 +6,7 @@ from bson import ObjectId
 from firebase_admin import auth, exceptions
 from db import db, generate_token
 from db.firebase_auth import ConfigFirebase
-from db import firebaseConfig, firebaseAuth
+from config import firebaseConfig, firebaseAuth
 from datetime import datetime, timedelta
 from passlib.context import CryptContext
 from starlette.responses import JSONResponse

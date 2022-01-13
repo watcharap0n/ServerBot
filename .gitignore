@@ -6,7 +6,10 @@ server/__pycache__/
 server/.pytest_cache
 server/.env
 .pytest_cache
+.vscode/
 .server
 *.ipynb
-server/db/environ/
+server/config/environ/
 .vscode
+server/db/environ
+Pipfile

@@ -4,52 +4,50 @@ from pydantic import BaseModel, Field
 from db import PyObjectId
 
 
-class Card(BaseModel):
-    id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
+class LineToken(BaseModel):
+    token: PyObjectId = Field(default_factory=PyObjectId, alias="token")
     name: str
     access_token: str
-    content: Optional[str] = None
-    message: Optional[str] = None
+    secret_token: str
 
     class Config:
         json_encoders = {ObjectId: str}
         schema_extra = {
             "example": {
-                "name": "flex hello",
+                "name": "name callback",
                 "access_token": "access token long live",
-                "content": "input your flex message json",
-                "message": "description flex message",
+                "secret_token": "secret token",
             }
         }
 
 
-class TokenUser(Card):
+class Webhook(LineToken):
     uid: Optional[str] = None
+    url: Optional[str] = None
     date: Optional[str] = None
     time: Optional[str] = None
 
     class Config:
         schema_extra = {
             "uid": "generate token uid",
+            "url": "https://mangoserverbot.herokuapp.com/callback/token",
             "date": "12/01/2022",
             "time": "12:00:00",
         }
 
 
-class UpdateCard(BaseModel):
+class UpdateLineToken(BaseModel):
     name: str
     access_token: str
-    content: Optional[str] = None
-    message: Optional[str] = None
+    secret_token: str
 
     class Config:
         arbitrary_types_allowed = True
         json_encoders = {ObjectId: str}
         schema_extra = {
             "example": {
-                "name": "update flex hello",
+                "name": "update name callback",
                 "access_token": "access token long live",
-                "content": "update input your flex message json",
-                "message": "update description flex message",
+                "secret_token": "secret token",
             }
         }

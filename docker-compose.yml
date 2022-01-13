@@ -11,15 +11,13 @@ services:
       - "./server:/redis:/data"
 
 
-  web:
+  app:
     build: .
     depends_on:
       - 'redis'
     image: kaneai/mango-server-bot
     container_name: container-server-bot
     restart: always
-    env_file:
-      - server/.env
     ports:
       - 80:80
     volumes:

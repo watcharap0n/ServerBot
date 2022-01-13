@@ -6,10 +6,12 @@ Alternative API /localhost/redoc
 run application
     uvicorn main:app --port 8500 --host 0.0.0.0 --reload
 """
+import os
 import secrets
 from functools import lru_cache
-from routers import secure, callback, intents, card, rule_based
-from routers.secure import get_current_active, User
+from routers import secure, callback, intents, card, rule_based, quick_reply
+from models.secure import User
+from routers.secure import get_current_active
 from fastapi import FastAPI, Depends, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
 from internal import Settings
@@ -20,7 +22,9 @@ from fastapi.openapi.utils import get_openapi
 app = FastAPI(
     openapi_url="/mango/openapi.json", redoc_url="/mango/redoc/", docs_url="/mango/docs"
 )
-app.mount("/static", StaticFiles(directory="static"), name="static")
+script_dir = os.path.dirname(__file__)
+st_abs_file_path = os.path.join(script_dir, "static/")
+app.mount("/static", StaticFiles(directory=st_abs_file_path), name="static")
 
 security = HTTPBasic()
 
@@ -97,6 +101,26 @@ app.include_router(
     responses={418: {"description": "I'm teapot"}},
 )
 
+app.include_router(
+    rule_based.router,
+    prefix="/rule_based",
+    tags=["RuleBased"],
+    responses={418: {"description": "I'm teapot"}},
+)
+
+app.include_router(
+    card.router,
+    prefix="/card",
+    tags=["Card"],
+    responses={418: {"description": "I'm teapot"}},
+)
+
+app.include_router(
+    quick_reply.router,
+    prefix="/button",
+    tags=["QuickReply"],
+    responses={418: {"description": "I'm teapot"}}
+)
 
 description = """
 SERVER BOT APP API helps you do awesome stuff. 🚀
