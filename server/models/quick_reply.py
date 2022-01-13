@@ -54,11 +54,7 @@ class UpdateQuickReply(BaseModel):
         schema_extra = {
             "example": {
                 "name": "update hello",
-<<<<<<< HEAD
-                "access token": "update access token long live",
-=======
                 "access_token": "update access token long live",
->>>>>>> master
                 "intent": "update hello world",
                 "texts": ["what name", "what product"],
                 "labels": ["name", "product"],

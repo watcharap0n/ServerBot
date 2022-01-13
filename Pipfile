@@ -20,7 +20,11 @@ passlib = {extras = ["bcrypt"], version = "*"}
 python-jose = {extras = ["cryptography"], version = "*"}
 pytz = "*"
 line-bot-sdk = "*"
-pydantic = {extras = ["email"], version = "*"}
+scikit-learn = "*"
+torch = "*"
+attacut = "*"
+pandas = "*"
+httpx = "*"
 
 [dev-packages]
 pytest = "*"

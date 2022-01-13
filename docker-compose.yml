@@ -10,7 +10,6 @@ services:
     volumes:
       - "./server:/redis:/data"
 
-
   app:
     build: .
     depends_on:

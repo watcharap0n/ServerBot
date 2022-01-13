@@ -23,5 +23,5 @@ class User(BaseModel):
     data: Optional[Permission] = None
 
     class Config:
-        json_encoders: {ObjectId: str}
-        schema_extra = {'data': {}}
+        json_encoders = {ObjectId: str}
+        schema_extra = {"data": {}}
