@@ -8,7 +8,8 @@ database and authentication master
 
 import os
 from .database import MongoDB
-from .object_str import CutId, ObjectId, PyObjectId
+from .object_str import CutId, PyObjectId
+from .environ.client_firebase import firebaseAuth, firebaseConfig
 
 
 client = os.getenv("MONGODB_URI", "mongodb://localhost:27017")
