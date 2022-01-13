@@ -1,10 +1,6 @@
 <template>
   <div>
-
-    <v-app style="font-family: 'Ubuntu', sans-serif;">
-      <Nuxt/>
-    </v-app>
-
+    Sign Up
   </div>
 </template>
 
