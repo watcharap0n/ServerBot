@@ -131,7 +131,7 @@ jobs:
 
       - name: Publish
         run: |
-          git remote add heroku https://heroku:$HEROKU_API_KEY@git.heroku.com/$APP_NAME.git
+          git remote add heroku https://heroku:$HEROKU_API_KEY@git.heroku.com/${{ secrets.HEROKU_CLIENT_NAME }}.git
           git push heroku HEAD:master -f 
 
     
