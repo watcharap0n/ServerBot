@@ -136,7 +136,6 @@ jobs:
          git pull
          git checkout master
          git filter-branch -- --all
-         git pull
          git push heroku_client master
 
     
