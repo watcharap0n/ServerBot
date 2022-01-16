@@ -134,9 +134,9 @@ jobs:
           git remote add heroku https://heroku:$HEROKU_API_KEY@git.heroku.com/${{ secrets.HEROKU_CLIENT_NAME }}.git
           git remote -v
           git pull
-          git checkout master
+          git checkout -b masterdeploy
           git filter-branch -- --all
-          git push heroku master
+          git push heroku masterdeploy
 
     
    
