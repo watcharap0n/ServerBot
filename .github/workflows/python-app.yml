@@ -120,12 +120,9 @@ jobs:
     name: Deploy Client on Heroku Git
     runs-on: ubuntu-latest
     environment: Client
-#    needs: Server
-    env:
-      HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
-      APP_NAME: ${{ secrets.HEROKU_CLIENT_NAME }}
 
     steps:
+      - name: Publish
       - uses: actions/checkout@v2
       - uses: akhileshns/heroku-deploy@v3.12.12 # This is the action
         with:
