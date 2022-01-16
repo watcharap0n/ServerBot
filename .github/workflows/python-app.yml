@@ -132,6 +132,8 @@ jobs:
       - name: Publish
         run: |
           git remote add master https://heroku:$HEROKU_API_KEY@git.heroku.com/mangoconsultantbot.git
+          git config --global user.name watcharap0n
+          git config --global user.email wera.watcharapon@gmail.com
           git add .
           git commit -am "make it better"
           git push heroku master
