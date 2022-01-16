@@ -137,6 +137,8 @@ jobs:
           git checkout master
           git filter-branch -- --all
           git pull
+          git config --global user.email wera.watcharapon@gmail.com
+          git config --global user.name watcharap0n
           git push heroku_client master
 
     
