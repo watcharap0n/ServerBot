@@ -131,12 +131,9 @@ jobs:
 
       - name: Publish
         run: |
-          git remote add heroku_client https://heroku:$HEROKU_API_KEY@git.heroku.com/mangoconsultantbot.git
-          git remote -v
-          git pull
-          git checkout -b masterdeploy
-          git filter-branch -- --all
-          git push heroku_client masterdeploy
-
+          git remote add master https://heroku:$HEROKU_API_KEY@git.heroku.com/mangoconsultantbot.git
+          git add .
+          git commit -am "make it better"
+          git push heroku master
     
    
