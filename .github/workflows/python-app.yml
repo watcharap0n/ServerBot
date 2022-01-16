@@ -126,16 +126,10 @@ jobs:
       APP_NAME: ${{ secrets.HEROKU_CLIENT_NAME }}
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-
-      - name: Publish
-        run: |
-          git remote add master https://heroku:$HEROKU_API_KEY@git.heroku.com/mangoconsultantbot.git
-          git config --global user.name watcharap0n
-          git config --global user.email wera.watcharapon@gmail.com
-          git add .
-          git commit -am "make it better"
-          git push heroku master
-    
+      - uses: actions/checkout@v2
+      - uses: akhileshns/heroku-deploy@v3.12.12 # This is the action
+        with:
+          heroku_api_key: ${{secrets.HEROKU_API_KEY}}
+          heroku_app_name: ${{ secrets.HEROKU_CLIENT_NAME }} #Must be unique in Heroku
+          heroku_email: info@mangoconsultant.com
    
