@@ -27,7 +27,7 @@ PAYLOAD_INTENT = {
 
 
 def get_token():
-    token = client.post("/secure/token", data=USER)
+    token = client.post("/authentication/token", data=USER)
     token = token.json()["access_token"]
     headers["Authorization"] = "Bearer " + token
 
