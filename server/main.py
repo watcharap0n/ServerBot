@@ -82,8 +82,8 @@ async def info(
 
 app.include_router(
     secure.router,
-    prefix="/secure",
-    tags=["Secure"],
+    prefix="/authentication",
+    tags=["Authentication"],
     responses={418: {"description": "I'm teapot"}},
 )
 
