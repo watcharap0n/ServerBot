@@ -37,7 +37,8 @@ module.exports = {
     },
 
     buildModules: [
-        "@nuxtjs/vuetify"
+        "@nuxtjs/vuetify",
+        "@nuxtjs/tailwindcss"
     ],
 
     modules: [
@@ -47,6 +48,7 @@ module.exports = {
     ],
 
     srcDir: 'app/',
+
 
     // css: [
     //     '~/assets/css/style.css'
