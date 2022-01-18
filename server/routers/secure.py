@@ -29,7 +29,7 @@ router = APIRouter()
 config = ConfigFirebase(path_auth=firebaseAuth, path_db=firebaseConfig)
 pb = config.authentication()
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/secure/token")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/authentication/token")
 
 
 def verify_password(plain_password, hashed_password):
