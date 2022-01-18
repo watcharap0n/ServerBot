@@ -3,7 +3,7 @@
     <v-row no-gutters>
       <v-col sm="7">
         <v-img :contain="true"
-               height="1080"
+               :max-height="wrapperHeight()"
                src="https://cdn.vuetifyjs.com/images/parallax/material.jpg">
           <template v-slot:placeholder>
             <v-layout fill-height align-center justify-center ma-0>
