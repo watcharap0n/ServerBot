@@ -2,9 +2,9 @@
   <div>
     <v-row no-gutters>
       <v-col sm="7">
-        <v-img :contain="true"
-               :max-height="wrapperHeight()"
-               src="https://cdn.vuetifyjs.com/images/parallax/material.jpg">
+        <v-img
+            class="h-screen"
+            src="https://cdn.vuetifyjs.com/images/parallax/material.jpg">
           <template v-slot:placeholder>
             <v-layout fill-height align-center justify-center ma-0>
               <v-progress-circular indeterminate color="tertiary">
@@ -17,8 +17,7 @@
 
       <v-col sm="5">
         <v-container>
-          <v-card class="text-center
-            overflow-hidden mx-auto" flat>
+          <v-card class="text-center overflow-hidden mx-auto" flat>
             <v-tabs
                 dark
                 centered
