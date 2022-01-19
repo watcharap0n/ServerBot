@@ -37,24 +37,44 @@ module.exports = {
     },
 
     buildModules: [
-        "@nuxtjs/vuetify"
+        "@nuxtjs/vuetify",
+        "@nuxtjs/tailwindcss"
     ],
 
     modules: [
         "@nuxtjs/axios",
+        '@nuxtjs/auth-next',
         "bootstrap-vue/nuxt",
         "vue-sweetalert2/nuxt"
     ],
 
     srcDir: 'app/',
 
-    // css: [
-    //     '~/assets/css/style.css'
-    // ],
-    // styleResources: {
-    //     scss: [
-    //         '~/assets/scss/style.scss',
-    //     ]
-    // },
-    components: true
+    components: true,
+
+    axios: {
+        baseURL: 'https://mangoserverbot.herokuapp.com'
+    },
+
+    auth: {
+        strategies: {
+            local: {
+                token: {
+                    property: 'access_token',
+                    global: true,
+                    // required: true,
+                    type: 'Bearer'
+                },
+                user: {
+                    property: 'data',
+                    autoFetch: true
+                },
+                endpoints: {
+                    login: {url: '/authentication/token', method: 'post'},
+                    user: {url: '/authentication/user', method: 'get'},
+                    logout: {url: '/authentication/logout', method: 'delete'}
+                }
+            }
+        }
+    }
 }
