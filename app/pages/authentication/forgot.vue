@@ -27,7 +27,7 @@
 </template>
 
 <script>
-import FormSubmit from "../../components/dynamics/FormSubmit";
+import FormSubmit from "../../components/app/FormSubmit";
 
 export default {
   components: {FormSubmit},
