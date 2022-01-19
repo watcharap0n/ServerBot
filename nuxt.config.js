@@ -39,6 +39,7 @@ module.exports = {
         "@nuxtjs/vuetify",
     ],
     css: [
+        '@/assets/css/build.css',
         '@/assets/css/main.css',
     ],
     scss: [
