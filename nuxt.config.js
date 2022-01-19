@@ -38,7 +38,6 @@ module.exports = {
 
     buildModules: [
         "@nuxtjs/vuetify",
-        "@nuxtjs/tailwindcss"
     ],
 
     modules: [
