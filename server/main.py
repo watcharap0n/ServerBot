@@ -34,6 +34,7 @@ origins = [
     "http://localhost:8000",
     "https://www.mangoconsultant.net",
     "https://mangoserverbot.herokuapp.com",
+    "https://platformchatbot.herokuapp.com",
 ]
 
 app.add_middleware(
@@ -69,8 +70,8 @@ async def homepage():
 
 @app.get("/info", tags=["Info"])
 async def info(
-    current_user: User = Depends(get_current_active),
-    settings: Settings = Depends(get_settings),
+        current_user: User = Depends(get_current_active),
+        settings: Settings = Depends(get_settings),
 ):
     return {
         "app_name": settings.app_name,
