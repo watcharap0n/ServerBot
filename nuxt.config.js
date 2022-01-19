@@ -43,20 +43,37 @@ module.exports = {
 
     modules: [
         "@nuxtjs/axios",
+        '@nuxtjs/auth-next',
         "bootstrap-vue/nuxt",
         "vue-sweetalert2/nuxt"
     ],
 
     srcDir: 'app/',
 
+    components: true,
 
-    // css: [
-    //     '~/assets/css/style.css'
-    // ],
-    // styleResources: {
-    //     scss: [
-    //         '~/assets/scss/style.scss',
-    //     ]
-    // },
-    components: true
+    axios: {
+        baseURL: 'http://localhost:8500'
+    },
+
+    auth: {
+        strategies: {
+            local: {
+                token: {
+                    property: 'access_token',
+                    global: true,
+                    // required: true,
+                    type: 'Bearer'
+                },
+                user: {
+                    property: 'data',
+                    autoFetch: true
+                },
+                endpoints: {
+                    login: {url: '/authentication/token', method: 'post'},
+                    user: {url: '/authentication/user', method: 'get'}
+                }
+            }
+        }
+    }
 }
