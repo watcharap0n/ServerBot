@@ -1,6 +1,16 @@
 <template>
   <div>
-    <h2 class="p-4">Hello Home</h2>
+
+    <div v-if="$auth.loggedIn">
+      {{ $auth.user }}
+    </div>
+
+    <div v-else>
+      <NuxtLink to="/authentication">
+        <v-btn>SignIn</v-btn>
+      </NuxtLink>
+    </div>
+
   </div>
 </template>
 
