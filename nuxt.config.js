@@ -10,6 +10,9 @@ module.exports = {
         script: [
             {
                 src: 'https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js'
+            },
+            {
+                src: 'https://cdn.tailwindcss.com'
             }
         ],
         link: [
@@ -38,15 +41,8 @@ module.exports = {
     buildModules: [
         "@nuxtjs/vuetify",
     ],
-    css: [
-        '@/assets/css/build.css',
-        '@/assets/css/main.css',
-    ],
-    scss: [
-        '@/assets/scss/main.scss'
-    ],
+
     modules: [
-        '@nuxt/postcss8',
         "@nuxtjs/axios",
         '@nuxtjs/auth-next',
         "bootstrap-vue/nuxt",
