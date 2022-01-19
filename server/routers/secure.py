@@ -271,3 +271,10 @@ async def logout():
     response.delete_cookie("Authorization")
     response.headers["Authorization"] = ""
     return response
+
+
+@router.get('/forgot')
+async def forgot(email: str):
+    print(email)
+    pb.send_password_reset_email(email)
+    return {'message': 'success', 'status': True}
