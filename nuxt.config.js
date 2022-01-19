@@ -1,6 +1,14 @@
 module.exports = {
     ssr: false,
     head: {
+        build: {
+            transpile: ['vee-validate'],
+            postcss: {
+                plugins: {
+                    "postcss-custom-properties": false
+                },
+            },
+        },
         titleTemplate: '%s Platform CHATBOT',
         meta: [
             {charset: 'utf-8'},
@@ -47,6 +55,7 @@ module.exports = {
         "bootstrap-vue/nuxt",
         "vue-sweetalert2/nuxt"
     ],
+
 
     srcDir: 'app/',
 
