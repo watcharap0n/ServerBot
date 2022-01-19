@@ -35,14 +35,6 @@ module.exports = {
             }
         ]
     },
-    build: {
-        transpile: ['vee-validate'],
-        postcss: {
-            plugins: {
-                "postcss-custom-properties": false
-            },
-        },
-    },
     buildModules: [
         "@nuxtjs/vuetify",
     ],
