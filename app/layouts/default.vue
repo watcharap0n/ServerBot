@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-app style="font-family: 'Ubuntu', sans-serif;">
+    <v-app style="font-family: 'Kanit', sans-serif;">
       <v-container justify="center">
 
         <Nuxt/>
