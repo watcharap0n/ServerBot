@@ -1,14 +1,6 @@
 module.exports = {
     ssr: false,
     head: {
-        build: {
-            transpile: ['vee-validate'],
-            postcss: {
-                plugins: {
-                    "postcss-custom-properties": false
-                },
-            },
-        },
         titleTemplate: '%s Platform CHATBOT',
         meta: [
             {charset: 'utf-8'},
@@ -46,16 +38,25 @@ module.exports = {
 
     buildModules: [
         "@nuxtjs/vuetify",
-        "@nuxtjs/tailwindcss"
     ],
-
+    css: [
+        '@/assets/css/main.css',
+    ],
     modules: [
+        '@nuxt/postcss8',
         "@nuxtjs/axios",
         '@nuxtjs/auth-next',
         "bootstrap-vue/nuxt",
         "vue-sweetalert2/nuxt"
     ],
-
+    build: {
+        postcss: {
+            plugins: {
+                tailwindcss: {},
+                autoprefixer: {},
+            },
+        },
+    },
 
     srcDir: 'app/',
 
@@ -86,14 +87,4 @@ module.exports = {
             }
         }
     },
-    build: {
-        postcss: {
-            preset: {
-                features: {
-                    // Fixes: https://github.com/tailwindcss/tailwindcss/issues/1190#issuecomment-546621554
-                    "focus-within-pseudo-class": false
-                }
-            }
-        }
-    }
 }
