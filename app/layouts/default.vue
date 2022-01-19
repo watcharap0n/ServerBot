@@ -4,6 +4,7 @@
       <NaviDraw/>
       <AppBar/>
       <div
+          v-if="$auth.loggedIn"
           :style="`margin-left: ${$vuetify.application.left}px; margin-top: ${$vuetify.application.top}`"
           class="bg-gray-100 h-screen"
       >
@@ -28,15 +29,7 @@ export default {
     }
   },
   methods: {
-    itemPage() {
-      console.log(this.selectedItem)
-    },
-    logout() {
-      this.$auth.logout()
-          .then(() => {
-            this.$router.push('/authentication')
-          })
-    }
+
   }
 }
 
