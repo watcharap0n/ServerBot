@@ -264,7 +264,7 @@ async def socket_auth(request: Request):
         raise exception
 
 
-@router.get("/logout")
+@router.delete("/logout")
 async def logout():
     response = JSONResponse(content={"message": "delete session"})
     response.delete_cookie("session")
