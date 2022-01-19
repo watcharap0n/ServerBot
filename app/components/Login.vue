@@ -5,32 +5,38 @@
         v-model="valid"
         lazy-validation
     >
-      Sign In
-      <p>use your email</p>
-
       <v-text-field
+          prepend-inner-icon="mdi-email"
+          color="purple darken-2"
           :rules="emailRules"
           v-model="email"
-          label="Email"
+          label="อีเมล"
           filled
           rounded
       >
       </v-text-field>
       <v-text-field
+          @click:append="show1 = !show1"
+          :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"
+          :type="show1 ? 'text' : 'password'"
+          prepend-inner-icon="mdi-lock"
+          color="purple darken-2"
           :rules="passwordRules"
           v-model="password"
-          label="Password"
+          label="รหัสผ่าน"
           filled
           rounded
       >
       </v-text-field>
       <v-btn
-          color="success"
+          block
+          color="pink accent-2"
           rounded
+          class="text-white"
           @click="submitLogin"
           :loading="spinSubmit"
           :disabled="!valid"
-      >Submit
+      >เข้าสู่ระบบ
       </v-btn>
     </v-form>
 
@@ -41,57 +47,59 @@
 export default {
   data() {
     return {
+      show1: false,
       valid: true,
       emailRules: [
-        v => !!v || 'E-mail is required',
-        v => /.+@.+\..+/.test(v) || 'E-mail must be valid',
+        v => !!v || 'กรุณากรอกอีเมล',
+        v => /.+@.+\..+/.test(v) || 'กรุณากรอกอีเมลให้ถูกต้อง',
       ],
       passwordRules: [
-        v => !!v || 'Password is required',
+        v => !!v || 'กรุณากรอกรหัสผ่าน',
       ],
       spinSubmit: false,
       email: '',
       password: '',
-      token: ''
     }
   },
   methods: {
     async submitLogin() {
-      let validation = this.$refs.form.validate()
+      let validation = this.$refs.form.validate();
       if (validation === true) {
-        this.spinSubmit = true
-        const path = 'http://localhost:8500/authentication/token';
         let formData = new FormData();
         formData.append('username', this.email)
         formData.append('password', this.password)
-        await this.API(path, formData)
-        this.spinSubmit = false
+        await this.loginInfo(formData)
       }
     },
-    async API(path, formData){
-      await this.$axios.post(path, formData)
-            .then((res) => {
-              console.log(res.data)
-              this.token = res.data.access_token
-              this.$refs.form.reset()
+    loginInfo(formData) {
+      this.spinSubmit = true
+      this.$auth.loginWith('local', {data: formData})
+          .then((res) => {
+            console.log(res);
+            this.$router.push('/home');
+            this.spinSubmit = false
+            this.$refs.form.reset();
+          })
+          .catch((err) => {
+            let response = err.response.status;
+            if (response === 403) {
               this.$swal.fire({
-                position: 'top-end',
-                icon: 'success',
-                title: 'Login Success',
-                showConfirmButton: false,
-                timer: 1500
+                icon: 'warning',
+                title: 'กรุณายืนยันตัวตน',
+                text: 'กรุณายืนยันตัวตนผ่านอีเมล',
               })
-            })
-            .catch((err) => {
-              console.error(err)
-              this.$refs.form.reset()
+              this.spinSubmit = false
+              this.$refs.form.reset();
+            } else {
               this.$swal.fire({
                 icon: 'error',
-                title: 'Not Authenticated',
-                text: 'Email or Password invalid',
-                footer: '<a href="">Why do I have this issue?</a>'
+                title: 'ผิดพลาด',
+                text: 'มีบางอย่างผิดพลาด อีเมลหรือพาสเวิดไม่ถูกต้อง'
               })
-            })
+              this.spinSubmit = false
+              this.$refs.form.reset();
+            }
+          })
     }
   }
 }
