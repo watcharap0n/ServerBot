@@ -1,7 +1,7 @@
 <template>
   <div>
 
-    <v-app style="font-family: 'Ubuntu', sans-serif;">
+    <v-app style="font-family: 'Kanit', sans-serif;">
       <Nuxt/>
     </v-app>
 

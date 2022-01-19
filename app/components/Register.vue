@@ -1,79 +1,91 @@
 <template>
   <div>
-    <form ref="form"
+    <v-form ref="formRegister"
           v-model="valid"
 
     >
-      Sign Up
+      <p class="text-3xl font-bold"> สมัครสมาชิก </p>
 
       <v-text-field
+          color="purple darken-2"
+          prepend-inner-icon="mdi-account"
           :rules="userNameRules"
           v-model="userName"
-          label="Username"
+          label="ชื่อผู้ใช้งาน"
           filled
           rounded
       ></v-text-field>
       <v-text-field
+          color="purple darken-2"
+          prepend-inner-icon="mdi-card-account-details"
           :rules="firstNameRules"
           v-model="firstName"
-          label="Firstname"
+          label="ชื่อจริง"
           filled
           rounded
       ></v-text-field>
       <v-text-field
+          color="purple darken-2"
+          prepend-inner-icon="mdi-card-account-details"
           :rules="lastNameRules"
           v-model="lastName"
-          label="Lastname"
+          label="นามสกุล"
           filled
           rounded
       ></v-text-field>
       <v-text-field
+          color="purple darken-2"
+          prepend-inner-icon="mdi-email"
           :rules="emailRules"
           v-model="email"
-          label="Email"
+          label="อีเมล"
           filled
           rounded
       ></v-text-field>
       <v-text-field
+          color="purple darken-2"
+          prepend-inner-icon="mdi-lock"
           v-model="password"
-          label="Password"
+          label="รหัสผ่าน"
           filled
           rounded
           :append-icon="show ? 'mdi-eye' : 'mdi-eye-off'"
-          :rules="[rules.required]"
+          :rules="rules"
           :type="show ? 'text' : 'password'"
           @click:append="show = !show"
       ></v-text-field>
       <v-text-field
+          color="purple darken-2"
+          prepend-inner-icon="mdi-lock-alert"
           v-model="confirmPassword"
-          label="Confirm Password"
+          label="ยืนยันรหัสผ่าน"
           filled
           rounded
           :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"
-          :rules="[rules.required, passwordConfirmationRule]"
+          :rules="[rules, passwordConfirmationRule]"
           :type="show1 ? 'text' : 'password'"
           @click:append="show1 = !show1"
-
       ></v-text-field>
       <v-file-input
+          color="purple darken-2"
           :rules="imageRules"
           v-model="fileImage"
-          label="File Image"
+          label="รูปภาพ"
           filled
           prepend-icon="mdi-camera"
           accept="image/png, image/jpeg, image/bmp"
       ></v-file-input>
       <v-btn
+          class="text-white"
+          block
+          color="pink accent-2"
           rounded
-          color="success"
           @click="summitData"
           :loading="spinSubmit"
           :disabled="!valid"
-      >Submit
+      >สมัครสมาชิก
       </v-btn>
-    </form>
-
-
+    </v-form>
   </div>
 </template>
 
@@ -92,25 +104,23 @@ export default {
       show: false,
       show1: false,
       fileImage: null,
-      objectData: {},
-      rules: {
-        required: value => !!value || 'Required.'
-      },
+      rules: [
+        value => !!value || 'กรุณากรอกรหัสผ่าน',
+        v => v && v.length >= 6 || 'กรุณากรอกรหัสผ่านอย่างน้อย 6 ตัว'
+      ],
       emailRules: [
-        v => !!v || 'E-mail is required',
-        v => /.+@.+\..+/.test(v) || 'E-mail must be valid',
+        v => !!v || 'กรุณากรอกอีเมล',
       ],
       userNameRules: [
-        v => !!v || 'username is required',
+        v => !!v || 'กรุณากรอกชื่อผู้ใช้งาน',
       ],
       firstNameRules: [
-        v => !!v || 'firstname is required',
+        v => !!v || 'กรุณากรอกชื่อจริง',
       ],
       lastNameRules: [
-        v => !!v || 'firstname is required',
+        v => !!v || 'กรุณากรอกนามสกุล',
       ],
       imageRules: [
-        v => !!v || 'image is required',
         value => !value || value.size < 2000000 || 'image size 2MB!'
       ],
       spinSubmit: false,
@@ -118,7 +128,8 @@ export default {
   },
   methods: {
     async summitData() {
-      let validation = this.$refs.form.validate()
+      let validation = this.$refs.formRegister.validate()
+      console.log(validation)
       if (validation === true) {
         this.spinSubmit = true
         const path = 'http://localhost:8500/authentication/register';
@@ -130,13 +141,14 @@ export default {
         formData.append('full_name', this.firstName + " " + this.lastName)
         await this.API(path, formData)
         this.spinSubmit = false
+        console.log(formData)
       }
     },
     async API(path, formData) {
       await this.$axios.post(path, formData)
           .then((res) => {
             console.log(res.data)
-            this.$refs.form.reset()
+            this.$refs.formRegister.reset()
             this.$swal.fire({
               position: 'top-end',
               icon: 'success',
@@ -146,20 +158,30 @@ export default {
             })
           })
           .catch((err) => {
+            console.log(err.status)
             console.error(err)
-            this.$refs.form.reset()
+            this.$refs.formRegister.reset()
             this.$swal.fire({
               icon: 'error',
               title: 'incomplete information',
               text: 'Data invalid',
               footer: '<a href="">Why do I have this issue?</a>'
             })
+            if (err.response.status === 403){
+              this.$swal.fire({
+              icon: 'warning',
+              title: 'อีเมลนี้ถูกใช้งานไปแล้ว',
+              text: 'กรุณาใช้อีเมลอื่น',
+
+            })
+            }
           })
     }
+
   },
   computed: {
     passwordConfirmationRule() {
-      return () => (this.password === this.confirmPassword) || 'Password must match'
+      return () => (this.password === this.confirmPassword) || 'โปรดใส่รหัสผ่านให้ถูกต้อง'
     }
   }
 }
