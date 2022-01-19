@@ -4,7 +4,8 @@ from typing import Optional
 from models.secure import Permission, User
 from bson import ObjectId
 from firebase_admin import auth, exceptions
-from db import db, generate_token, firebaseAuth, firebaseConfig
+from config import firebaseConfig, firebaseAuth
+from db import db, generate_token
 from db.firebase_auth import ConfigFirebase
 from datetime import datetime, timedelta
 from passlib.context import CryptContext
