@@ -26,6 +26,7 @@
           label="รหัสผ่าน"
           filled
           rounded
+          @keyup.enter="submitLogin"
       >
       </v-text-field>
       <v-btn

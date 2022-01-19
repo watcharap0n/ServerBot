@@ -8,10 +8,10 @@
 
     <v-spacer></v-spacer>
 
-    <Button icon="icon" :have-icon="true" name-icon="mdi-heart"/>
-    <Button icon="icon" :have-icon="true" name-icon="mdi-magnify"/>
+    <Button icon="icon" :have-icon="true" name-icon="mdi-heart" color="pink accent-2"/>
+    <Button icon="icon" :have-icon="true" name-icon="mdi-magnify" color="pink accent-2"/>
     <div class="pa-2" v-if="$auth.loggedIn">
-      <Button name-btn="ออกจากระบบ" text="text"/>
+      <Button name-btn="ออกจากระบบ" text="text" :btn-submit="logout"/>
     </div>
 
     <div v-else>
@@ -23,7 +23,15 @@
 <script>
 import Button from "../app/Button";
 export default {
-  components: {Button}
+  components: {Button},
+  methods:{
+    logout() {
+      this.$auth.logout()
+          .then(() => {
+            this.$router.push('/authentication')
+          })
+    }
+  }
 }
 </script>
 
