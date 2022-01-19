@@ -35,12 +35,22 @@ module.exports = {
             }
         ]
     },
-
+    build: {
+        transpile: ['vee-validate'],
+        postcss: {
+            plugins: {
+                "postcss-custom-properties": false
+            },
+        },
+    },
     buildModules: [
         "@nuxtjs/vuetify",
     ],
     css: [
         '@/assets/css/main.css',
+    ],
+    scss: [
+        '@/assets/scss/main.scss'
     ],
     modules: [
         '@nuxt/postcss8',
@@ -49,15 +59,6 @@ module.exports = {
         "bootstrap-vue/nuxt",
         "vue-sweetalert2/nuxt"
     ],
-    build: {
-        postcss: {
-            plugins: {
-                tailwindcss: {},
-                autoprefixer: {},
-            },
-        },
-    },
-
     srcDir: 'app/',
 
     components: true,
