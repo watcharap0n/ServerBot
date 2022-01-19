@@ -71,7 +71,8 @@ module.exports = {
                 },
                 endpoints: {
                     login: {url: '/authentication/token', method: 'post'},
-                    user: {url: '/authentication/user', method: 'get'}
+                    user: {url: '/authentication/user', method: 'get'},
+                    logout: {url: '/authentication/logout', method: 'delete'}
                 }
             }
         }
