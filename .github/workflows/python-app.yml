@@ -35,8 +35,8 @@ jobs:
       - name: Unit Test
         env:
           PYTHONPATH: ${{ secrets.PYTHONPATH }}
-          USER_TESTING: ${{ secrets.USER_TESTING }}
-          PWD_TESTING: ${{ secrets.PWD_TESTING }}
+          user_testing: ${{ secrets.USER_TESTING }}
+          pwd_testing: ${{ secrets.PWD_TESTING }}
           apiKey: ${{ secrets.APIKEY }}
           authDomain: ${{ secrets.AUTHDOMAIN }}
           databaseURL: ${{ secrets.DATABASEURL }}
