@@ -11,7 +11,7 @@ services:
       - "./server:/redis:/data"
 
   app:
-    build: .
+    build: server/
     depends_on:
       - 'redis'
     env_file:
