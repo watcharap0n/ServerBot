@@ -66,7 +66,7 @@
               <v-tab-item>
                 <v-card>
                   <v-card-text>
-                    <Register/>
+                    <Register :tab-parent.sync="tab"/>
                   </v-card-text>
                 </v-card>
               </v-tab-item>
