@@ -168,7 +168,7 @@ async def login(user=Depends(authentication_cookie)):
 
 @router.post("/register")
 async def register(
-    file: Optional[UploadFile] = File(None),
+    file: UploadFile = File(...),
     email: str = Form(...),
     hashed_password: str = Form(...),
     username: str = Form(...),
