@@ -188,11 +188,10 @@ async def register(
     try:
         http = str()
         if file:
-            filename = file.filename
             upload_dir = os.path.join("static", "uploads")
             file_input = os.path.join(upload_dir, uuid4().hex)
-            http += f"https://mangoserverbot.herokuapp.com/static/uploads/{filename}.jpg"
-            with open(file_input, "wb+") as upload_file:
+            http += f"https://mangoserverbot.herokuapp.com/{file_input}.jpg"
+            with open(f'{file_input}.jpg', "wb+") as upload_file:
                 upload_file.write(file.file.read())
                 upload_file.close()
         user = auth.create_user(
