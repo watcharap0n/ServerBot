@@ -22,7 +22,6 @@
     
     $ cd client
     $ yarn dev
-    $ yarn build
 
 
 
