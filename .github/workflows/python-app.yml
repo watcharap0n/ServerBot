@@ -34,6 +34,7 @@ jobs:
 
       - name: Unit Test
         env:
+          channel_access_token: ${{ secrets.CHANNEL_ACCESS_TOKEN }}
           PYTHONPATH: ${{ secrets.PYTHONPATH }}
           user_testing: ${{ secrets.USER_TESTING }}
           pwd_testing: ${{ secrets.PWD_TESTING }}

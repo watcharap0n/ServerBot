@@ -1,3 +1,4 @@
+import os
 from fastapi import status
 from fastapi.testclient import TestClient
 from main import app, get_settings
@@ -202,7 +203,7 @@ Testing RuleBased success
 
 PAYLOAD_CALLBACK = {
     "name": "test unit name",
-    "access_token": "J8BtpEBu0bRLFsmBk67ZkoJY/a7WmEulj3M93h5j3+M3mGUnnXfcAURmVYI5nwFXD6y4HXvpnDWZgkBE7may4k19BnHEOFZTLEwPn24zp2Hlp8p49krr9i7PsDKKjLd6PT0s6whcrfsXZM67eXVgTwdB04t89/1O/w1cDnyilFU=",
+    "access_token": os.environ['channel_access_token'],
     "secret_token": "test unit secret token",
 }
 
