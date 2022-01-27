@@ -106,18 +106,21 @@ Testing Intent success
 """
 
 PAYLOAD_RuleBased = {
-    "name": "test unit",
-    "access_token": "test unit access token",
-    "ready": True,
+    "name": "rule based",
+    "access_token": "access token long live",
     "status_flex": False,
-    "content": "content test unit",
-    "question": ["a", "b", "c", "d"],
-    "answer": ["1", "2", "3", "4", "5"],
+    "ready": True,
+    "content": "request flex message content {}",
+    "keyword": [
+        "erp"
+    ],
+    "answer": [
+        "answer bot"
+    ]
 }
 
 
 def test_rule_based_create():
-    get_token()
     response = client.post(
         "/rule_based/create", json=PAYLOAD_RuleBased, headers=headers
     )
@@ -199,52 +202,62 @@ Testing RuleBased success
 
 PAYLOAD_CALLBACK = {
     "name": "test unit name",
-    "access_token": "test unit access token",
+    "access_token": "J8BtpEBu0bRLFsmBk67ZkoJY/a7WmEulj3M93h5j3+M3mGUnnXfcAURmVYI5nwFXD6y4HXvpnDWZgkBE7may4k19BnHEOFZTLEwPn24zp2Hlp8p49krr9i7PsDKKjLd6PT0s6whcrfsXZM67eXVgTwdB04t89/1O/w1cDnyilFU=",
     "secret_token": "test unit secret token",
 }
 
 
 def test_callback_create():
+    get_token()
     response = client.post(
         "/callback/channel/create", json=PAYLOAD_CALLBACK, headers=headers
     )
-    global token_callback
+    global callback_token
     global uid_callback
-    token_callback = response.json()["token"]
+    callback_token = response.json()["token"]
     uid_callback = response.json()["uid"]
     assert response.status_code == status.HTTP_200_OK
 
 
+def test_callback_create_invalid_data():
+    PAYLOAD_CALLBACK['access_token'] = 'test invalid'
+    response = client.post(
+        "/callback/channel/create", json=PAYLOAD_CALLBACK, headers=headers
+    )
+    assert response.status_code == status.HTTP_401_UNAUTHORIZED
+    assert response.json() == {
+        'detail': 'Authentication failed. Confirm that the access token in the authorization header is valid.'}
+
+
 def test_callback_find():
-    response = client.get(f"/callback/channel?uid={uid_callback}", headers=headers)
+    response = client.get(f"/callback/channel/info?uid={uid_callback}", headers=headers)
     assert response.status_code == status.HTTP_200_OK
     assert isinstance(response.json(), list)
 
 
 def test_callback_find_is_null():
-    response = client.get("/callback/channel", headers=headers)
+    response = client.get("/callback/channel/info", headers=headers)
     assert response.status_code == status.HTTP_400_BAD_REQUEST
     assert response.json() == {"detail": "Access Token is null"}
 
 
 def test_callback_find_one():
-    access_token = PAYLOAD_CALLBACK["access_token"]
-    response = client.get(f"/callback/channel/{access_token}", headers=headers)
+    response = client.get(f"/callback/channel/info/{callback_token}", headers=headers)
     assert response.status_code == status.HTTP_200_OK
     assert isinstance(response.json(), dict)
 
 
 def test_callback_find_one_not_found():
-    access_token = "fake_user_access_token"
-    response = client.get(f"/callback/channel/{access_token}", headers=headers)
+    fake_token = "fake_user_access_token"
+    response = client.get(f"/callback/channel/info/{fake_token}", headers=headers)
     assert response.status_code == status.HTTP_400_BAD_REQUEST
-    assert response.json() == {"detail": f"not found channel {access_token}"}
+    assert response.json() == {"detail": f"not found channel {fake_token}"}
 
 
 def test_callback_update():
     PAYLOAD_CALLBACK["name"] = "update name callback test unit"
     response = client.put(
-        f"/callback/channel/update/{token_callback}",
+        f"/callback/channel/update/{callback_token}",
         json=PAYLOAD_CALLBACK,
         headers=headers,
     )
@@ -253,7 +266,7 @@ def test_callback_update():
 
 def test_callback_delete():
     response = client.delete(
-        f"/callback/channel/delete/{token_callback}", headers=headers
+        f"/callback/channel/delete/{callback_token}", headers=headers
     )
     assert response.status_code == status.HTTP_204_NO_CONTENT
 
