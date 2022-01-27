@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, Dict
 from bson import ObjectId
 from pydantic import BaseModel, Field
 from db import PyObjectId
@@ -21,11 +21,31 @@ class LineToken(BaseModel):
         }
 
 
+class BotInfo(BaseModel):
+    basicId: Optional[str] = None
+    chatMode: Optional[str] = None
+    displayName: Optional[str] = None
+    markAsReadMode: Optional[str] = None
+    userId: Optional[str] = None
+
+    class Config:
+        schema_extra = {
+            "example": {
+                "basicId": "@458rhieq",
+                "chatMode": "bot",
+                "displayName": "watcharap0n",
+                "markAsReadMode": "auto",
+                "userId": "U4b9363bd805302bc979ac8b7dfe2a879"
+            }
+        }
+
+
 class Webhook(LineToken):
     uid: Optional[str] = None
     url: Optional[str] = None
     date: Optional[str] = None
     time: Optional[str] = None
+    bot_info: Dict
 
     class Config:
         schema_extra = {
