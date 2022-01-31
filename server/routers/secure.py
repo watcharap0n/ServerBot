@@ -3,10 +3,10 @@ import pytz
 from uuid import uuid4
 from models.secure import Permission, User
 from bson import ObjectId
+from db import db, generate_token
 from firebase_admin import auth, exceptions
 from config import firebaseConfig, firebaseAuth
-from db import db, generate_token
-from db.firebase_auth import ConfigFirebase
+from config.firebase_auth import ConfigFirebase
 from datetime import datetime, timedelta
 from passlib.context import CryptContext
 from starlette.responses import JSONResponse
