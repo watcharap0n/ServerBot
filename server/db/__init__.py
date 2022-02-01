@@ -7,13 +7,12 @@ database and authentication master
 """
 
 import os
-from . import firebase_auth
 from .database import MongoDB
 from .object_str import CutId, PyObjectId
 
 
-client = os.getenv('MONGODB_URI', 'mongodb://localhost:27017')
-db = MongoDB(database_name='MangoBOT', uri=client)
+client = os.getenv("MONGODB_URI", "mongodb://localhost:27017")
+db = MongoDB(database_name="MangoBOT", uri=client)
 
 
 def generate_token(engine):
@@ -23,5 +22,5 @@ def generate_token(engine):
     :return:
     """
     obj = CutId(_id=engine)
-    Id = obj.dict()['id']
+    Id = obj.dict()["id"]
     return Id
