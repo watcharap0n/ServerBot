@@ -4,8 +4,8 @@ __pycache__/
 Pipfile.lock
 server/__pycache__/
 server/.pytest_cache
-dist
 server/.env
+dist
 .pytest_cache
 .vscode/
 .server
