@@ -3,7 +3,7 @@ from typing import Optional, List
 from starlette.responses import JSONResponse
 from models.rule_based import RuleBased, TokenUser, UpdateRuleBased
 from modules.item_static import item_user
-from routers.secure import User, get_current_active
+from oauth2 import User, get_current_active
 from fastapi import APIRouter, HTTPException, Depends, status
 from fastapi.encoders import jsonable_encoder
 
