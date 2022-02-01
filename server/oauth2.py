@@ -1,7 +1,7 @@
 import os
 import pytz
 from uuid import uuid4
-from oauth2 import User
+from models.oauth2 import User
 from bson import ObjectId
 from db import db, generate_token
 from firebase_admin import auth, exceptions
@@ -21,6 +21,7 @@ from fastapi import (
     UploadFile,
     Request,
     Response,
+
 )
 
 EXPIRES_TOKEN = 60 * 60 * 1
@@ -175,6 +176,7 @@ async def login(user=Depends(authentication_cookie)):
 
 @router.post("/register")
 async def register(
+    request: Request,
     file: UploadFile = File(...),
     email: str = Form(...),
     hashed_password: str = Form(...),
@@ -197,7 +199,8 @@ async def register(
         if file:
             upload_dir = os.path.join("static", "uploads")
             file_input = os.path.join(upload_dir, uuid4().hex)
-            http += f"https://mangoserverbot.herokuapp.com/{file_input}.jpg"
+            base_url = request.base_url
+            http += f"{base_url}{file_input}.jpg"
             with open(f"{file_input}.jpg", "wb+") as upload_file:
                 upload_file.write(file.file.read())
                 upload_file.close()
