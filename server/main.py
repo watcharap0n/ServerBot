@@ -10,8 +10,8 @@ import os
 import secrets
 from functools import lru_cache
 from routers import secure, callback, intents, card, rule_based, quick_reply
-from models.secure import User
-from routers.secure import get_current_active
+from models.oauth2 import User
+from oauth2 import get_current_active
 from fastapi import FastAPI, Depends, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
 from internal import Settings
@@ -119,7 +119,7 @@ app.include_router(
     quick_reply.router,
     prefix="/button",
     tags=["QuickReply"],
-    responses={418: {"description": "I'm teapot"}}
+    responses={418: {"description": "I'm teapot"}},
 )
 
 description = """
