@@ -35,7 +35,7 @@ class BotInfo(BaseModel):
                 "chatMode": "bot",
                 "displayName": "watcharap0n",
                 "markAsReadMode": "auto",
-                "userId": "U4b9363bd805302bc979ac8b7dfe2a879"
+                "userId": "U4b9363bd805302bc979ac8b7dfe2a879",
             }
         }
 
