@@ -8,8 +8,9 @@ run application
 """
 import os
 import secrets
+import oauth2
 from functools import lru_cache
-from routers import secure, callback, intents, card, rule_based, quick_reply
+from routers import callback, intents, card, rule_based, quick_reply
 from models.oauth2 import User
 from oauth2 import get_current_active
 from fastapi import FastAPI, Depends, HTTPException, status
@@ -82,7 +83,7 @@ async def info(
 
 
 app.include_router(
-    secure.router,
+    oauth2.router,
     prefix="/authentication",
     tags=["Authentication"],
     responses={418: {"description": "I'm teapot"}},
