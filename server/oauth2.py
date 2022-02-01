@@ -88,7 +88,7 @@ async def get_current_active(current_user: dict = Depends(get_current_user)):
 
 
 async def authentication_cookie(
-    response: Response, form_data: OAuth2PasswordRequestForm = Depends()
+        response: Response, form_data: OAuth2PasswordRequestForm = Depends()
 ):
     """
 
@@ -168,12 +168,13 @@ async def login(user=Depends(authentication_cookie)):
 
 @router.post("/register")
 async def register(
-    file: UploadFile = File(...),
-    email: str = Form(...),
-    hashed_password: str = Form(...),
-    username: str = Form(...),
-    full_name: str = Form(...),
-    disabled: bool = Form(True),
+        request: Request,
+        file: UploadFile = File(...),
+        email: str = Form(...),
+        hashed_password: str = Form(...),
+        username: str = Form(...),
+        full_name: str = Form(...),
+        disabled: bool = Form(True),
 ):
     """
 
@@ -190,7 +191,8 @@ async def register(
         if file:
             upload_dir = os.path.join("static", "uploads")
             file_input = os.path.join(upload_dir, uuid4().hex)
-            http += f"https://mangoserverbot.herokuapp.com/{file_input}.jpg"
+            base_url = request.base_url
+            http += f"{base_url}{file_input}.jpg"
             with open(f"{file_input}.jpg", "wb+") as upload_file:
                 upload_file.write(file.file.read())
                 upload_file.close()
