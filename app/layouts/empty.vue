@@ -1,7 +1,8 @@
 <template>
   <div>
 
-    <v-app style="font-family: 'Kanit', sans-serif;">
+    <v-app :style="cssProps">
+
       <Nuxt/>
     </v-app>
 
@@ -9,7 +10,24 @@
 </template>
 
 <script>
-export default {}
+export default {
+  data(){
+    return{
+      cssProps: {
+          backgroundImage: `url(${require('~/assets/images/Bg-login_bot.png')})`
+        }
+
+    }
+  },
+  computed:{
+    background(){
+      return{
+        "background-image": require('~/assets/images/Bg-login_bot.png'),
+
+      }
+    }
+  }
+}
 </script>
 
 <style scoped>
