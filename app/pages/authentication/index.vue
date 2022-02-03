@@ -1,18 +1,18 @@
 <template>
   <div>
     <Login/>
-
+    <create-chanel/>
   </div>
 </template>
 
 <script>
 import Login from '../../components/Login'
 import Register from '../../components/Register'
-
+import createChanel from "@/components/app/createChanel";
 
 export default {
   layout: "empty",
-  components: {Login, Register},
+  components: {Login, Register,createChanel},
   data() {
     return {
       mounted: false,
