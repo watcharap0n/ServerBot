@@ -14,7 +14,7 @@
                   :label="nameEle2"
     >
     </v-text-field>
-    <v-btn color="pink accent-2"
+    <v-btn color="#12AE7E"
            rounded
            v-text="nameBtn"
            @click="submitForm(formEle)"
@@ -33,6 +33,7 @@ export default {
     'field1',
     'nameEle1',
     'nameEle2',
+
   ],
   data() {
     return {
