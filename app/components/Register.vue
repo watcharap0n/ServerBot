@@ -2,7 +2,6 @@
   <div>
     <v-form ref="formRegister"
             v-model="valid"
-
     >
       <v-text-field
           color="purple darken-2"
@@ -89,6 +88,7 @@
 
 <script>
 export default {
+  layout: "empty",
   props: ['tabParent'],
   data() {
     return {
@@ -131,7 +131,7 @@ export default {
       let validation = this.$refs.formRegister.validate()
       if (validation === true) {
         this.spinSubmit = true
-        const path = 'https://mangoserverbot.herokuapp.com/authentication/register';
+        const path = '/authentication/register';
         let formData = new FormData();
         formData.append('file', this.fileImage)
         formData.append('email', this.email)
