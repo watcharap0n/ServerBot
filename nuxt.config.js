@@ -57,6 +57,9 @@ module.exports = {
     },
 
     auth: {
+        auth: {
+            plugins: ['~/plugins/auth-admin.js']
+        },
         strategies: {
             local: {
                 token: {
