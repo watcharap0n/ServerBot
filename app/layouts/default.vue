@@ -2,7 +2,7 @@
   <div>
     <v-app style="font-family: 'Ubuntu', sans-serif;" class="bg-gray-200">
       <NaviDraw/>
-      <AppBar/>
+      <Bar/>
       <div
           v-if="$auth.loggedIn"
           :style="`margin-left: ${$vuetify.application.left}px; margin-top: ${$vuetify.application.top}`"
@@ -16,21 +16,18 @@
 </template>
 
 <script>
-import AppBar from "../components/layout/AppBar";
+import Bar from "../components/app/Bar.vue"
 import NaviDraw from "../components/layout/NaviDraw";
 import Button from "../components/app/Button";
 
 export default {
-  components: {AppBar, Button, NaviDraw},
+  middleware: ['auth-admin'],
+  components: {Bar, Button, NaviDraw},
   props: ['toolbarTitle'],
   data() {
-    return {
-
-    }
+    return {}
   },
-  methods: {
-
-  }
+  methods: {}
 }
 
 </script>
