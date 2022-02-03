@@ -1,5 +1,6 @@
 <template>
   <div>
+    <v-col sm="7">
 
     <div class="p-28 ">
       <h2 class="text-5xl">
@@ -11,9 +12,11 @@
       <FormSubmit name-btn="ลืมรหัสผ่าน"
                   name-ele1="ที่อยู่อีเมล"
                   :submit-form="submitForm"
+
+
+
       />
     </div>
-
 
   <v-overlay :value="spinLoading">
       <v-progress-circular
@@ -21,7 +24,7 @@
         size="64"
       ></v-progress-circular>
     </v-overlay>
-
+      </v-col>
 
   </div>
 </template>
