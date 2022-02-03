@@ -7,7 +7,6 @@
       :dark="dark"
       :color="color"
       :small="small"
-      @click="btnSubmit"
       :text="text"
       :to="to"
   >
@@ -15,6 +14,7 @@
       {{ nameIcon }}
     </v-icon>
     {{ nameBtn }}
+
   </v-btn>
 
 </template>
