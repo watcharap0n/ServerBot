@@ -563,7 +563,7 @@
 <script>
 export default {
     props: ['error'],
-    layout: 'error'
+    layout: 'empty'
   }
 </script>
 
