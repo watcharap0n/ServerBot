@@ -27,6 +27,7 @@
               v-model="email"
               label="อีเมล"
               rounded
+              @keyup.enter="submitLogin"
           >
           </v-text-field>
           <br>
@@ -132,8 +133,8 @@ export default {
     loginInfo(formData) {
       this.spinSubmit = true
       this.$auth.loginWith('local', {data: formData})
-          .then((res) => {
-            console.log(res);
+          .then(() => {
+            // console.log(this.$auth.strategy.token.get())
             this.$router.push('/home');
             this.spinSubmit = false
             this.$refs.form.reset();
