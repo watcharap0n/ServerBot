@@ -4,6 +4,7 @@
     <v-app style="font-family: 'Kanit', sans-serif;">
       <div v-if="$auth.loggedIn">
         <Nuxt/>
+        <Snackbar></Snackbar>
       </div>
 
     </v-app>
@@ -12,8 +13,10 @@
 </template>
 
 <script>
+import Snackbar from "@/components/Snackbar";
 
 export default {
+  components: {Snackbar},
   middleware: ['auth-admin'],
 }
 </script>
