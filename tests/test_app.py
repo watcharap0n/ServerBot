@@ -202,7 +202,7 @@ Testing RuleBased success
 
 PAYLOAD_CALLBACK = {
     "name": "test unit name",
-    "access_token": "J8BtpEBu0bRLFsmBk67ZkoJY/a7WmEulj3M93h5j3+M3mGUnnXfcAURmVYI5nwFXD6y4HXvpnDWZgkBE7may4k19BnHEOFZTLEwPn24zp2Hlp8p49krr9i7PsDKKjLd6PT0s6whcrfsXZM67eXVgTwdB04t89/1O/w1cDnyilFU=",
+    "access_token": "mefjjnyqYHF1txQGf63aTGS+BAGU51GOBakC3mWDn5yQn9YjqHeBJXBXZugi17VdM8xvPyFQ/1BJD90EDK0vIuVemPXzcg12DPvib0eLKZwels5c9dbM6KkigaNiiQho3tPrWRKopyTp3g+wJwr88gdB04t89/1O/w1cDnyilFU=",
     "secret_token": "test unit secret token",
 }
 
@@ -217,6 +217,30 @@ def test_callback_create():
     callback_token = response.json()["token"]
     uid_callback = response.json()["uid"]
     assert response.status_code == status.HTTP_200_OK
+
+
+def test_callback_update():
+    PAYLOAD_CALLBACK["name"] = "update name callback test unit"
+    response = client.put(
+        f"/callback/channel/update/{callback_token}",
+        json=PAYLOAD_CALLBACK,
+        headers=headers,
+    )
+    assert response.status_code == status.HTTP_200_OK
+
+
+def test_callback_update_not_found():
+    token = "fake_id_callback"
+    PAYLOAD_CALLBACK["name"] = "update name callback test unit"
+    response = client.put(
+        f"/callback/channel/update/{token}",
+        json=PAYLOAD_CALLBACK,
+        headers=headers,
+    )
+    assert response.status_code == status.HTTP_400_BAD_REQUEST
+    assert response.json() == {
+        "detail": f"Callback not found {token} or Update Already exits"
+    }
 
 
 def test_callback_create_invalid_data():
@@ -235,12 +259,6 @@ def test_callback_find():
     assert isinstance(response.json(), list)
 
 
-def test_callback_find_is_null():
-    response = client.get("/callback/channel/info", headers=headers)
-    assert response.status_code == status.HTTP_400_BAD_REQUEST
-    assert response.json() == {"detail": "Access Token is null"}
-
-
 def test_callback_find_one():
     response = client.get(f"/callback/channel/info/{callback_token}", headers=headers)
     assert response.status_code == status.HTTP_200_OK
@@ -254,35 +272,11 @@ def test_callback_find_one_not_found():
     assert response.json() == {"detail": f"not found channel {fake_token}"}
 
 
-def test_callback_update():
-    PAYLOAD_CALLBACK["name"] = "update name callback test unit"
-    response = client.put(
-        f"/callback/channel/update/{callback_token}",
-        json=PAYLOAD_CALLBACK,
-        headers=headers,
-    )
-    assert response.status_code == status.HTTP_200_OK
-
-
 def test_callback_delete():
     response = client.delete(
         f"/callback/channel/delete/{callback_token}", headers=headers
     )
     assert response.status_code == status.HTTP_204_NO_CONTENT
-
-
-def test_callback_update_not_found():
-    token = "fake_id_callback"
-    PAYLOAD_CALLBACK["name"] = "update name callback test unit"
-    response = client.put(
-        f"/callback/channel/update/{token}",
-        json=PAYLOAD_CALLBACK,
-        headers=headers,
-    )
-    assert response.status_code == status.HTTP_400_BAD_REQUEST
-    assert response.json() == {
-        "detail": f"Callback not found {token} or Update Already exits"
-    }
 
 
 def test_callback_delete_not_found():
