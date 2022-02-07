@@ -10,7 +10,7 @@ module.exports = {
         script: [
             {
                 src: 'https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js'
-            }
+            },
         ],
         link: [
             {
@@ -35,7 +35,9 @@ module.exports = {
             }
         ]
     },
-
+    plugins: [
+        '~/plugins/notifier.js'
+    ],
     buildModules: [
         "@nuxtjs/vuetify",
         "@nuxtjs/tailwindcss"
@@ -45,9 +47,9 @@ module.exports = {
         "@nuxtjs/axios",
         '@nuxtjs/auth-next',
         "bootstrap-vue/nuxt",
-        "vue-sweetalert2/nuxt"
+        "vue-sweetalert2/nuxt",
+        "nuxt-clipboard",
     ],
-
     srcDir: 'app/',
 
     components: true,
@@ -56,6 +58,9 @@ module.exports = {
         baseURL: 'http://localhost:8500'
     },
 
+    clipboard: {
+        autoSetContainer: true
+    },
     auth: {
         strategies: {
             local: {
