@@ -139,7 +139,7 @@ export default {
       let validation = this.$refs.formRegister.validate()
       if (validation === true) {
         this.spinSubmit = true
-        const path = 'http://localhost:8500/authentication/register';
+        const path = '/authentication/register';
         let formData = new FormData();
         formData.append('file', this.fileImage)
         formData.append('email', this.email)
