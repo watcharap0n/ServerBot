@@ -1,3 +1,4 @@
+import os
 from fastapi import status
 from fastapi.testclient import TestClient
 from main import app, get_settings
@@ -13,7 +14,7 @@ def get_settings_override():
 app.dependency_overrides[get_settings] = get_settings_override
 
 headers = {}
-USER = {"username": "wera.watcharapon@gmail.com", "password": "kane!@#$"}
+USER = {"username": os.environ['user_testing'], "password": os.environ['pwd_testing']}
 
 PAYLOAD_INTENT = {
     "name": "test unit",
@@ -202,7 +203,7 @@ Testing RuleBased success
 
 PAYLOAD_CALLBACK = {
     "name": "test unit name",
-    "access_token": "mefjjnyqYHF1txQGf63aTGS+BAGU51GOBakC3mWDn5yQn9YjqHeBJXBXZugi17VdM8xvPyFQ/1BJD90EDK0vIuVemPXzcg12DPvib0eLKZwels5c9dbM6KkigaNiiQho3tPrWRKopyTp3g+wJwr88gdB04t89/1O/w1cDnyilFU=",
+    "access_token": os.environ['channel_access_token'],
     "secret_token": "test unit secret token",
 }
 
