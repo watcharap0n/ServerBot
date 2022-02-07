@@ -120,6 +120,9 @@ export default {
       password: '',
     }
   },
+  created() {
+    console.log(process.env.branch)
+  },
   methods: {
     async submitLogin() {
       let validation = this.$refs.form.validate();

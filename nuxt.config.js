@@ -1,4 +1,8 @@
 module.exports = {
+    env: {
+        branch: process.env.BRANCH || 'review',
+        baseUrl: process.env.BASE_URL || 'http://localhost:8500'
+    },
     ssr: false,
     head: {
         titleTemplate: '%s Platform CHATBOT',
