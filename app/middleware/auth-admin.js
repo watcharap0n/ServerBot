@@ -1,5 +1,5 @@
-export default function ({ $auth, next }) {
+export default function ({ $auth, redirect }) {
   if (!$auth.user) {
-    next('/authentication')
+    redirect('/authentication')
   }
 }
