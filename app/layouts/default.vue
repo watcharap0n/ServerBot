@@ -10,19 +10,21 @@
       >
         <br><br><br>
         <Nuxt/>
+        <Snackbar></Snackbar>
       </div>
     </v-app>
   </div>
 </template>
 
 <script>
+import Snackbar from "@/components/Snackbar";
 import Bar from "../components/app/Bar.vue"
 import NaviDraw from "../components/layout/NaviDraw";
 import Button from "../components/app/Button";
 
 export default {
   middleware: ['auth-admin'],
-  components: {Bar, Button, NaviDraw},
+  components: {Bar, Button, NaviDraw, Snackbar},
   props: ['toolbarTitle'],
   data() {
     return {}
