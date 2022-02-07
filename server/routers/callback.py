@@ -69,10 +69,6 @@ async def get_all_token(current_user: User = Depends(get_current_active)):
     :return:
     """
     uid = current_user.data.uid
-    if not uid:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, detail="Access Token is null"
-        )
     channels = await db.find(collection=collection, query={"uid": uid})
     channels = list(channels)
     return channels
