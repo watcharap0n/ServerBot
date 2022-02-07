@@ -46,7 +46,8 @@ module.exports = {
         "@nuxtjs/axios",
         '@nuxtjs/auth-next',
         "bootstrap-vue/nuxt",
-        "vue-sweetalert2/nuxt"
+        "vue-sweetalert2/nuxt",
+        "vue-clipboard"
     ],
     srcDir: 'app/',
 
@@ -55,14 +56,15 @@ module.exports = {
     axios: {
         baseURL: 'https://mangoserverbot.herokuapp.com'
     },
-
+    clipboard: {
+        autoSetContainer: true
+    },
     auth: {
         strategies: {
             local: {
                 token: {
                     property: 'access_token',
                     global: true,
-                    // required: true,
                     type: 'Bearer'
                 },
                 user: {
