@@ -42,6 +42,9 @@ module.exports = {
             }
         ]
     },
+    plugins: [
+        '~/plugins/notifier.js'
+    ],
     buildModules: [
         "@nuxtjs/vuetify",
     ],
