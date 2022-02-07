@@ -46,8 +46,8 @@ export default {
     return {
       selectedItem: 0,
       items: [
-        {title: 'หน้าหลัก', icon: 'mdi-home', url: '/home'},
-        {title: 'แดชบอร์ด', icon: 'mdi-view-dashboard', url: '/'},
+        {title: 'หน้าหลัก', icon: 'mdi-home', url: '/'},
+        {title: 'แดชบอร์ด', icon: 'mdi-view-dashboard', url: '/dashboard'},
         {title: 'บอท', icon: 'mdi-robot-happy', url: '/bot'},
         {title: 'ตั้งค่า', icon: 'mdi-account-box', url: '/setting'},
       ],
