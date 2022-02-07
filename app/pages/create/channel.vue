@@ -1,5 +1,6 @@
 <template>
   <div>
+     <Bar name-title="Platform Chatbot | Webhook"/>
     <v-row justify="center" class="text-center p-2">
       <v-col
           cols="12"
