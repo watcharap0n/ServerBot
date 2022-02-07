@@ -47,7 +47,7 @@ module.exports = {
         '@nuxtjs/auth-next',
         "bootstrap-vue/nuxt",
         "vue-sweetalert2/nuxt",
-        "vue-clipboard"
+        "nuxt-clipboard"
     ],
     srcDir: 'app/',
 
