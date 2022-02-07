@@ -135,7 +135,7 @@ export default {
       this.$auth.loginWith('local', {data: formData})
           .then(() => {
             // console.log(this.$auth.strategy.token.get())
-            this.$router.push('/home');
+            this.$router.push('/');
             this.spinSubmit = false
             this.$refs.form.reset();
           })
