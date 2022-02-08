@@ -14,15 +14,25 @@ collection = "card"
 
 @router.get("/", response_model=List[TokenUser])
 async def get_card(
-    access_token: Optional[str] = None, current_user: User = Depends(get_current_active)
+        access_token: Optional[str] = None, current_user: User = Depends(get_current_active)
 ):
     items = await db.find(collection=collection, query={"access_token": access_token})
     items = list(items)
     return items
 
 
+async def check_duplication_name_card(card: Card):
+    items = await db.find(collection=collection, query={"access_token": card.access_token})
+    items = list(items)
+    for item in items:
+        if item['name'] == card.name:
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail='card name is duplicate')
+    return card
+
+
 @router.post("/create", response_model=TokenUser, status_code=status.HTTP_201_CREATED)
-async def create_card(card: Card, current_user: User = Depends(get_current_active)):
+async def create_card(card: Card = Depends(check_duplication_name_card),
+                      current_user: User = Depends(get_current_active)):
     items_model = jsonable_encoder(card)
     items_model = item_user(data=items_model, current_user=current_user)
     await db.insert_one(collection=collection, data=items_model)
@@ -32,7 +42,7 @@ async def create_card(card: Card, current_user: User = Depends(get_current_activ
 
 @router.put("/query/update/{id}", response_model=UpdateCard)
 async def update_query_card(
-    id: str, payload: UpdateCard, current_user: User = Depends(get_current_active)
+        id: str, payload: UpdateCard, current_user: User = Depends(get_current_active)
 ):
     data = jsonable_encoder(payload)
     query = {"_id": id}
