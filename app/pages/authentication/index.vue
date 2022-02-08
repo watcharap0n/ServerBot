@@ -1,18 +1,15 @@
 <template>
   <div>
     <Login/>
-
   </div>
 </template>
 
 <script>
 import Login from '../../components/Login'
-import Register from '../../components/Register'
-
 
 export default {
   layout: "empty",
-  components: {Login, Register},
+  components: {Login},
   data() {
     return {
       mounted: false,
