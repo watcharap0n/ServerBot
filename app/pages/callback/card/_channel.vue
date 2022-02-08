@@ -1,13 +1,14 @@
 <template>
   <div>
     <div v-if="$auth.loggedIn">
-      {{ $auth.user }}
+
+
+
     </div>
 
     <div v-else>
       <v-btn to="/authentication">SignIn</v-btn>
     </div>
-    <h2>Hello </h2>
   </div>
 </template>
 
@@ -18,8 +19,8 @@ export default {
 
     }
   },
-  created() {
-    console.log(this.$route.params)
+  async created() {
+    await this.$parent.$emit('routerHandle', this.$route.params);
   }
 }
 </script>
