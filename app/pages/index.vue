@@ -85,7 +85,7 @@
               </v-card-text>
               <v-card-actions>
                 <v-spacer></v-spacer>
-                <v-btn :to="`/callback/channel/${v.token}`"
+                <v-btn @click="routerChannel(v.token)"
                        color="primary"
                        text
                        class="text-decoration-none"
@@ -259,6 +259,10 @@ export default {
               color: 'info'
             })
           })
+    },
+    routerChannel(router) {
+      const path = `/callback/dashboard/${router}`
+      this.$router.push(path)
     }
   }
 }
