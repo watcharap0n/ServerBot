@@ -20,7 +20,7 @@ PAYLOAD_INTENT = {
     "access_token": "test unit access token",
     "ready": True,
     "status_flex": False,
-    "content": "content test unit",
+    "id_card": "content test unit",
     "question": ["a", "b", "c", "d"],
     "answer": ["1", "2", "3", "4", "5"],
 }
@@ -75,6 +75,16 @@ def test_intent_update():
         f"/intents/query/update/{ids_intent}", json=PAYLOAD_INTENT, headers=headers
     )
     assert response.status_code == status.HTTP_200_OK
+
+
+def test_intent_update_flex_status_not_found_id_card():
+    PAYLOAD_INTENT['status_flex'] = True
+    response = client.put(
+        f'/intents/query/update/{ids_intent}', json=PAYLOAD_INTENT, headers=headers
+    )
+    PAYLOAD_INTENT['status_flex'] = False
+    assert response.status_code == status.HTTP_400_BAD_REQUEST
+    assert response.json() == {f"detail": f"id card not found {PAYLOAD_INTENT['id_card']}"}
 
 
 def test_intent_delete():
@@ -313,6 +323,12 @@ def test_card_create():
     global ids_card
     ids_card = response.json()["_id"]
     assert response.status_code == status.HTTP_201_CREATED
+
+
+def test_card_create_duplicate():
+    response = client.post('/card/create', json=PAYLOAD_CARD, headers=headers)
+    assert response.status_code == status.HTTP_400_BAD_REQUEST
+    assert response.json() == {"detail": "card name is duplicate"}
 
 
 def test_card_create_invalid():
