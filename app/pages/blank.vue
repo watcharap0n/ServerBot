@@ -1,112 +1,117 @@
 <template>
   <div>
-
-    <v-card>
-      <v-toolbar
-          color="primary"
-          dark
-          flat
-      >
-        <v-icon>mdi-silverware</v-icon>
-        <v-toolbar-title>Local hotspots</v-toolbar-title>
-      </v-toolbar>
-
-      <v-row>
-        <v-col>
-          <v-card-text>
+    <v-container>
+      <v-card>
+        <v-toolbar
+            color="primary"
+            dark
+            flat
+        >
+          <v-icon>mdi-view-dashboard</v-icon>
+          <v-toolbar-title>BOT</v-toolbar-title>
+        </v-toolbar>
+        <v-row
+            class="pa-4"
+            justify="space-between"
+        >
+          <v-col cols="5">
             <v-treeview
-                v-model="tree"
-                :load-children="fetch"
+                :active.sync="active"
                 :items="items"
-                selected-color="indigo"
+                :load-children="fetchItems"
+                :open.sync="open"
+                activatable
+                color="warning"
                 open-on-click
-                selectable
-                return-object
-                expand-icon="mdi-chevron-down"
-                on-icon="mdi-bookmark"
-                off-icon="mdi-bookmark-outline"
-                indeterminate-icon="mdi-bookmark-minus"
+                transition
             >
+              <template v-slot:prepend="{ item }">
+                <v-icon v-if="!item.children">
+                  mdi-account
+                </v-icon>
+              </template>
             </v-treeview>
-          </v-card-text>
-        </v-col>
-      </v-row>
+          </v-col>
 
+          <v-col
+              class="d-flex text-center"
+          >
+            <v-scroll-y-transition mode="out-in">
+              <div
+                  v-if="!selected"
+                  class="text-h6 grey--text text--lighten-1 font-weight-light"
+                  style="align-self: center;"
+              >
+                Select a Item
+              </div>
+              <v-card
+                  v-else
+                  :key="selected.id"
+                  class="pt-6 mx-auto"
+                  flat
+                  max-width="400"
+              >
+                <v-card-text>
 
-    </v-card>
+                  {{ selected }}
 
+                </v-card-text>
+                <v-divider></v-divider>
+
+              </v-card>
+            </v-scroll-y-transition>
+          </v-col>
+        </v-row>
+      </v-card>
+    </v-container>
   </div>
 </template>
 
 <script>
+
 export default {
-  data() {
-    return {
-      breweries: [],
-      isLoading: false,
-      tree: [],
-      types: [],
-    }
-  },
+  data: () => ({
+    data: [],
+    active: [],
+    avatar: null,
+    open: [],
+    users: [],
+  }),
+
   computed: {
     items() {
-      const children = this.types.map(type => ({
-        id: type,
-        name: this.getName(type),
-        children: this.getChildren(type),
-      }))
-
-      return [{
-        id: 1,
-        name: 'All Breweries',
-        children,
-      }]
+      return [
+        {
+          name: 'YourName',
+          children: this.users,
+        },
+      ]
     },
-    shouldShowTree() {
-      return this.breweries.length > 0 && !this.isLoading
+    selected() {
+      if (!this.active.length) return undefined
+      const id = this.active[0]
+      return this.users.find(user => user.id === id)
     },
   },
-  watch: {
-    breweries(val) {
-      this.types = val.reduce((acc, cur) => {
-        const type = cur.brewery_type
 
-        if (!acc.includes(type)) acc.push(type)
-
-        return acc
-      }, []).sort()
-    },
-  },
   methods: {
-    fetch() {
-      if (this.breweries.length) return
+    async fetchItems(item) {
+      if (this.item) return
 
-      return fetch('https://api.openbrewerydb.org/breweries')
-          .then(res => res.json())
-          .then(data => (this.breweries = data))
-          .catch(err => console.log(err))
-    },
-    getChildren(type) {
-      const breweries = []
-
-      for (const brewery of this.breweries) {
-        if (brewery.brewery_type !== type) continue
-
-        breweries.push({
-          ...brewery,
-          name: this.getName(brewery.name),
-        })
-      }
-
-      return breweries.sort((a, b) => {
-        return a.name > b.name ? 1 : -1
-      })
-    },
-    getName(name) {
-      return `${name.charAt(0).toUpperCase()}${name.slice(1)}`
+      const path = `/card?access_token=asdf`
+      return this.$axios.get(path)
+          .then((res) => {
+            res.data.forEach((v) => {
+              v.id = v._id
+            })
+            console.log(res.data)
+            item.children.push(...res.data)
+          })
+          .catch((err) => {
+            console.error(err)
+          })
     },
   },
-
 }
 </script>
 
