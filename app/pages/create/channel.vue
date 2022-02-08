@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-row justify="center" class="text-center p-2">
+    <v-row justify="center" class="text-center p-36">
       <v-col
           cols="12"
           sm="10"
@@ -27,7 +27,7 @@
               <v-text-field
                   :rules="nameRules"
                   v-model="elements.name"
-                  label="์Name"
+                  label="ชื่อ"
               ></v-text-field>
               <v-text-field
                   :rules="accessRules"
@@ -121,7 +121,7 @@ export default {
             let status = err.response.status
             if (status === 401) {
               this.$notifier.showMessage({
-                content: 'Access token ไม่ถูกต้อง',
+                content: 'Access Token ไม่ถูกต้อง',
                 color: 'red'
               })
             } else if (err.response.status === 400) {
