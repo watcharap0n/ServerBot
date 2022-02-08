@@ -23,7 +23,7 @@
     >
       <v-list-item
           class="text-decoration-none"
-          v-for="item in items"
+          v-for="item in routerItems"
           :key="item.title"
           link
           :to="item.url"
@@ -43,15 +43,10 @@
 <script>
 
 export default {
+  props: ['routerItems'],
   data() {
     return {
       selectedItem: 0,
-      items: [
-        {title: 'หน้าหลัก', icon: 'mdi-home', url: '/'},
-        {title: 'แดชบอร์ด', icon: 'mdi-view-dashboard', url: '/dashboard'},
-        {title: 'บอท', icon: 'mdi-robot-happy', url: '/bot'},
-        {title: 'ตั้งค่า', icon: 'mdi-account-box', url: '/setting'},
-      ],
     }
   }
 }
