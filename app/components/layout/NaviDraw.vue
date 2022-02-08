@@ -22,6 +22,7 @@
         color="pink accent-2"
     >
       <v-list-item
+          class="text-decoration-none"
           v-for="item in items"
           :key="item.title"
           link
