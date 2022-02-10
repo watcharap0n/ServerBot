@@ -9,9 +9,9 @@
         {{ header }}
       </v-toolbar>
       <v-card-text>
-        <div class="p-2">
+        <div class="p-6">
           <div v-if="body" v-text="body"></div>
-          <v-form v-if="elementForms" ref="form">
+          <v-form v-if="elementForms" ref="form" class="p-2">
             <v-text-field
                 v-for="(v, k) in elementForms"
                 v-model="v.value"
@@ -20,6 +20,7 @@
                 :label="v.label"
                 :rules="v.rules"
                 filled
+                :prepend-icon="v.icon ? v.icon : ''"
                 rounded
                 required
             ></v-text-field>
