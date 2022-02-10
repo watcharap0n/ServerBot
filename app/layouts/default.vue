@@ -103,9 +103,9 @@
         >
           <v-list-item
               class="text-decoration-none"
-              v-for="item in itemsRouter"
-              :key="item.title"
+              v-for="(item, k) in itemsRouter"
               link
+              :key="k"
               :to="item.url"
               @click="changePageTitle(item.title)"
           >
@@ -121,15 +121,12 @@
       </v-navigation-drawer>
 
       <div
-          v-if="$auth.loggedIn"
           :style="`margin-left: ${$vuetify.application.left}px; margin-top: ${$vuetify.application.top}`"
-          class="bg-gray-100 h-screen"
+          class="bg-gray-100 h-screen p-20"
       >
-        <br><br><br>
 
 
-
-        <Nuxt @routerHandle="handler($event)"/>
+        <Nuxt @routerHandle="handler"/>
         <Snackbar></Snackbar>
       </div>
     </v-app>
@@ -149,27 +146,7 @@ export default {
       selectedItem: 0,
       drawer: true,
       itemsRouter: [],
-      data: [],
-      active: [],
-      avatar: null,
-      open: [],
-      users: [],
     }
-  },
-  computed: {
-    items() {
-      return [
-        {
-          name: 'YourName',
-          children: this.users,
-        },
-      ]
-    },
-    selected() {
-      if (!this.active.length) return undefined
-      const id = this.active[0]
-      return this.users.find(user => user.id === id)
-    },
   },
   methods: {
     handler(router) {
@@ -191,22 +168,6 @@ export default {
     },
     changePageTitle(page) {
       return this.nameBar = page
-    },
-    async fetchItems(item) {
-      if (this.item) return
-
-      const path = `/card?access_token=asdf`
-      return this.$axios.get(path)
-          .then((res) => {
-            res.data.forEach((v) => {
-              v.id = v._id
-            })
-            console.log(res.data)
-            item.children.push(...res.data)
-          })
-          .catch((err) => {
-            console.error(err)
-          })
     },
   }
 }
