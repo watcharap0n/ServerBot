@@ -69,6 +69,8 @@
 
 <script>
 
+import {mapGetters} from "vuex";
+
 export default {
   data: () => ({
     data: [],
@@ -92,6 +94,9 @@ export default {
       const id = this.active[0]
       return this.users.find(user => user.id === id)
     },
+    ...mapGetters({
+      cards: "treeview/getInitialized",
+    })
   },
 
   methods: {
@@ -99,17 +104,10 @@ export default {
       if (this.item) return
 
       const path = `/card?access_token=asdf`
-      return this.$axios.get(path)
-          .then((res) => {
-            res.data.forEach((v) => {
-              v.id = v._id
-            })
-            console.log(res.data)
-            item.children.push(...res.data)
-          })
-          .catch((err) => {
-            console.error(err)
-          })
+      this.$store.commit('treeview/setPath', path)
+      await this.$store.dispatch('treeview/initialized')
+      item.children.push(...this.cards)
+
     },
   },
 }
