@@ -17,20 +17,6 @@ export const mutations = {
 }
 
 export const actions = {
-    async crateCard(context) {
-        const path = '/card/create';
-        return this.$axios.post(path, context.getters.getPayload)
-            .then((res) => {
-                context.commit('setResponse', res.data)
-            })
-            .catch((err) => {
-                context.commit('setResponse', err.response)
-                this.$notifier.showMessage({
-                    content: `ชื่อการ์ดนี้เคยมีการสร้างแล้ว!`,
-                    color: 'red'
-                })
-            })
-    },
     async deleteCard(context) {
         const path = `/card/query/delete/${context.getters.getDynamicPath}`;
         return this.$axios.delete(path)
@@ -46,19 +32,6 @@ export const actions = {
             })
 
     },
-    async updateCard(context) {
-        const path = `/card/query/update/${context.getters.getDynamicPath}`;
-        return this.$axios.put(path, context.getters.getPayload)
-            .then((res) => {
-                context.commit('setResponse', res.data)
-            })
-            .catch((err) => {
-                this.$notifier.showMessage({
-                    content: `มีบางอย่างผิดพลาด status code ${err.response.status}`,
-                    color: 'red'
-                })
-            })
-    }
 }
 
 
