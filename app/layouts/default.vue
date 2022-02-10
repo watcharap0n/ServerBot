@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-app style="font-family: 'Ubuntu', sans-serif;" class="bg-gray-200">
+    <v-app style="font-family: 'Ubuntu', sans-serif;" class="bg-gray-100 h-screen">
       <v-app-bar
           flat
           dense
@@ -122,10 +122,8 @@
 
       <div
           :style="`margin-left: ${$vuetify.application.left}px; margin-top: ${$vuetify.application.top}`"
-          class="bg-gray-100 h-screen p-20"
+          class="bg-gray-100 p-20 h-screen"
       >
-
-
         <Nuxt @routerHandle="handler"/>
         <Snackbar></Snackbar>
       </div>
