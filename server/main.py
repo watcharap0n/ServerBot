@@ -8,9 +8,11 @@ run application
 """
 import os
 import secrets
+import oauth2
 from functools import lru_cache
-from routers import secure, callback, intents, card, rule_based, quick_reply
-from routers.secure import get_current_active, User
+from routers import callback, intents, card, rule_based, quick_reply
+from models.oauth2 import User
+from oauth2 import get_current_active
 from fastapi import FastAPI, Depends, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
 from internal import Settings
@@ -80,9 +82,9 @@ async def info(
 
 
 app.include_router(
-    secure.router,
-    prefix="/secure",
-    tags=["Secure"],
+    oauth2.router,
+    prefix="/authentication",
+    tags=["Authentication"],
     responses={418: {"description": "I'm teapot"}},
 )
 
@@ -118,7 +120,7 @@ app.include_router(
     quick_reply.router,
     prefix="/button",
     tags=["QuickReply"],
-    responses={418: {"description": "I'm teapot"}}
+    responses={418: {"description": "I'm teapot"}},
 )
 
 description = """

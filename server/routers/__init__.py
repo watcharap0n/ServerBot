@@ -4,9 +4,7 @@ RouterAPI
 """
 
 from . import callback
-from . import secure
 from . import card
 from . import quick_reply
 from . import rule_based
 from . import intents
-

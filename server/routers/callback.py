@@ -6,11 +6,11 @@ from models.callback import Webhook, LineToken, UpdateLineToken
 from random import randint
 from typing import Optional, List
 from fastapi import APIRouter, Depends, Body, Request, status, HTTPException
-from routers.secure import get_current_active, User
+from oauth2 import get_current_active, User
 from fastapi.encoders import jsonable_encoder
 from linebot import LineBotApi, WebhookHandler
 from linebot.models import StickerSendMessage, TextSendMessage
-from linebot.exceptions import InvalidSignatureError
+from linebot.exceptions import InvalidSignatureError, LineBotApiError
 
 router = APIRouter()
 collection = "webhook"
@@ -48,50 +48,50 @@ async def check_access_token(item: LineToken):
         collection=collection, query={"access_token": item.access_token}
     )
     if not user:
-        return item
+        try:
+            line_bot_api = LineBotApi(item.access_token)
+            line_bot_api.get_bot_info()
+            return item
+        except LineBotApiError as ex:
+            raise HTTPException(status_code=ex.status_code, detail=ex.message)
     raise HTTPException(
         status_code=status.HTTP_400_BAD_REQUEST,
         detail="Access token have already",
     )
 
 
-@router.get("/channel", response_model=List[LineToken])
-async def get_all_token(
-    uid: Optional[str] = None, current_user: User = Depends(get_current_active)
-):
+@router.get("/channel/info", response_model=List[Webhook])
+async def get_all_token(current_user: User = Depends(get_current_active)):
     """
 
     :param uid:
     :param current_user:
     :return:
     """
-    if not uid:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, detail="Access Token is null"
-        )
+    uid = current_user.data.uid
     channels = await db.find(collection=collection, query={"uid": uid})
     channels = list(channels)
     return channels
 
 
-@router.get("/channel/{access_token}", response_model=Webhook)
-async def get_query_token(access_token: str):
-    channel = await db.find_one(
-        collection=collection, query={"access_token": access_token}
-    )
+@router.get("/channel/info/{token}", response_model=Webhook)
+async def get_query_token(token: str,
+                          current_user: User = Depends(get_current_active)):
+    channel = await db.find_one(collection=collection, query={"token": token})
     if not channel:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"not found channel {access_token}",
+            detail=f"not found channel {token}",
         )
+
     channel = Webhook(**channel)
     return channel
 
 
 @router.post("/channel/create", response_model=Webhook)
 async def create_channel(
-    item: LineToken = Depends(check_access_token),
-    current_user: User = Depends(get_current_active),
+        item: LineToken = Depends(check_access_token),
+        current_user: User = Depends(get_current_active),
 ):
     """
 
@@ -99,34 +99,44 @@ async def create_channel(
     :param current_user:
     :return:
     """
+
+    line_bot_api = LineBotApi(item.access_token)
+    bot_info = line_bot_api.get_bot_info()
     item_model = jsonable_encoder(item)
     item_model = item_user(data=item_model, current_user=current_user, url=True)
-    await db.insert_one(collection=collection, data=item_model)
+    item_model["bot_info"] = bot_info
+    item_model = jsonable_encoder(item_model)
     store_model = Webhook(**item_model)
+    await db.insert_one(collection=collection, data=item_model)
     return store_model
 
 
 @router.put("/channel/update/{token}", response_model=UpdateLineToken)
 async def update_channel(
-    payload: UpdateLineToken,
-    token: Optional[str] = None,
-    current_user: User = Depends(get_current_active),
+        payload: UpdateLineToken,
+        token: Optional[str] = None,
+        current_user: User = Depends(get_current_active),
 ):
-    data = jsonable_encoder(payload)
-    query = {"token": token}
-    values = {"$set": data}
+    try:
+        line_bot_api = LineBotApi(payload.access_token)
+        line_bot_api.get_bot_info()
+        data = jsonable_encoder(payload)
+        query = {"token": token}
+        values = {"$set": data}
 
-    if (await db.update_one(collection=collection, query=query, values=values)) == 0:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Callback not found {token} or Update Already exits",
-        )
-    return payload
+        if (await db.update_one(collection=collection, query=query, values=values)) == 0:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=f"Callback not found {token} or Update Already exits",
+            )
+        return payload
+    except LineBotApiError as ex:
+        raise HTTPException(status_code=ex.status_code, detail=ex.message)
 
 
 @router.delete("/channel/delete/{token}")
 async def delete_channel(
-    token: Optional[str] = None, current_user: User = Depends(get_current_active)
+        token: Optional[str] = None, current_user: User = Depends(get_current_active)
 ):
     """
 
@@ -144,9 +154,9 @@ async def delete_channel(
 
 @router.post("/{token}")
 async def client_webhook(
-    request: Request,
-    token: str,
-    payload: Optional[dict] = Body(None),
+        request: Request,
+        token: str,
+        payload: Optional[dict] = Body(None),
 ):
     """
 

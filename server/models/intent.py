@@ -1,4 +1,4 @@
-from typing import Optional, List
+from typing import Optional
 from bson import ObjectId
 from pydantic import BaseModel, Field
 from db import PyObjectId
@@ -10,7 +10,7 @@ class Intent(BaseModel):
     access_token: str
     ready: Optional[bool] = True
     status_flex: Optional[bool] = False
-    content: Optional[str] = None
+    id_card: Optional[str] = None
     question: Optional[list] = []
     answer: Optional[list] = []
 
@@ -22,7 +22,7 @@ class Intent(BaseModel):
                 "access_token": "access token long live",
                 "ready": True,
                 "status_flex": False,
-                "content": "content flex message",
+                "id_card": "content flex message",
                 "question": ["hello"],
                 "answer": ["hello there"],
             }
@@ -47,7 +47,7 @@ class UpdateIntent(BaseModel):
     access_token: str
     ready: Optional[bool] = True
     status_flex: Optional[bool] = False
-    content: Optional[str] = None
+    id_card: Optional[str] = None
     question: Optional[list] = []
     answer: Optional[list] = []
 
@@ -60,7 +60,7 @@ class UpdateIntent(BaseModel):
                 "access_token": "update access token long live",
                 "ready": True,
                 "status_flex": False,
-                "content": "update content flex message",
+                "id_card": "update content flex message",
                 "question": ["hello", "update"],
                 "answer": ["hello there", "update"],
             }

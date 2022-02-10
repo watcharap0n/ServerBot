@@ -1,4 +1,8 @@
 module.exports = {
+    env: {
+        branch: process.env.BRANCH || 'review',
+        baseUrl: process.env.BASE_URL || 'http://localhost:8500'
+    },
     ssr: false,
     head: {
         titleTemplate: '%s Platform CHATBOT',
@@ -10,7 +14,7 @@ module.exports = {
         script: [
             {
                 src: 'https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js'
-            }
+            },
         ],
         link: [
             {
@@ -35,26 +39,51 @@ module.exports = {
             }
         ]
     },
-
+    plugins: [
+        '~/plugins/notifier.js'
+    ],
     buildModules: [
-        "@nuxtjs/vuetify"
+        "@nuxtjs/vuetify",
+        "@nuxtjs/tailwindcss"
     ],
 
     modules: [
         "@nuxtjs/axios",
+        '@nuxtjs/auth-next',
         "bootstrap-vue/nuxt",
-        "vue-sweetalert2/nuxt"
+        "vue-sweetalert2/nuxt",
+        "nuxt-clipboard",
     ],
-
     srcDir: 'app/',
 
-    // css: [
-    //     '~/assets/css/style.css'
-    // ],
-    // styleResources: {
-    //     scss: [
-    //         '~/assets/scss/style.scss',
-    //     ]
-    // },
-    components: true
+    components: true,
+
+    axios: {
+        baseURL: 'http://localhost:8500'
+    },
+
+    clipboard: {
+        autoSetContainer: true
+    },
+    auth: {
+        strategies: {
+            local: {
+                token: {
+                    property: 'access_token',
+                    global: true,
+                    // required: true,
+                    type: 'Bearer'
+                },
+                user: {
+                    property: 'data',
+                    autoFetch: true
+                },
+                endpoints: {
+                    login: {url: '/authentication/token', method: 'post'},
+                    user: {url: '/authentication/user', method: 'get'},
+                    logout: {url: '/authentication/logout', method: 'delete'}
+                }
+            }
+        }
+    }
 }

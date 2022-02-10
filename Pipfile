@@ -25,6 +25,7 @@ torch = "*"
 attacut = "*"
 pandas = "*"
 httpx = "*"
+fastapi-security = "*"
 
 [dev-packages]
 pytest = "*"
