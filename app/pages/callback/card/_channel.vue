@@ -1,5 +1,5 @@
 <template>
-  <v-container>
+  <div class="h-auto">
     <v-card>
       <v-toolbar
           color="#12AE7E"
@@ -14,7 +14,7 @@
                @click="dialog = true"
                :hidden="!btnShow"
         >
-          <v-icon left>mdi-plus</v-icon>
+          <v-icon left>mdi-card-plus-outline</v-icon>
           เพิ่มการ์ด
         </v-btn>
 
@@ -23,14 +23,14 @@
           class="pa-4"
           justify="space-between"
       >
-        <v-col cols="5">
+        <v-col cols="12" sm="4">
           <v-treeview
               :active.sync="active"
               :items="items"
               :load-children="fetchItems"
               :open.sync="open"
               activatable
-              color="warning"
+              color="info"
               open-on-click
               transition
           >
@@ -40,11 +40,16 @@
               </v-icon>
             </template>
 
+            <template v-slot:label="{item}">
+              <div>{{ item.name }}</div>
+              <small v-if="selected">{{ item.message }}</small>
+            </template>
+
           </v-treeview>
         </v-col>
 
         <v-col
-            class="d-flex text-center"
+            cols="12" sm="8"
         >
           <v-scroll-y-transition mode="out-in">
             <div
@@ -57,23 +62,23 @@
             <v-card
                 v-else
                 :key="selected.id"
-                class="pt-6 mx-auto"
                 flat
-                max-width="400"
             >
               <v-card-text>
-
-                {{ selected }}
-
+                <Card
+                    :spin="!spinSave"
+                    v-if="selected"
+                    :delete-card="deleteCard"
+                    :update-card="todo"
+                    :set-object="selected" @input="selected = $event"
+                />
               </v-card-text>
-              <v-divider></v-divider>
 
             </v-card>
           </v-scroll-y-transition>
         </v-col>
       </v-row>
     </v-card>
-
     <Dialog :dialog.sync="dialog"
             header="เพิ่มการ์ด"
             :element-forms="elements"
@@ -82,22 +87,25 @@
             :loading-dialog="!spinSave"
             :submit-dialog="save"
     />
+
+
     <Dialog :dialog.sync="dialogDelete"
             header="ลบข้อมูล"
             body="คุณแน่ใจว่าจะลบข้อมูล ?"
             max-width="350"
             :loading-dialog="!spinSave"
-            :submit-dialog="deleted"
+            :submit-dialog="remove"
     />
-  </v-container>
+  </div>
 </template>
 
 <script>
 import {mapGetters} from "vuex";
 import Dialog from "@/components/app/Dialog";
+import Card from "@/components/app/Card";
 
 export default {
-  components: {Dialog},
+  components: {Dialog, Card},
   data() {
     return {
       dialog: false,
@@ -150,9 +158,6 @@ export default {
       const id = this.active[0]
       return this.users.find(user => user.id === id)
     },
-    ...mapGetters({
-      cards: "treeview/getInitialized",
-    })
   },
   methods: {
     async fetchItems(item) {
@@ -160,10 +165,19 @@ export default {
 
       await this.fetchToken()
       let encoded = encodeURIComponent(this.form.access_token);
+      console.log(encoded)
       const path = `/card/?access_token=${encoded}`;
-      this.$store.commit('treeview/setPath', path);
-      await this.$store.dispatch('treeview/initialized');
-      await item.children.push(...this.cards);
+      await this.$axios.get(path)
+          .then((res) => {
+            res.data.forEach((v) => {
+              v.id = v._id
+            })
+            item.children.push(...res.data);
+            console.log(res.data)
+          })
+          .catch((err) => {
+            console.error(err);
+          })
       this.btnShow = true;
     },
     async fetchToken() {
@@ -181,38 +195,77 @@ export default {
           })
     },
     async save() {
-      await this.fetchToken()
       this.spinSave = false
+      await this.fetchToken()
       this.form.name = this.elements[0].value
-      this.$store.commit('card/payload', this.form)
-      await this.$store.dispatch('card/crateCard')
-      this.form = this.$store.getters["card/getResponse"]
-      this.users.push(this.form)
-      this.$notifier.showMessage({
-        content: 'สร้างการ์ดสำเร็จ คุณสามารถกำหนดรูปแบบได้แล้ว',
-        color: 'success'
-      })
-      this.form = Object.assign({}, this.defaultForm)
+      const path = '/card/create'
+      this.$axios.post(path, this.form)
+          .then((res) => {
+            this.form = res.data
+            this.form.id = this.form._id
+            this.users.push(this.form)
+            this.form = Object.assign({}, this.defaultForm)
+            this.$notifier.showMessage({
+              content: 'สร้างการ์ดสำเร็จ คุณสามารถกำหนดรูปแบบได้แล้ว',
+              color: 'success'
+            })
+          })
+          .catch((err) => {
+            console.error(err)
+            if (err.response.status === 400) {
+              this.$notifier.showMessage({
+                content: `ชื่อการ์ดนี้เคยมีการสร้างแล้ว  ${this.form.name}`,
+                color: 'red'
+              })
+            } else {
+              this.$notifier.showMessage({
+                content: `มีบางอย่างผิดพลาด! ${err.response.status}`,
+                color: 'red'
+              })
+            }
+          })
       this.dialog = false;
       this.spinSave = true
       this.elements[0].value = ''
     },
-    deleteCard(item) {
+    deleteCard() {
       this.dialogDelete = true
-      this.$store.commit('card/setDynamicPath', item.id)
     },
-    async deleted() {
+    async remove() {
       this.spinSave = false
-      await this.$store.dispatch('card/deleteCard')
+      this.$store.commit('features/setDynamicPath', this.selected._id)
+      await this.$store.dispatch('features/deleteCard')
       this.users.splice(this.users.indexOf(this.selected), 1)
       this.spinSave = true
       this.dialogDelete = false
       this.$notifier.showMessage({
-        content: `ลบการ์ดแล้ว`,
+        content: `ลบการ์ดแล้ว!`,
         color: 'success'
       })
+    },
+    async todo() {
+      this.spinSave = false
+      delete this.selected.id
+      this.form = Object.assign({}, this.selected)
+      const path = `/card/query/update/${this.selected._id}`;
+      this.$axios.put(path, this.form)
+          .then(() => {
+            this.$notifier.showMessage({
+              content: `แก้ไขการ์ดแล้ว!`,
+              color: 'success'
+            })
+            this.form = Object.assign({}, this.defaultForm)
+          })
+          .catch((err) => {
+            this.$notifier.showMessage({
+              content: `มีบางอย่างผิดพลาด status code ${err.response.status}`,
+              color: 'red'
+            })
+          })
+      this.spinSave = true
     }
-  },
+  }
+
 }
 </script>
 
