@@ -14,7 +14,7 @@
             v-for="(v, k) in channels"
             :key="k"
         >
-          <v-item>
+          <v-item v-if="channels">
             <v-card
                 v-if="v.token"
                 color="#D7F9FA"
@@ -135,19 +135,22 @@
             :submit-dialog="save"
             :loading-dialog.sync="btnSpin"
     />
+    <Skeleton :condition="overlay"/>
   </div>
 </template>
 
 <script>
+import Skeleton from "@/components/app/Skeleton";
 import Dialog from "@/components/app/Dialog";
 import Bar from "~/components/app/Bar";
 import CreateChannel from "@/components/app/CreateChannel";
 
 export default {
-  components: {Bar, Dialog, CreateChannel},
+  components: {Bar, Dialog, CreateChannel, Skeleton},
   layout: 'index',
   data() {
     return {
+      overlay: false,
       btnSpin: false,
       channels: [],
       defaultChannel: {
@@ -191,11 +194,13 @@ export default {
     }
   },
   async created() {
+    this.overlay = true
     const path = '/callback/channel/info'
     await this.$axios.get(path)
         .then((res) => {
           this.channels = res.data
           this.channels.unshift(this.defaultChannel)
+          this.overlay = false
         })
         .catch((err) => {
           console.error(err)
