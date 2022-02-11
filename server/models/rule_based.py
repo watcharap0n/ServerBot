@@ -11,7 +11,7 @@ class RuleBased(BaseModel):
     status_flex: Optional[bool] = False
     ready: Optional[bool] = True
     content: Optional[str] = None
-    keyword: Optional[list] = []
+    keyword: Optional[str] = None
     answer: Optional[list] = []
 
     class Config:
@@ -23,7 +23,7 @@ class RuleBased(BaseModel):
                 "status_flex": False,
                 "ready": True,
                 "content": "request flex message content {}",
-                "keyword": ["erp"],
+                "keyword": 'erp',
                 "answer": ["answer bot"],
             }
         }
@@ -48,7 +48,7 @@ class UpdateRuleBased(BaseModel):
     status_flex: Optional[bool] = False
     ready: Optional[bool] = True
     content: Optional[str] = None
-    keyword: Optional[list] = []
+    keyword: Optional[str] = None
     answer: Optional[list] = []
 
     class Config:
@@ -61,7 +61,7 @@ class UpdateRuleBased(BaseModel):
                 "status_flex": False,
                 "ready": True,
                 "content": "update request flex message content {}",
-                "keyword": ["erp"],
+                "keyword": 'erp',
                 "answer": ["answer bot"],
             }
         }
