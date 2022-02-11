@@ -66,7 +66,7 @@
             >
               <v-card-text>
 
-                <h2>ใส่ Component ที่นี้</h2>
+                <RuleBased/>
 
               </v-card-text>
 
@@ -88,9 +88,10 @@
 
 <script>
 import Dialog from "@/components/app/Dialog";
+import RuleBased from "@/components/app/RuleBased";
 
 export default {
-  components: {Dialog},
+  components: {Dialog, RuleBased},
   data() {
     return {
       dialog: false,
