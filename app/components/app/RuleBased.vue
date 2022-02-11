@@ -1,121 +1,102 @@
 <template>
   <div>
-    <v-container>
-      <v-col sm="8">
-        <v-switch
-            v-model="showReady"
-            label="Ready"
 
+    <v-card class="text-center p-2" flat>
+      <v-card-text>
+        <v-switch
+            dense
+            :color="`${showReady ? '#12AE7E': 'red'}`"
+            v-model="showReady"
+            :label="`${showReady ? 'เปิดใช้งาน': 'ปิดใช้งาน'}`"
         >
         </v-switch>
-        <div v-if="ruleBased.ready === showReady">
+        <div :hidden="!showReady">
+          <p class="text-xl font-normal font-extrabold text-green-500">สร้างคีย์เวิร์ด</p>
+          <v-text-field
+              v-model="keyword"
+              label="คีย์เวิร์ด"
+              filled
+              @keydown.enter="sendQues"
+              clearable
+          ></v-text-field>
 
-          <v-card>
-            <v-card-text class="text-center p-2">
-              <v-form ref="formQueCard"
-                      v-model="valid">
-                <p class="text-xl">สร้างคีย์เวิร์ด</p>
-                <v-text-field
-                    v-model="ques"
-                    label="คีย์เวิร์ด"
-                    filled
-                    @keydown.enter="sendQues"
-                    clearable
-                ></v-text-field>
-              </v-form>
+          <p class="text-xl font-normal font-extrabold text-green-500 m-10">คำตอบ</p>
+          <v-switch
+              dense
+              :color="`${showCard ? '#12AE7E': 'red'}`"
+              v-model="showCard"
+              :label="`${showCard ? 'เปิดใช้งานตอบแบบการ์ด': 'ปิดใช้งานตอบแบบการ์ด'}`"
+          >
+          </v-switch>
 
-            </v-card-text>
-
-
-            <v-card-text class="text-center p-2">
-              <p class="text-xl">คำตอบ</p>
-              <v-switch
-                  v-model="showCard"
-                  label="Card"
-              >
-              </v-switch>
-              <div v-if="showCard === false">
-                <v-card-text
-                    v-model="showText"
+          <div v-if="!showCard" v-model="showText">
+            <v-text-field
+                v-model="answer"
+                label="คำตอบ"
+                filled
+                @keyup.enter="sendAns"
+                clearable
+            ></v-text-field>
+            <v-combobox
+                v-model="ruleBased.answer"
+                label="คำตอบ"
+                deletable-chips
+                chips
+                multiple
+                hide-selected
+                readonly
+            >
+              <template v-slot:selection="{ attrs, item, select, selected }">
+                <v-chip
+                    v-bind="attrs"
+                    :input-value="selected"
+                    close
+                    @click="select"
+                    @click:close="removeAns(item)"
                 >
-                  <v-form ref="formAnsCard"
-                          v-model="valid">
-                    <v-text-field
-                        v-model="ans"
-                        label="คำตอบ"
-                        filled
-                        @keyup.enter="sendAns"
-                        clearable
-                    ></v-text-field>
-                  </v-form>
-                  <v-combobox
-                      v-model="ruleBased.answer"
-                      label="คำตอบ"
-                      deletable-chips
-                      chips
-                      multiple
-                      hide-selected
-                      readonly
-                  >
-                    <template v-slot:selection="{ attrs, item, select, selected }">
-                      <v-chip
-                          v-bind="attrs"
-                          :input-value="selected"
-                          close
-                          @click="select"
-                          @click:close="removeAns(item)"
-                      >
-                        <strong>{{ item }}</strong>&nbsp;
+                  <strong>{{ item }}</strong>&nbsp;
 
-                      </v-chip>
-                    </template>
-                  </v-combobox>
+                </v-chip>
+              </template>
+            </v-combobox>
+          </div>
 
-                </v-card-text>
-              </div>
-
-              <div v-if="showCard === true">
-                <v-card-text
-                    v-model="showFlex"
-                >
-                  <v-select
-                      v-model="e2"
-                      :items="states"
-                      append-outer-icon="mdi-card-bulleted-outline"
-                      menu-props="auto"
-                      hide-details
-                      label="Select"
-                      single-line
-                  ></v-select>
-                </v-card-text>
-              </div>
-            </v-card-text>
-            <v-row justify="end">
-              <v-col sm="5">
-                <v-btn
-                    color="#12AE7E"
-                    text
-                    x-large
-                >บันทึกข้อมูล
-                </v-btn>
-                <v-btn
-                    color="red"
-                    fab
-                    dark
-                    small
-                >
-                  <v-icon>mdi-delete</v-icon>
-                </v-btn>
-              </v-col>
-            </v-row>
-          </v-card>
+          <div v-else v-model="showFlex">
+            <v-select
+                v-model="selected"
+                :items="modelCards"
+                append-outer-icon="mdi-card-bulleted-outline"
+                menu-props="auto"
+                hide-details
+                label="เลือกการ์ดที่ต้องการใช้งาน"
+                single-line
+            ></v-select>
+          </div>
         </div>
+      </v-card-text>
 
-      </v-col>
-    </v-container>
-
-
+      <v-card-actions>
+        <v-spacer></v-spacer>
+         <v-btn
+              text
+              color="success"
+          >
+            <v-icon left>mdi-database-plus</v-icon>
+            บันทึกข้อมูล
+          </v-btn>
+          <v-btn
+              color="red"
+              dark
+              text
+          >
+            <v-icon left>mdi-delete</v-icon>
+            ลบข้อมูล
+          </v-btn>
+      </v-card-actions>
+    </v-card>
   </div>
+
+
 </template>
 
 <script>
@@ -127,11 +108,11 @@ export default {
       showReady: true,
       showText: "",
       showFlex: "",
-      e2: 'Texas',
+      selected: '',
       showCard: false,
       valid: true,
-      ques: "",
-      ans: "",
+      keyword: "",
+      answer: "",
       ruleBased: {
         name: "",
         accessToken: "",
@@ -141,7 +122,7 @@ export default {
         keyword: "",
         answer: []
       },
-      states: [
+      modelCards: [
         'Alabama', 'Alaska', 'American Samoa', 'Arizona',
         'Arkansas', 'California', 'Colorado', 'Connecticut',
         'Delaware', 'District of Columbia', 'Federated States of Micronesia',
@@ -162,14 +143,11 @@ export default {
   },
   methods: {
     sendQues() {
-      this.ruleBased.keyword.push(this.ques)
-      this.$refs.formQueCard.reset();
-      console.log(this.ruleBased.keyword)
+      this.ruleBased.keyword.push(this.keyword)
+      this.keyword = ''
     },
     sendAns() {
-      this.ruleBased.answer.push(this.ans)
-      this.$refs.formAnsCard.reset();
-      console.log(this.ruleBased.answer)
+      this.ruleBased.answer.push(this.answer)
     },
     remove(item) {
       this.ruleBased.keyword.splice(this.ruleBased.keyword.indexOf(item), 1)
