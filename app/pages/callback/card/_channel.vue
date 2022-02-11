@@ -100,7 +100,7 @@
 </template>
 
 <script>
-import {mapGetters} from "vuex";
+
 import Dialog from "@/components/app/Dialog";
 import Card from "@/components/app/Card";
 
@@ -165,34 +165,18 @@ export default {
 
       await this.fetchToken()
       let encoded = encodeURIComponent(this.form.access_token);
-      console.log(encoded)
       const path = `/card/?access_token=${encoded}`;
-      await this.$axios.get(path)
-          .then((res) => {
-            res.data.forEach((v) => {
-              v.id = v._id
-            })
-            item.children.push(...res.data);
-            console.log(res.data)
-          })
-          .catch((err) => {
-            console.error(err);
-          })
+      this.$store.commit('features/setDynamicPath', path)
+      await this.$store.dispatch('features/fetchItem')
+      let response = this.$store.getters["features/getItem"]
+      item.children.push(...response);
       this.btnShow = true;
     },
     async fetchToken() {
       const path = `/callback/channel/info/${this.$route.params.channel}`;
-      await this.$axios.get(path)
-          .then((res) => {
-            this.form.access_token = res.data.access_token
-          })
-          .catch((err) => {
-            this.$notifier.showMessage({
-              content: 'มีบางอย่างผิดพลาด',
-              color: 'red'
-            })
-            console.error(err);
-          })
+      this.$store.commit('features/setDynamicPath', path)
+      await this.$store.dispatch('features/fetchToken')
+      this.form.access_token = this.$store.getters["features/getToken"]
     },
     async save() {
       this.spinSave = false
