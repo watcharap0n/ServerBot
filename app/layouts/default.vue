@@ -1,13 +1,24 @@
 <template>
   <div>
-    <v-app style="font-family: 'Ubuntu', sans-serif;" class="bg-gray-100 h-screen">
+    <v-app style="font-family: 'Kanit', sans-serif;" class="bg-gray-100 h-screen">
       <v-app-bar
           flat
           dense
           fixed
           :style="`margin-left: ${$vuetify.application.left}px;`"
       >
-        <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
+        <v-btn
+            style="margin-right: 20px"
+            small
+            class="hidden-xs-only "
+            @click="drawer = !drawer"
+            fab
+
+        >
+          <v-icon v-if="drawer">mdi-dots-vertical</v-icon>
+          <v-icon v-else>mdi-format-list-bulleted</v-icon>
+        </v-btn>
+
         <v-toolbar-title>{{ nameBar }}</v-toolbar-title>
 
         <v-spacer></v-spacer>
@@ -24,20 +35,17 @@
             bottom
         >
           <template v-slot:activator="{ on, attrs }">
-          <span class="leading-snug p-1"
-                v-on="on"
-                v-bind="on"
-          >
-            {{ $auth.user.username }}
-          </span>
+
             <v-btn
-                icon
                 v-on="on"
                 v-bind="on"
+                text
+                rounded
             >
-              <v-avatar>
-                <img :src="$auth.user.img_path" alt="src">
-              </v-avatar>
+              <v-icon left>
+                mdi-account
+              </v-icon>
+              {{ $auth.user.username }}
             </v-btn>
           </template>
 
@@ -49,10 +57,12 @@
                 <v-avatar>
                   <img :src="$auth.user.img_path" alt="src">
                 </v-avatar>
-                <h2>{{ $auth.user.username }}</h2>
-                <p class="text-caption mt-1">
-                  {{ $auth.user.email }}
-                </p>
+                <div class="m-2">
+                  <div class="font-semibold">{{ $auth.user.full_name }}</div>
+                  <small class="text-caption mt-1">
+                    {{ $auth.user.email }}
+                  </small>
+                </div>
                 <v-divider class="my-3"></v-divider>
                 <v-btn
                     color="#12AE7E"
@@ -61,7 +71,7 @@
                     rounded
                     text
                 >
-                  แก้บัญชี
+                  แก้ไขบัญชี
                 </v-btn>
                 <v-divider class="my-3"></v-divider>
                 <v-btn
@@ -84,8 +94,13 @@
           app
           v-model="drawer"
       >
-        <h2 class="p-5">Platform CHATBOT</h2>
 
+        <v-row class="p-2 m-4 text-2xl">
+          <div> PLATFORM</div>
+          <div class="text-red-600"> CHATBOT</div>
+        </v-row>
+
+        <v-divider></v-divider>
         <v-list-item two-line v-if="$auth.loggedIn">
           <v-list-item-avatar>
             <img :src="$auth.user.img_path">
@@ -110,7 +125,7 @@
               @click="changePageTitle(item.title)"
           >
             <v-list-item-icon>
-              <v-icon>{{ item.icon }}</v-icon>
+              <v-icon color="red">{{ item.icon }}</v-icon>
             </v-list-item-icon>
 
             <v-list-item-content>

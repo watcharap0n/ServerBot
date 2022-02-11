@@ -22,64 +22,63 @@
 
 
       <v-menu
-          left
-          bottom
-      >
-        <template v-slot:activator="{ on, attrs }">
-          <span class="leading-snug p-1"
+            left
+            bottom
+        >
+          <template v-slot:activator="{ on, attrs }">
+
+            <v-btn
                 v-on="on"
                 v-bind="on"
-          >
-            {{ $auth.user.username }}
-          </span>
-          <v-btn
-              icon
-              v-on="on"
-              v-bind="on"
-          >
-            <v-avatar>
-              <img :src="$auth.user.img_path" alt="src">
-            </v-avatar>
-          </v-btn>
-        </template>
+                text
+                rounded
+            >
+              <v-icon left>
+                mdi-account
+              </v-icon>
+              {{ $auth.user.username }}
+            </v-btn>
+          </template>
 
-        <v-card width="300">
-          <v-list-item-content
-              class="justify-center"
-          >
-            <div class="mx-auto text-center">
-              <v-avatar>
-                <img :src="$auth.user.img_path" alt="src">
-              </v-avatar>
-              <h2>{{ $auth.user.username }}</h2>
-              <p class="text-caption mt-1">
-                {{ $auth.user.email }}
-              </p>
-              <v-divider class="my-3"></v-divider>
-              <v-btn
-                  color="#12AE7E"
-                  block
-                  depressed
-                  rounded
-                  text
-              >
-                แก้บัญชี
-              </v-btn>
-              <v-divider class="my-3"></v-divider>
-              <v-btn
-                  color="red"
-                  block
-                  depressed
-                  rounded
-                  text
-                  @click="logout"
-              >
-                ยกเลิกเชื่อมต่อ
-              </v-btn>
-            </div>
-          </v-list-item-content>
-        </v-card>
-      </v-menu>
+          <v-card width="300">
+            <v-list-item-content
+                class="justify-center"
+            >
+              <div class="mx-auto text-center">
+                <v-avatar>
+                  <img :src="$auth.user.img_path" alt="src">
+                </v-avatar>
+                <div class="m-2">
+                  <div class="font-semibold">{{ $auth.user.full_name }}</div>
+                  <small class="text-caption mt-1">
+                    {{ $auth.user.email }}
+                  </small>
+                </div>
+                <v-divider class="my-3"></v-divider>
+                <v-btn
+                    color="#12AE7E"
+                    block
+                    depressed
+                    rounded
+                    text
+                >
+                  แก้ไขบัญชี
+                </v-btn>
+                <v-divider class="my-3"></v-divider>
+                <v-btn
+                    color="red"
+                    block
+                    depressed
+                    rounded
+                    text
+                    @click="logout"
+                >
+                  ยกเลิกเชื่อมต่อ
+                </v-btn>
+              </div>
+            </v-list-item-content>
+          </v-card>
+        </v-menu>
     </v-app-bar>
   </div>
 </template>
