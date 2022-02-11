@@ -151,10 +151,10 @@ export default {
       this.itemsRouter = [
         {title: 'หน้าหลัก', icon: 'mdi-home', url: `/`},
         {title: 'แดชบอร์ด', icon: 'mdi-view-dashboard', url: `/callback/dashboard/${router.channel}`},
-        {title: 'สร้างการ์ด', icon: 'mdi-robot-happy', url: `/callback/card/${router.channel}`},
+        {title: 'สร้างการ์ด', icon: 'mdi-cards-outline', url: `/callback/card/${router.channel}`},
         {title: 'สอนบอท', icon: 'mdi-robot-happy', url: `/callback/intent/${router.channel}`},
-        {title: 'สร้างกฏ', icon: 'mdi-robot-happy', url: `/callback/rule/${router.channel}`},
-        {title: 'ตอบโดยเร็ว', icon: 'mdi-robot-happy', url: `/callback/button/${router.channel}`},
+        {title: 'สร้างกฏ', icon: 'mdi-key-variant', url: `/callback/rule/${router.channel}`},
+        {title: 'ตอบโดยเร็ว', icon: 'mdi-reply', url: `/callback/button/${router.channel}`},
         {title: 'ตั้งค่า', icon: 'mdi-account-box', url: `/callback/setting/${router.channel}`},
       ]
     },
