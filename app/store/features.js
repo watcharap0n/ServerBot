@@ -2,9 +2,17 @@ export const state = () => ({
     data: [],
     response: null,
     dynamicPath: '',
+    item: null,
+    itemToken: null,
 })
 
 export const mutations = {
+    setItem(state, payload) {
+        state.item = payload
+    },
+    setItemToken(state, payload) {
+        state.itemToken = payload
+    },
     payload(state, payload) {
         state.data = payload
     },
@@ -32,6 +40,32 @@ export const actions = {
             })
 
     },
+    async fetchItem(context) {
+        await this.$axios.get(context.getters.getDynamicPath)
+            .then((res) => {
+                res.data.forEach((v) => {
+                    v.id = v._id
+                })
+                context.commit('setItem', res.data);
+            })
+            .catch((err) => {
+                console.error(err);
+            })
+    },
+    async fetchToken(context) {
+        await this.$axios.get(context.getters.getDynamicPath)
+            .then((res) => {
+                context.commit('setItemToken', res.data.access_token);
+            })
+            .catch((err) => {
+                this.$notifier.showMessage({
+                    content: 'มีบางอย่างผิดพลาด',
+                    color: 'red'
+                })
+                console.error(err);
+            })
+    }
+
 }
 
 
@@ -44,5 +78,11 @@ export const getters = {
     },
     getDynamicPath(state) {
         return state.dynamicPath
+    },
+    getItem(state) {
+        return state.item
+    },
+    getToken(state) {
+        return state.itemToken
     }
 }
