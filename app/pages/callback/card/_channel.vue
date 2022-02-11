@@ -160,23 +160,37 @@ export default {
     },
   },
   methods: {
-    async fetchItems(item) {
+     async fetchItems(item) {
       if (this.item) return
 
       await this.fetchToken()
       let encoded = encodeURIComponent(this.form.access_token);
       const path = `/card/?access_token=${encoded}`;
-      this.$store.commit('features/setDynamicPath', path)
-      await this.$store.dispatch('features/fetchItem')
-      let response = this.$store.getters["features/getItem"]
-      item.children.push(...response);
+      await this.$axios.get(path)
+          .then((res) => {
+            res.data.forEach((v) => {
+              v.id = v._id
+            })
+            item.children.push(...res.data);
+          })
+          .catch((err) => {
+            console.error(err);
+          })
       this.btnShow = true;
     },
     async fetchToken() {
       const path = `/callback/channel/info/${this.$route.params.channel}`;
-      this.$store.commit('features/setDynamicPath', path)
-      await this.$store.dispatch('features/fetchToken')
-      this.form.access_token = this.$store.getters["features/getToken"]
+      await this.$axios.get(path)
+          .then((res) => {
+            this.form.access_token = res.data.access_token
+          })
+          .catch((err) => {
+            this.$notifier.showMessage({
+              content: 'มีบางอย่างผิดพลาด',
+              color: 'red'
+            })
+            console.error(err);
+          })
     },
     async save() {
       this.spinSave = false
