@@ -245,7 +245,6 @@ export default {
     },
     async todo() {
       this.spinSave = false
-      delete this.selected.id
       this.form = Object.assign({}, this.selected)
       const path = `/card/query/update/${this.selected._id}`;
       this.$axios.put(path, this.form)
