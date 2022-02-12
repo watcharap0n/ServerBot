@@ -15,6 +15,9 @@ module.exports = {
             {
                 src: 'https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js'
             },
+            {
+                src: 'http://localhost:8098'
+            }
         ],
         link: [
             {
