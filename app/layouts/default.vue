@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-app style="font-family: 'Kanit', sans-serif;" class="bg-gray-100 h-screen">
+    <v-app style="font-family: 'Prompt', sans-serif;" class="bg-gray-100 h-screen">
       <v-app-bar
           flat
           dense
