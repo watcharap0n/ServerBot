@@ -25,9 +25,9 @@ export const mutations = {
 }
 
 export const actions = {
-    async deleteCard(context) {
-        const path = `/card/query/delete/${context.getters.getDynamicPath}`;
-        return this.$axios.delete(path)
+    async deleteItem(context) {
+        const path = context.getters.getDynamicPath;
+        this.$axios.delete(path)
             .then((res) => {
                 context.commit('setResponse', res.data)
             })
@@ -39,6 +39,23 @@ export const actions = {
                 })
             })
 
+    },
+    async updateItem(context) {
+        const path = context.getters.getDynamicPath;
+        await this.$axios.put(path, context.getters.getPayload)
+            .then((res) => {
+                context.commit('setResponse', res.data)
+                this.$notifier.showMessage({
+                    content: `แก้ไขแล้ว!`,
+                    color: 'success'
+                })
+            })
+            .catch((err) => {
+                this.$notifier.showMessage({
+                    content: `มีบางอย่างผิดพลาด status code ${err.response.status}`,
+                    color: 'red'
+                })
+            })
     },
     async fetchItem(context) {
         await this.$axios.get(context.getters.getDynamicPath)
@@ -64,8 +81,16 @@ export const actions = {
                 })
                 console.error(err);
             })
+    },
+    async fetchCard(context) {
+        await this.$axios.get(context.getters.getDynamicPath)
+            .then((res) => {
+                context.commit('setResponse', res.data)
+            })
+            .catch((err) => {
+                console.error(err);
+            })
     }
-
 }
 
 
