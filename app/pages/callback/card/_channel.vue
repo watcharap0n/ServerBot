@@ -231,8 +231,9 @@ export default {
     },
     async remove() {
       this.spinSave = false
-      this.$store.commit('features/setDynamicPath', this.selected._id)
-      await this.$store.dispatch('features/deleteCard')
+      const path = `/card/query/delete/${this.selected._id}`
+      this.$store.commit('features/setDynamicPath', path)
+      await this.$store.dispatch('features/deleteItem')
       this.users.splice(this.users.indexOf(this.selected), 1)
       this.spinSave = true
       this.dialogDelete = false
