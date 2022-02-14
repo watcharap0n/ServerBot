@@ -66,7 +66,7 @@
             >
               <v-card-text>
 
-                <h2>ใส่ Component ที่นี้</h2>
+                <Intent/>
 
               </v-card-text>
 
@@ -88,9 +88,10 @@
 
 <script>
 import Dialog from "@/components/app/Dialog";
+import Intent from "@/components/app/Intent"
 
 export default {
-  components: {Dialog},
+  components: {Dialog, Intent},
   data() {
     return {
       dialog: false,
@@ -145,7 +146,7 @@ export default {
     await this.$parent.$emit('routerHandle', this.$route.params);
   },
   methods: {
-     async fetchItems(item) {
+    async fetchItems(item) {
       if (this.item) return
 
       await this.fetchToken()

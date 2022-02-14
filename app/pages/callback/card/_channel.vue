@@ -160,7 +160,7 @@ export default {
     },
   },
   methods: {
-     async fetchItems(item) {
+    async fetchItems(item) {
       if (this.item) return
 
       await this.fetchToken()
@@ -262,7 +262,6 @@ export default {
       this.spinSave = true
     }
   }
-
 }
 </script>
 
