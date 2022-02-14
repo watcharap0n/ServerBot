@@ -1,151 +1,123 @@
 <template>
-  <div>
-    <v-container>
-      <v-col sm="8">
-        <v-switch
-            v-model="showReady"
-            label="Ready"
 
+  <v-card class="text-center p-2">
+    <v-card-text>
+      <v-switch
+          dense
+          :color="`${intent.ready ? '#12AE7E': 'red'}`"
+          :label="`${intent.ready ? 'เปิดใช้งาน': 'ปิดใช้งาน'}`"
+          v-model="intent.ready"
+      ></v-switch>
+      <div :hidden="!intent.ready">
+        <p class="text-xl font-normal font-extrabold text-green-500">สอนบอท</p>
+        <v-text-field
+            append-outer-icon="mdi-send"
+            @click:append-outer="sendQues"
+            v-model="question"
+            label="คำถาม"
+            filled
+            @keydown.enter="sendQues"
+            clearable
+        ></v-text-field>
+        <v-combobox
+            v-model="intent.question"
+            label="คำถามที่สอนไป"
+            :items="intent.question"
+            chips
+            multiple
+            hide-selected
+            readonly
+        >
+          <template v-slot:selection="{ attrs, item, select, selected }">
+            <v-chip
+                v-bind="attrs"
+                :input-value="selected"
+                close
+                @click="select"
+                @click:close="remove(item)"
+            >
+              <strong>{{ item }}</strong>&nbsp;
+
+            </v-chip>
+          </template>
+        </v-combobox>
+
+
+        <p class="text-xl font-normal font-extrabold text-green-500">คำตอบ</p>
+        <v-switch
+            v-model="intent.status_flex"
+            label="Card"
         >
         </v-switch>
-        <div v-if="intent.ready === showReady">
-
-          <v-card>
-            <v-card-text class="text-center p-2">
-              <v-form ref="formQueCard"
-                      v-model="valid">
-                <p class="text-xl">สร้างคำถาม (สิ่งที่จะสอน)</p>
-                <v-text-field
-                    append-outer-icon="mdi-send"
-                    @click:append-outer="sendQues"
-                    v-model="ques"
-                    label="คำถาม"
-                    filled
-                    @keydown.enter="sendQues"
-                    clearable
-                ></v-text-field>
-              </v-form>
-              <v-combobox
-                  v-model="intent.question"
-                  label="คำถามที่สอนไป"
-                  :items="intent.question"
-                  chips
-                  multiple
-                  hide-selected
-                  readonly
+        <div v-if="!intent.status_flex">
+          <v-text-field
+              append-outer-icon="mdi-send"
+              @click:append-outer="sendAns"
+              v-model="answer"
+              label="คำตอบ"
+              filled
+              @keyup.enter="sendAns"
+              clearable
+          ></v-text-field>
+          <v-combobox
+              v-model="intent.answer"
+              label="คำตอบทั้งหมด"
+              deletable-chips
+              chips
+              multiple
+              hide-selected
+              readonly
+          >
+            <template v-slot:selection="{ attrs, item, select, selected }">
+              <v-chip
+                  v-bind="attrs"
+                  :input-value="selected"
+                  close
+                  @click="select"
+                  @click:close="removeAns(item)"
               >
-                <template v-slot:selection="{ attrs, item, select, selected }">
-                  <v-chip
-                      v-bind="attrs"
-                      :input-value="selected"
-                      close
-                      @click="select"
-                      @click:close="remove(item)"
-                  >
-                    <strong>{{ item }}</strong>&nbsp;
+                <strong>{{ item }}</strong>&nbsp;
 
-                  </v-chip>
-                </template>
-              </v-combobox>
-            </v-card-text>
-
-
-            <v-card-text class="text-center p-2">
-              <p class="text-xl">คำตอบ (สิ่งที่ให้บอทตอบ)</p>
-              <v-switch
-                  v-model="showCard"
-                  label="Card"
-              >
-              </v-switch>
-              <div v-if="showCard === false">
-                <v-card-text
-                    v-model="showText"
-                >
-                  <v-form ref="formAnsCard"
-                          v-model="valid">
-                    <v-text-field
-                        append-outer-icon="mdi-send"
-                        @click:append-outer="sendAns"
-                        v-model="ans"
-                        label="คำตอบ"
-                        filled
-                        @keyup.enter="sendAns"
-                        clearable
-                    ></v-text-field>
-                  </v-form>
-                  <v-combobox
-                      v-model="intent.answer"
-                      label="คำตอบทั้งหมด"
-                      deletable-chips
-                      chips
-                      multiple
-                      hide-selected
-                      readonly
-                  >
-                    <template v-slot:selection="{ attrs, item, select, selected }">
-                      <v-chip
-                          v-bind="attrs"
-                          :input-value="selected"
-                          close
-                          @click="select"
-                          @click:close="removeAns(item)"
-                      >
-                        <strong>{{ item }}</strong>&nbsp;
-
-                      </v-chip>
-                    </template>
-                  </v-combobox>
-
-                </v-card-text>
-              </div>
-
-              <div v-if="showCard === true">
-                <v-card-text
-                    v-model="showFlex"
-
-                >
-                  <v-select
-                      v-model="e2"
-                      :items="states"
-                      append-outer-icon="mdi-card-bulleted-outline"
-                      menu-props="auto"
-                      hide-details
-                      label="Select"
-                      single-line
-                  ></v-select>
-                </v-card-text>
-              </div>
-            </v-card-text>
-            <v-row justify="end">
-              <v-col sm="5">
-                <v-btn
-                    color="#12AE7E"
-                    text
-                    x-large
-                >บันทึกประเภทการตอบ
-                </v-btn>
-                <v-btn
-                    color="red"
-                    fab
-                    dark
-                    small
-                >
-                  <v-icon>mdi-delete</v-icon>
-                </v-btn>
-              </v-col>
-            </v-row>
-          </v-card>
+              </v-chip>
+            </template>
+          </v-combobox>
         </div>
 
-      </v-col>
-    </v-container>
+        <div v-else>
+          <v-select
+              v-model="selected"
+              :items="modelCard"
+              append-outer-icon="mdi-card-bulleted-outline"
+              menu-props="auto"
+              hide-details
+              label="Select"
+              single-line
+          ></v-select>
+        </div>
+      </div>
+    </v-card-text>
+    <v-card-actions>
+      <v-spacer></v-spacer>
+      <v-btn
+          color="#12AE7E"
+          text
+          x-large
+      >บันทึกประเภทการตอบ
+      </v-btn>
+      <v-btn
+          color="red"
+          dark
+          text
+      >
+        <v-icon left>mdi-delete</v-icon>
+        ลบข้อมูล
+      </v-btn>
+    </v-card-actions>
+  </v-card>
 
-
-  </div>
 </template>
 
 <script>
-import intent from "@/components/app/Intent";
 
 export default {
   data() {
@@ -153,21 +125,21 @@ export default {
       showReady: true,
       showText: "",
       showFlex: "",
-      e2: 'Texas',
+      selected: "",
       showCard: false,
       valid: true,
-      ques: "",
-      ans: "",
+      question: "",
+      answer: "",
       intent: {
         name: "",
-        accessToken: "",
+        access_token: "",
         ready: true,
-        statusCard: false,
-        idCard: "",
+        status_flex: false,
+        card: "",
         question: [],
         answer: [],
       },
-      states: [
+      modelCard: [
         'Alabama', 'Alaska', 'American Samoa', 'Arizona',
         'Arkansas', 'California', 'Colorado', 'Connecticut',
         'Delaware', 'District of Columbia', 'Federated States of Micronesia',
@@ -188,26 +160,24 @@ export default {
   },
   methods: {
     sendQues() {
-      this.intent.question.push(this.ques)
-      this.$refs.formQueCard.reset();
-      console.log(this.intent.question)
+      if (this.question)
+      this.intent.question.push(this.question)
+      this.question = ''
     },
     sendAns() {
-      this.intent.answer.push(this.ans)
-      this.$refs.formAnsCard.reset();
-      console.log(this.intent.answer)
+      if (this.answer)
+      this.intent.answer.push(this.answer)
+      this.answer = ''
     },
     remove(item) {
       this.intent.question.splice(this.intent.question.indexOf(item), 1)
       this.intent.question = [...this.intent.question]
-
     },
     removeAns(item) {
       this.intent.answer.splice(this.intent.answer.indexOf(item), 1)
       this.intent.answer = [...this.intent.answer]
     },
   },
-  computed: {},
 }
 </script>
 
