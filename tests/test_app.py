@@ -20,7 +20,7 @@ PAYLOAD_INTENT = {
     "access_token": "test unit access token",
     "ready": True,
     "status_flex": False,
-    "id_card": "content test unit",
+    "card": "content test unit",
     "question": ["a", "b", "c", "d"],
     "answer": ["1", "2", "3", "4", "5"],
 }
@@ -77,14 +77,14 @@ def test_intent_update():
     assert response.status_code == status.HTTP_200_OK
 
 
-def test_intent_update_flex_status_not_found_id_card():
+def test_intent_update_flex_status_not_found_card():
     PAYLOAD_INTENT['status_flex'] = True
     response = client.put(
         f'/intents/query/update/{ids_intent}', json=PAYLOAD_INTENT, headers=headers
     )
     PAYLOAD_INTENT['status_flex'] = False
     assert response.status_code == status.HTTP_400_BAD_REQUEST
-    assert response.json() == {f"detail": f"id card not found {PAYLOAD_INTENT['id_card']}"}
+    assert response.json() == {f"detail": f"id card not found {PAYLOAD_INTENT['card']}"}
 
 
 def test_intent_delete():
@@ -120,10 +120,8 @@ PAYLOAD_RuleBased = {
     "access_token": "access token long live",
     "status_flex": False,
     "ready": True,
-    "content": "request flex message content {}",
-    "keyword": [
-        "erp"
-    ],
+    "card": "put query card in collection card",
+    "keyword": 'test',
     "answer": [
         "answer bot"
     ]
@@ -178,6 +176,16 @@ def test_rule_based_update():
         headers=headers,
     )
     assert response.status_code == status.HTTP_200_OK
+
+
+def test_rule_Based_update_flex_status_not_found_card():
+    PAYLOAD_RuleBased['status_flex'] = True
+    response = client.put(
+        f'/rule_based/query/update/{ids_rule_based}', json=PAYLOAD_RuleBased, headers=headers
+    )
+    PAYLOAD_RuleBased['status_flex'] = False
+    assert response.status_code == status.HTTP_400_BAD_REQUEST
+    assert response.json() == {f"detail": f"id card not found {PAYLOAD_RuleBased['card']}"}
 
 
 def test_rule_based_delete():
@@ -360,7 +368,7 @@ def test_card_delete():
 
 
 def test_card_update_not_found():
-    id = "fake_id_card"
+    id = "fake_card"
     PAYLOAD_CARD["name"] = "update name card test unit"
     response = client.put(
         f"/card/query/update/{id}",
