@@ -1,6 +1,7 @@
 <template>
   <div>
     <v-card>
+
       <v-toolbar
           color="#12AE7E"
           dark
@@ -42,7 +43,7 @@
 
             <template v-slot:label="{item}">
               <div>{{ item.name }}</div>
-              <small v-if="selected">{{ item.message }}</small>
+              <small v-if="selected">{{ item.keyword }}</small>
             </template>
 
           </v-treeview>
@@ -66,7 +67,11 @@
             >
               <v-card-text>
 
-                <RuleBased/>
+                <RuleBased
+                    :rule-based="selected"
+                    :cards="cards"
+                    :users.sync="users"
+                />
 
               </v-card-text>
 
@@ -83,6 +88,7 @@
             :loading-dialog="!spinSave"
             :submit-dialog="save"
     />
+
   </div>
 </template>
 
@@ -94,6 +100,7 @@ export default {
   components: {Dialog, RuleBased},
   data() {
     return {
+      cards: [],
       dialog: false,
       dialogDelete: false,
       spinSave: true,
@@ -102,14 +109,20 @@ export default {
       form: {
         name: '',
         access_token: '',
-        content: '',
-        message: '',
+        status_flex: false,
+        ready: true,
+        card: "",
+        keyword: "",
+        answer: []
       },
       defaultForm: {
         name: '',
         access_token: '',
-        content: '',
-        message: '',
+        status_flex: false,
+        ready: true,
+        card: "",
+        keyword: "",
+        answer: []
       },
       data: [],
       active: [],
@@ -128,6 +141,7 @@ export default {
     }
   },
   computed: {
+
     items() {
       return [
         {
@@ -158,6 +172,7 @@ export default {
               v.id = v._id
             })
             item.children.push(...res.data);
+            this.getCards(encoded);
           })
           .catch((err) => {
             console.error(err);
@@ -212,7 +227,15 @@ export default {
       this.spinSave = true
       this.elements[0].value = ''
     },
+    async getCards(accessToken) {
+      const path = `/card/?access_token=${accessToken}`;
+      this.$store.commit('features/setDynamicPath', path)
+      await this.$store.dispatch('features/fetchCard')
+      this.cards = this.$store.getters["features/getResponse"]
+    }
+
   },
+
 
 }
 </script>
