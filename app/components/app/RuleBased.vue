@@ -1,7 +1,9 @@
 <template>
 
   <v-card class="text-center p-2" flat>
+
     <v-card-text>
+
       <v-switch
           dense
           :color="`${ruleBased.ready ? '#12AE7E': 'red'}`"
@@ -62,7 +64,9 @@
         <div v-else>
           <v-select
               v-model="ruleBased.card"
-              :items="modelCards"
+              :items="cards"
+              item-text="name"
+              item-value="_id"
               append-outer-icon="mdi-card-bulleted-outline"
               menu-props="auto"
               hide-details
@@ -74,10 +78,13 @@
     </v-card-text>
 
     <v-card-actions>
+
       <v-spacer></v-spacer>
       <v-btn
           text
           color="success"
+          :loading="!spin"
+          @click="todo"
       >
         <v-icon left>mdi-database-plus</v-icon>
         บันทึกข้อมูล
@@ -86,54 +93,56 @@
           color="red"
           dark
           text
+          @click="dialog = true"
       >
         <v-icon left>mdi-delete</v-icon>
         ลบข้อมูล
       </v-btn>
     </v-card-actions>
+    <Dialog :dialog.sync="dialog"
+            header="ลบข้อมูล"
+            body="คุณแน่ใจว่าจะลบข้อมูล ?"
+            max-width="350"
+            :loading-dialog="!spin"
+            :submit-dialog="remove"
+    />
+
   </v-card>
 
 </template>
 
 <script>
 
+import Dialog from "@/components/app/Dialog";
 export default {
+  components:{Dialog},
+  props: {
+    ruleBased:{
+      required: false,
+      type: Object
+    },
+    cards: {
+      required: false
+    },
+    users: {
+      required: false
+    },
+  },
   data() {
     return {
       answer: "",
-      ruleBased: {
-        name: "",
-        access_token: "",
-        status_flex: false,
-        ready: true,
-        card: "",
-        keyword: "",
-        answer: []
-      },
-      modelCards: [
-        'Alabama', 'Alaska', 'American Samoa', 'Arizona',
-        'Arkansas', 'California', 'Colorado', 'Connecticut',
-        'Delaware', 'District of Columbia', 'Federated States of Micronesia',
-        'Florida', 'Georgia', 'Guam', 'Hawaii', 'Idaho',
-        'Illinois', 'Indiana', 'Iowa', 'Kansas', 'Kentucky',
-        'Louisiana', 'Maine', 'Marshall Islands', 'Maryland',
-        'Massachusetts', 'Michigan', 'Minnesota', 'Mississippi',
-        'Missouri', 'Montana', 'Nebraska', 'Nevada',
-        'New Hampshire', 'New Jersey', 'New Mexico', 'New York',
-        'North Carolina', 'North Dakota', 'Northern Mariana Islands', 'Ohio',
-        'Oklahoma', 'Oregon', 'Palau', 'Pennsylvania', 'Puerto Rico',
-        'Rhode Island', 'South Carolina', 'South Dakota', 'Tennessee',
-        'Texas', 'Utah', 'Vermont', 'Virgin Island', 'Virginia',
-        'Washington', 'West Virginia', 'Wisconsin', 'Wyoming',
-      ],
+      items: [],
+      dialog: false,
+      spin: true
 
     }
   },
   methods: {
     sendAns() {
       this.ruleBased.answer.push(this.answer)
+      this.answer = ''
     },
-    remove(item) {
+    removeKeyword(item) {
       this.ruleBased.keyword.splice(this.ruleBased.keyword.indexOf(item), 1)
       this.ruleBased.keyword = [...this.ruleBased.keyword]
 
@@ -142,8 +151,41 @@ export default {
       this.ruleBased.answer.splice(this.ruleBased.answer.indexOf(item), 1)
       this.ruleBased.answer = [...this.ruleBased.answer]
     },
+    async remove() {
+      this.spin = false
+      this.spinSave = false
+      const path = `/rule_based/query/delete/${this.ruleBased.id}`
+      this.$store.commit(`features/setDynamicPath`, path)
+      await this.$store.dispatch(`features/deleteItem`)
+      this.users.splice(this.users.indexOf(this.ruleBased), 1)
+      this.spinSave = true
+      this.dialogDelete = false
+      this.$notifier.showMessage({
+        content: `ลบกฎแล้ว!`,
+        color: 'success'
+      })
+      this.spin = true
+    },
+    async todo(){
+      this.spin = false
+      const path = `/rule_based/query/update/${this.ruleBased.id}`
+      await this.$axios.put(path, this.ruleBased)
+       .then((res) => {
+         this.$notifier.showMessage({
+              content: `แก้ไขกฎแล้ว ${res.data.name}`,
+              color: 'success'
+            })
+       })
+      .catch((err) => {
+            this.$notifier.showMessage({
+              content: `มีบางอย่างผิดพลาด status code ${err.response.status}`,
+              color: 'red'
+            })
+          })
+      this.spin = true
+    }
   },
-  computed: {},
+
 }
 </script>
 
