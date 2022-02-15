@@ -34,7 +34,7 @@
                 :input-value="selected"
                 close
                 @click="select"
-                @click:close="remove(item)"
+                @click:close="removeQuestion(item)"
             >
               <strong>{{ item }}</strong>&nbsp;
 
@@ -85,8 +85,10 @@
 
         <div v-else>
           <v-select
-              v-model="selected"
-              :items="modelCard"
+              v-model="intent.card"
+              :items="cards"
+              item-text="name"
+              item-value="_id"
               append-outer-icon="mdi-card-bulleted-outline"
               menu-props="auto"
               hide-details
@@ -102,74 +104,74 @@
           color="#12AE7E"
           text
           x-large
+          :loading="!spin"
+          @click="todo"
       >บันทึกประเภทการตอบ
       </v-btn>
       <v-btn
           color="red"
           dark
           text
+          @click="dialog = true"
       >
         <v-icon left>mdi-delete</v-icon>
         ลบข้อมูล
       </v-btn>
     </v-card-actions>
+    <Dialog
+        :dialog.sync="dialog"
+        header="ลบข้อมูล"
+        body="คุณแน่ใจว่าจะลบข้อมูล ?"
+        max-width="350"
+        :loading-dialog="!spin"
+        :submit-dialog="remove"
+    >
+
+    </Dialog>
   </v-card>
 
 </template>
 
 <script>
+import Dialog from "@/components/app/Dialog";
 
 export default {
+  components: {Dialog},
+  props: {
+    intent: {
+      required: false,
+      type: Object
+    },
+    cards: {
+      required: false
+    },
+    users: {
+      required: false
+    }
+  },
   data() {
     return {
-      showReady: true,
-      showText: "",
-      showFlex: "",
+      items: [],
+      dialog: false,
+      spin: true,
       selected: "",
       showCard: false,
-      valid: true,
       question: "",
       answer: "",
-      intent: {
-        name: "",
-        access_token: "",
-        ready: true,
-        status_flex: false,
-        card: "",
-        question: [],
-        answer: [],
-      },
-      modelCard: [
-        'Alabama', 'Alaska', 'American Samoa', 'Arizona',
-        'Arkansas', 'California', 'Colorado', 'Connecticut',
-        'Delaware', 'District of Columbia', 'Federated States of Micronesia',
-        'Florida', 'Georgia', 'Guam', 'Hawaii', 'Idaho',
-        'Illinois', 'Indiana', 'Iowa', 'Kansas', 'Kentucky',
-        'Louisiana', 'Maine', 'Marshall Islands', 'Maryland',
-        'Massachusetts', 'Michigan', 'Minnesota', 'Mississippi',
-        'Missouri', 'Montana', 'Nebraska', 'Nevada',
-        'New Hampshire', 'New Jersey', 'New Mexico', 'New York',
-        'North Carolina', 'North Dakota', 'Northern Mariana Islands', 'Ohio',
-        'Oklahoma', 'Oregon', 'Palau', 'Pennsylvania', 'Puerto Rico',
-        'Rhode Island', 'South Carolina', 'South Dakota', 'Tennessee',
-        'Texas', 'Utah', 'Vermont', 'Virgin Island', 'Virginia',
-        'Washington', 'West Virginia', 'Wisconsin', 'Wyoming',
-      ],
-
     }
   },
   methods: {
     sendQues() {
       if (this.question)
-      this.intent.question.push(this.question)
+        this.intent.question.push(this.question)
       this.question = ''
     },
     sendAns() {
       if (this.answer)
-      this.intent.answer.push(this.answer)
+        this.intent.answer.push(this.answer)
       this.answer = ''
     },
-    remove(item) {
+    removeQuestion(item) {
       this.intent.question.splice(this.intent.question.indexOf(item), 1)
       this.intent.question = [...this.intent.question]
     },
@@ -177,6 +179,39 @@ export default {
       this.intent.answer.splice(this.intent.answer.indexOf(item), 1)
       this.intent.answer = [...this.intent.answer]
     },
+    async todo() {
+      this.spin = false
+      const path = `/intents/query/update/${this.intent.id}`
+      await this.$axios.put(path, this.intent)
+          .then((res) => {
+            this.$notifier.showMessage({
+              content: `แก้ไขสอนบอทแล้ว ${res.data.name}`,
+              color: 'success'
+            })
+          })
+          .catch((err) => {
+            this.$notifier.showMessage({
+              content: `มีบางอย่างผิดพลาด status code ${err.response.status}`,
+              color: 'red'
+            })
+          })
+      this.spin = true
+    },
+    async remove() {
+      this.spin = false
+      this.spinSave = false
+      const path = `/intents/query/delete/${this.intent.id}`
+      this.$store.commit(`features/setDynamicPath`, path)
+      await this.$store.dispatch(`features/deleteItem`)
+      this.users.splice(this.users.indexOf(this.intent), 1)
+      this.spinSave = true
+      this.dialogDelete = false
+      this.$notifier.showMessage({
+        content: `ลบกฎแล้ว!`,
+        color: 'success'
+      })
+      this.spin = true
+    }
   },
 }
 </script>
