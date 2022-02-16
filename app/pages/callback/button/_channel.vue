@@ -1,6 +1,7 @@
 <template>
   <div>
     <v-card>
+
       <v-toolbar
           color="#12AE7E"
           dark
@@ -42,7 +43,7 @@
 
             <template v-slot:label="{item}">
               <div>{{ item.name }}</div>
-              <small v-if="selected">{{ item.message }}</small>
+              <small v-if="selected">{{ item.reply }}</small>
             </template>
 
           </v-treeview>
@@ -66,7 +67,13 @@
             >
               <v-card-text>
 
-                <h2>ใส่ Component ที่นี้</h2>
+                <Button
+                    :button="selected"
+                    :users.sync="users"
+                    :intent="intent"
+                >
+
+                </Button>
 
               </v-card-text>
 
@@ -88,11 +95,14 @@
 
 <script>
 import Dialog from "@/components/app/Dialog";
+import Button from "@/components/app/Button";
+
 
 export default {
-  components: {Dialog},
+  components: {Dialog, Button},
   data() {
     return {
+      intent: [],
       dialog: false,
       dialogDelete: false,
       spinSave: true,
@@ -101,14 +111,18 @@ export default {
       form: {
         name: '',
         access_token: '',
-        content: '',
-        message: '',
+        intent: "",
+        texts: [],
+        labels: [],
+        reply: []
       },
       defaultForm: {
         name: '',
         access_token: '',
-        content: '',
-        message: '',
+        intent: "",
+        texts: [],
+        labels: [],
+        reply: []
       },
       data: [],
       active: [],
@@ -157,6 +171,7 @@ export default {
               v.id = v._id
             })
             item.children.push(...res.data);
+            this.getIntent(encoded)
           })
           .catch((err) => {
             console.error(err);
@@ -211,6 +226,12 @@ export default {
       this.spinSave = true
       this.elements[0].value = ''
     },
+    async getIntent(accessToken){
+      const path = `/intents/?access_token=${accessToken}`
+      this.$store.commit('features/setDynamicPath', path)
+      await this.$store.dispatch('features/fetchCard')
+      this.intent = this.$store.getters["features/getResponse"]
+    }
   },
 
 }
