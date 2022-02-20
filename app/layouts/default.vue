@@ -148,11 +148,10 @@
 
 <script>
 import Snackbar from "@/components/Snackbar";
-import Button from "../components/app/Button";
 
 export default {
   middleware: ['auth-admin'],
-  components: {Button, Snackbar},
+  components: {Snackbar},
   data() {
     return {
       nameBar: 'PLATFORM CHATBOT',
