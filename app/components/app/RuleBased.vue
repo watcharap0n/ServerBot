@@ -1,177 +1,148 @@
 <template>
-  <div>
-    <v-container>
-      <v-col sm="8">
-        <v-switch
-            v-model="showReady"
-            label="Ready"
 
+  <v-card class="text-center p-2" flat>
+
+    <v-card-text>
+
+      <v-switch
+          dense
+          :color="`${ruleBased.ready ? '#12AE7E': 'red'}`"
+          v-model="ruleBased.ready"
+          :label="`${ruleBased.ready ? 'เปิดใช้งาน': 'ปิดใช้งาน'}`"
+      >
+      </v-switch>
+      <div :hidden="!ruleBased.ready">
+        <p class="text-xl font-normal font-extrabold text-green-500">สร้างคีย์เวิร์ด</p>
+        <v-text-field
+            v-model="ruleBased.keyword"
+            label="คีย์เวิร์ด"
+            filled
+            clearable
+        ></v-text-field>
+
+        <p class="text-xl font-normal font-extrabold text-green-500">คำตอบ</p>
+        <v-switch
+            dense
+            :color="`${ruleBased.status_flex ? '#12AE7E': 'red'}`"
+            v-model="ruleBased.status_flex"
+            :label="`${ruleBased.status_flex ? 'เปิดใช้งานตอบแบบการ์ด': 'ปิดใช้งานตอบแบบการ์ด'}`"
         >
         </v-switch>
-        <div v-if="ruleBased.ready === showReady">
 
-          <v-card>
-            <v-card-text class="text-center p-2">
-              <v-form ref="formQueCard"
-                      v-model="valid">
-                <p class="text-xl">สร้างคีย์เวิร์ด</p>
-                <v-text-field
-                    v-model="ques"
-                    label="คีย์เวิร์ด"
-                    filled
-                    @keydown.enter="sendQues"
-                    clearable
-                ></v-text-field>
-              </v-form>
-
-            </v-card-text>
-
-
-            <v-card-text class="text-center p-2">
-              <p class="text-xl">คำตอบ</p>
-              <v-switch
-                  v-model="showCard"
-                  label="Card"
+        <div v-if="!ruleBased.status_flex">
+          <v-text-field
+              v-model="answer"
+              label="คำตอบ"
+              filled
+              @keyup.enter="sendAns"
+              clearable
+          ></v-text-field>
+          <v-combobox
+              v-model="ruleBased.answer"
+              label="คำตอบ"
+              deletable-chips
+              chips
+              multiple
+              hide-selected
+              readonly
+          >
+            <template v-slot:selection="{ attrs, item, select, selected }">
+              <v-chip
+                  v-bind="attrs"
+                  :input-value="selected"
+                  close
+                  @click="select"
+                  @click:close="removeAns(item)"
               >
-              </v-switch>
-              <div v-if="showCard === false">
-                <v-card-text
-                    v-model="showText"
-                >
-                  <v-form ref="formAnsCard"
-                          v-model="valid">
-                    <v-text-field
-                        v-model="ans"
-                        label="คำตอบ"
-                        filled
-                        @keyup.enter="sendAns"
-                        clearable
-                    ></v-text-field>
-                  </v-form>
-                  <v-combobox
-                      v-model="ruleBased.answer"
-                      label="คำตอบ"
-                      deletable-chips
-                      chips
-                      multiple
-                      hide-selected
-                      readonly
-                  >
-                    <template v-slot:selection="{ attrs, item, select, selected }">
-                      <v-chip
-                          v-bind="attrs"
-                          :input-value="selected"
-                          close
-                          @click="select"
-                          @click:close="removeAns(item)"
-                      >
-                        <strong>{{ item }}</strong>&nbsp;
+                <strong>{{ item }}</strong>&nbsp;
 
-                      </v-chip>
-                    </template>
-                  </v-combobox>
-
-                </v-card-text>
-              </div>
-
-              <div v-if="showCard === true">
-                <v-card-text
-                    v-model="showFlex"
-                >
-                  <v-select
-                      v-model="e2"
-                      :items="states"
-                      append-outer-icon="mdi-card-bulleted-outline"
-                      menu-props="auto"
-                      hide-details
-                      label="Select"
-                      single-line
-                  ></v-select>
-                </v-card-text>
-              </div>
-            </v-card-text>
-            <v-row justify="end">
-              <v-col sm="5">
-                <v-btn
-                    color="#12AE7E"
-                    text
-                    x-large
-                >บันทึกข้อมูล
-                </v-btn>
-                <v-btn
-                    color="red"
-                    fab
-                    dark
-                    small
-                >
-                  <v-icon>mdi-delete</v-icon>
-                </v-btn>
-              </v-col>
-            </v-row>
-          </v-card>
+              </v-chip>
+            </template>
+          </v-combobox>
         </div>
 
-      </v-col>
-    </v-container>
+        <div v-else>
+          <v-select
+              v-model="ruleBased.card"
+              :items="cards"
+              item-text="name"
+              item-value="_id"
+              append-outer-icon="mdi-card-bulleted-outline"
+              menu-props="auto"
+              hide-details
+              label="เลือกการ์ดที่ต้องการใช้งาน"
+              single-line
+          ></v-select>
+        </div>
+      </div>
+    </v-card-text>
 
+    <v-card-actions>
 
-  </div>
+      <v-spacer></v-spacer>
+      <v-btn
+          text
+          color="success"
+          :loading="!spin"
+          @click="todo"
+      >
+        <v-icon left>mdi-database-plus</v-icon>
+        บันทึกข้อมูล
+      </v-btn>
+      <v-btn
+          color="red"
+          dark
+          text
+          @click="dialog = true"
+      >
+        <v-icon left>mdi-delete</v-icon>
+        ลบข้อมูล
+      </v-btn>
+    </v-card-actions>
+    <Dialog :dialog.sync="dialog"
+            header="ลบข้อมูล"
+            body="คุณแน่ใจว่าจะลบข้อมูล ?"
+            max-width="350"
+            :loading-dialog="!spin"
+            :submit-dialog="remove"
+    />
+
+  </v-card>
+
 </template>
 
 <script>
-import intent from "@/components/app/Intent";
 
+import Dialog from "@/components/app/Dialog";
 export default {
+  components:{Dialog},
+  props: {
+    ruleBased:{
+      required: false,
+      type: Object
+    },
+    cards: {
+      required: false
+    },
+    users: {
+      required: false
+    },
+  },
   data() {
     return {
-      showReady: true,
-      showText: "",
-      showFlex: "",
-      e2: 'Texas',
-      showCard: false,
-      valid: true,
-      ques: "",
-      ans: "",
-      ruleBased: {
-        name: "",
-        accessToken: "",
-        statusCard: false,
-        ready: true,
-        idCard: "",
-        keyword: "",
-        answer: []
-      },
-      states: [
-        'Alabama', 'Alaska', 'American Samoa', 'Arizona',
-        'Arkansas', 'California', 'Colorado', 'Connecticut',
-        'Delaware', 'District of Columbia', 'Federated States of Micronesia',
-        'Florida', 'Georgia', 'Guam', 'Hawaii', 'Idaho',
-        'Illinois', 'Indiana', 'Iowa', 'Kansas', 'Kentucky',
-        'Louisiana', 'Maine', 'Marshall Islands', 'Maryland',
-        'Massachusetts', 'Michigan', 'Minnesota', 'Mississippi',
-        'Missouri', 'Montana', 'Nebraska', 'Nevada',
-        'New Hampshire', 'New Jersey', 'New Mexico', 'New York',
-        'North Carolina', 'North Dakota', 'Northern Mariana Islands', 'Ohio',
-        'Oklahoma', 'Oregon', 'Palau', 'Pennsylvania', 'Puerto Rico',
-        'Rhode Island', 'South Carolina', 'South Dakota', 'Tennessee',
-        'Texas', 'Utah', 'Vermont', 'Virgin Island', 'Virginia',
-        'Washington', 'West Virginia', 'Wisconsin', 'Wyoming',
-      ],
+      answer: "",
+      items: [],
+      dialog: false,
+      spin: true
 
     }
   },
   methods: {
-    sendQues() {
-      this.ruleBased.keyword.push(this.ques)
-      this.$refs.formQueCard.reset();
-      console.log(this.ruleBased.keyword)
-    },
     sendAns() {
-      this.ruleBased.answer.push(this.ans)
-      this.$refs.formAnsCard.reset();
-      console.log(this.ruleBased.answer)
+      this.ruleBased.answer.push(this.answer)
+      this.answer = ''
     },
-    remove(item) {
+    removeKeyword(item) {
       this.ruleBased.keyword.splice(this.ruleBased.keyword.indexOf(item), 1)
       this.ruleBased.keyword = [...this.ruleBased.keyword]
 
@@ -180,8 +151,41 @@ export default {
       this.ruleBased.answer.splice(this.ruleBased.answer.indexOf(item), 1)
       this.ruleBased.answer = [...this.ruleBased.answer]
     },
+    async remove() {
+      this.spin = false
+      this.spinSave = false
+      const path = `/rule_based/query/delete/${this.ruleBased.id}`
+      this.$store.commit(`features/setDynamicPath`, path)
+      await this.$store.dispatch(`features/deleteItem`)
+      this.users.splice(this.users.indexOf(this.ruleBased), 1)
+      this.spinSave = true
+      this.dialogDelete = false
+      this.$notifier.showMessage({
+        content: `ลบกฎแล้ว!`,
+        color: 'success'
+      })
+      this.spin = true
+    },
+    async todo(){
+      this.spin = false
+      const path = `/rule_based/query/update/${this.ruleBased.id}`
+      await this.$axios.put(path, this.ruleBased)
+       .then((res) => {
+         this.$notifier.showMessage({
+              content: `แก้ไขกฎแล้ว ${res.data.name}`,
+              color: 'success'
+            })
+       })
+      .catch((err) => {
+            this.$notifier.showMessage({
+              content: `มีบางอย่างผิดพลาด status code ${err.response.status}`,
+              color: 'red'
+            })
+          })
+      this.spin = true
+    }
   },
-  computed: {},
+
 }
 </script>
 

@@ -1,5 +1,5 @@
 <template>
-  <v-card class="text-center p-2">
+  <v-card class="text-center p-2" flat>
     <v-card-text>
       <v-form ref="formCard"
               v-model="valid">
