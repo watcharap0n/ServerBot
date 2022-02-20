@@ -10,7 +10,7 @@ class RuleBased(BaseModel):
     access_token: str
     status_flex: Optional[bool] = False
     ready: Optional[bool] = True
-    content: Optional[str] = None
+    card: Optional[str] = None
     keyword: Optional[str] = None
     answer: Optional[list] = []
 
@@ -22,7 +22,7 @@ class RuleBased(BaseModel):
                 "access_token": "access token long live",
                 "status_flex": False,
                 "ready": True,
-                "content": "request flex message content {}",
+                "card": "id card query collection card",
                 "keyword": 'erp',
                 "answer": ["answer bot"],
             }
@@ -47,7 +47,7 @@ class UpdateRuleBased(BaseModel):
     access_token: str
     status_flex: Optional[bool] = False
     ready: Optional[bool] = True
-    content: Optional[str] = None
+    card: Optional[str] = None
     keyword: Optional[str] = None
     answer: Optional[list] = []
 
@@ -60,7 +60,7 @@ class UpdateRuleBased(BaseModel):
                 "access_token": "access token long live",
                 "status_flex": False,
                 "ready": True,
-                "content": "update request flex message content {}",
+                "card": "update id card query collection card",
                 "keyword": 'erp',
                 "answer": ["answer bot"],
             }
