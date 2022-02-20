@@ -1,8 +1,6 @@
 <template>
   <div>
-
-    <v-app :style="cssProps">
-
+    <v-app :style="cssProps" style="font-family: 'Prompt', sans-serif;" class="bg-gray-100 h-screen">
       <Nuxt/>
     </v-app>
 
