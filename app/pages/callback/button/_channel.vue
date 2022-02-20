@@ -43,7 +43,6 @@
 
             <template v-slot:label="{item}">
               <div>{{ item.name }}</div>
-              <small v-if="selected">{{ item.reply }}</small>
             </template>
 
           </v-treeview>
@@ -67,13 +66,13 @@
             >
               <v-card-text>
 
-                <Button
+                <QuickReply
                     :button="selected"
                     :users.sync="users"
                     :intent="intent"
                 >
 
-                </Button>
+                </QuickReply>
 
               </v-card-text>
 
@@ -95,11 +94,11 @@
 
 <script>
 import Dialog from "@/components/app/Dialog";
-import Button from "@/components/app/Button";
+import QuickReply from "@/components/app/QuickReply";
 
 
 export default {
-  components: {Dialog, Button},
+  components: {Dialog, QuickReply},
   data() {
     return {
       intent: [],
