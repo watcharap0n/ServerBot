@@ -1,12 +1,11 @@
 <template>
   <div>
 
-    <v-app style="font-family: 'Kanit', sans-serif;">
+    <v-app style="font-family: 'Prompt', sans-serif;">
       <div v-if="$auth.loggedIn">
         <Nuxt/>
         <Snackbar></Snackbar>
       </div>
-
     </v-app>
 
   </div>
