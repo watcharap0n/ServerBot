@@ -26,20 +26,17 @@
           bottom
       >
         <template v-slot:activator="{ on, attrs }">
-          <span class="leading-snug p-1"
-                v-on="on"
-                v-bind="on"
-          >
-            {{ $auth.user.username }}
-          </span>
+
           <v-btn
-              icon
               v-on="on"
               v-bind="on"
+              text
+              rounded
           >
-            <v-avatar>
-              <img :src="$auth.user.img_path" alt="src">
-            </v-avatar>
+            <v-icon left>
+              mdi-account
+            </v-icon>
+            {{ $auth.user.username }}
           </v-btn>
         </template>
 
@@ -51,10 +48,12 @@
               <v-avatar>
                 <img :src="$auth.user.img_path" alt="src">
               </v-avatar>
-              <h2>{{ $auth.user.username }}</h2>
-              <p class="text-caption mt-1">
-                {{ $auth.user.email }}
-              </p>
+              <div class="m-2">
+                <div class="font-semibold">{{ $auth.user.full_name }}</div>
+                <small class="text-caption mt-1">
+                  {{ $auth.user.email }}
+                </small>
+              </div>
               <v-divider class="my-3"></v-divider>
               <v-btn
                   color="#12AE7E"
@@ -63,7 +62,7 @@
                   rounded
                   text
               >
-                แก้บัญชี
+                แก้ไขบัญชี
               </v-btn>
               <v-divider class="my-3"></v-divider>
               <v-btn
@@ -85,11 +84,7 @@
 </template>
 
 <script>
-import Button from "~/components/app/Button";
-
 export default {
-  components: {Button},
-
   props: ['nameTitle'],
   data() {
     return {}
