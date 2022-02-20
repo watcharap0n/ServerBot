@@ -53,9 +53,10 @@ async def update_query_intent(
     data = jsonable_encoder(payload)
     query = {"_id": id}
     values = {"$set": data}
+
     if payload.status_flex:
-        if (await db.find_one(collection='card', query={'_id': payload.id_card})) is None:
-            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f'id card not found {payload.id_card}')
+        if (await db.find_one(collection='card', query={'_id': payload.card})) is None:
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f'id card not found {payload.card}')
 
     if (await db.update_one(collection=collection, query=query, values=values)) == 0:
         raise HTTPException(
