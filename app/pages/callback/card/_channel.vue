@@ -100,7 +100,7 @@
 </template>
 
 <script>
-import {mapGetters} from "vuex";
+
 import Dialog from "@/components/app/Dialog";
 import Card from "@/components/app/Card";
 
@@ -165,7 +165,6 @@ export default {
 
       await this.fetchToken()
       let encoded = encodeURIComponent(this.form.access_token);
-      console.log(encoded)
       const path = `/card/?access_token=${encoded}`;
       await this.$axios.get(path)
           .then((res) => {
@@ -173,7 +172,6 @@ export default {
               v.id = v._id
             })
             item.children.push(...res.data);
-            console.log(res.data)
           })
           .catch((err) => {
             console.error(err);
@@ -233,8 +231,9 @@ export default {
     },
     async remove() {
       this.spinSave = false
-      this.$store.commit('features/setDynamicPath', this.selected._id)
-      await this.$store.dispatch('features/deleteCard')
+      const path = `/card/query/delete/${this.selected._id}`
+      this.$store.commit('features/setDynamicPath', path)
+      await this.$store.dispatch('features/deleteItem')
       this.users.splice(this.users.indexOf(this.selected), 1)
       this.spinSave = true
       this.dialogDelete = false
@@ -264,7 +263,6 @@ export default {
       this.spinSave = true
     }
   }
-
 }
 </script>
 
