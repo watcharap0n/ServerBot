@@ -22,11 +22,24 @@ y = [['สวัสดีครับ :)', 'สวัสดีครับ'],
 
 import re
 import numpy as np
-from typing import Optional
+from pydantic import BaseModel
+from typing import Optional, Any, List
 from attacut import tokenize
 from sklearn.linear_model import LogisticRegression
 from sklearn.pipeline import Pipeline
 from sklearn.feature_extraction.text import TfidfVectorizer, CountVectorizer, TfidfTransformer
+
+
+class Engine(BaseModel):
+    predicted: Optional[Any] = None
+    confidence: Optional[Any] = None
+    answers: Optional[list]
+    name: Optional[str] = None
+    card: Optional[str] = None
+    ready: Optional[bool]
+    id: Optional[str]
+    status_flex: Optional[bool]
+    require: Optional[str] = None
 
 
 async def chatbot_pipeline(
@@ -35,7 +48,7 @@ async def chatbot_pipeline(
         db: list,
         message: str,
         answers: list,
-        X_test: Optional[list] = None) -> dict:
+        X_test: Optional[list] = None) -> object:
     """
 
     :param message:
@@ -61,15 +74,15 @@ async def chatbot_pipeline(
     message = list(message)
     predicted = text_clf_logis.predict(message)
     intent = db[predicted[0]]
-    return {
-        'predicted': predicted,
-        'answers': answers,
-        'name': intent.get('name'),
-        'card': intent.get('card'),
-        'ready': intent.get('ready'),
-        'id': intent.get('_id'),
-        'status_flex': intent.get('status_flex')
-    }
+    return Engine(
+        predicted=predicted,
+        answers=answers,
+        name=intent.get('name'),
+        card=intent.get('card'),
+        ready=intent.get('ready'),
+        id=intent.get('_id'),
+        status_flex=intent.get('status_flex')
+    )
 
 
 async def chatbot_standard(
@@ -78,7 +91,7 @@ async def chatbot_standard(
         db: list,
         answers: list,
         message: str,
-        X_test: Optional[list] = None) -> dict:
+        X_test: Optional[list] = None) -> object:
     """
     :param db:
     :param answers
@@ -90,7 +103,7 @@ async def chatbot_standard(
     """
 
     if len(X) == 1 and len(answers) == 1:
-        return {'require': 'ต้องสร้าง Intent สอนบอทอย่างน้อย 2 Intent ก่อนถึงจะสามารถใช้งานบอทได้'}
+        return Engine(require='ต้องสร้าง Intent อย่างน้อย 2 Intent ก่อนถึงจะสามารถใช้งานบอทได้ครับ')
     X = [re.sub(re.compile(r'\s+'), '', i) for i in X]
     tf_vect = CountVectorizer(tokenizer=tokenize)
     x_train_vect = tf_vect.fit_transform(X)
@@ -105,18 +118,17 @@ async def chatbot_standard(
                 'predicted': predicted}
     predicted = clf.predict(x_test_vect)
     pred_proba = clf.predict_proba(x_test_vect)[0][predicted]
-    confidence = (0.3565152559 / ((len(y) * pred_proba) ** 0.5)) ** 2
     intent = db[predicted[0]]
-    return {
-        'predicted': predicted,
-        'confidence': confidence,
-        'answers': answers,
-        'name': intent.get('name'),
-        'card': intent.get('card'),
-        'ready': intent.get('ready'),
-        'id': intent.get('_id'),
-        'status_flex': intent.get('status_flex')
-    }
+    return Engine(
+        predicted=predicted,
+        confidence=pred_proba,
+        answers=answers,
+        name=intent.get('name'),
+        card=intent.get('card'),
+        ready=intent.get('ready'),
+        id=intent.get('_id'),
+        status_flex=intent.get('status_flex')
+    )
 
 
 async def intent_model(
@@ -125,13 +137,13 @@ async def intent_model(
         db: list,
         answers: list,
         message: str,
-):
+) -> object:
     """
         :param
     """
 
     if len(X) == 1 and len(answers) == 1:
-        return {'require': 'ต้องสร้าง Intent อย่างน้อย 2 Intent ก่อนถึงจะสามารถใช้งานบอทได้ครับ'}
+        return Engine(require='ต้องสร้าง Intent อย่างน้อย 2 Intent ก่อนถึงจะสามารถใช้งานบอทได้ครับ')
     sum_text = [re.sub(re.compile(r'\s+'), '', i) for i in X]
     tf_vect = TfidfVectorizer(tokenizer=tokenize)
     x_train_vect = tf_vect.fit_transform(sum_text)
@@ -141,13 +153,13 @@ async def intent_model(
     predicted = my_classifire.predict(x_test_vect)
     pred_proba = my_classifire.predict_proba(x_test_vect)[0][predicted]
     intent = db[predicted[0]]
-    return {
-        'predicted': predicted,
-        'confidence': pred_proba,
-        'answers': answers,
-        'name': intent.get('name'),
-        'card': intent.get('card'),
-        'ready': intent.get('ready'),
-        'id': intent.get('_id'),
-        'status_flex': intent.get('status_flex')
-    }
+    return Engine(
+        predicted=predicted,
+        confidence=pred_proba,
+        answers=answers,
+        name=intent.get('name'),
+        card=intent.get('card'),
+        ready=intent.get('ready'),
+        id=intent.get('_id'),
+        status_flex=intent.get('status_flex')
+    )
