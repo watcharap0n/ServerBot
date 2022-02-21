@@ -22,23 +22,24 @@ y = [['สวัสดีครับ :)', 'สวัสดีครับ'],
 
 import re
 import numpy as np
-import pandas as pd
 from typing import Optional
 from attacut import tokenize
-from sklearn.model_selection import GridSearchCV
 from sklearn.linear_model import LogisticRegression
-from sklearn.naive_bayes import MultinomialNB
 from sklearn.pipeline import Pipeline
-from sklearn.linear_model import SGDClassifier
 from sklearn.feature_extraction.text import TfidfVectorizer, CountVectorizer, TfidfTransformer
 
 
-async def chatbot_pipeline(X: list, y: list,
-                           message: str,
-                           X_test: Optional[list] = None) -> dict:
+async def chatbot_pipeline(
+        X: list,
+        y: list,
+        db: list,
+        message: str,
+        answers: list,
+        X_test: Optional[list] = None) -> dict:
     """
 
     :param message:
+    :param answers:
     :param X:
     :param y:
     :param X_test:
@@ -59,51 +60,94 @@ async def chatbot_pipeline(X: list, y: list,
                 'predicted': predicted}
     message = list(message)
     predicted = text_clf_logis.predict(message)
-    return {'predicted': predicted}
+    intent = db[predicted[0]]
+    return {
+        'predicted': predicted,
+        'answers': answers,
+        'name': intent.get('name'),
+        'card': intent.get('card'),
+        'ready': intent.get('ready'),
+        'id': intent.get('_id'),
+        'status_flex': intent.get('status_flex')
+    }
 
 
-async def chatbot_standard(data: list,
-                           message: str,
-                           X_test: Optional[list] = None) -> dict:
+async def chatbot_standard(
+        X: list,
+        y: list,
+        db: list,
+        answers: list,
+        message: str,
+        X_test: Optional[list] = None) -> dict:
     """
-    :param data:
+    :param db:
+    :param answers
     :param message:
     :param X:
     :param y:
     :param X_test:
     :return:
     """
-    sum_text = []
-    ans_text = [x['answer'] for x in data]
-    embedding = [x for x in range(len(ans_text))]
-    for text in data:
-        txt = ''
-        for v in text['question']:
-            txt += v
-        sum_text.append(txt)
-    if len(sum_text) == 1 and len(ans_text) == 1:
-        return {'require': 'ต้องสร้าง Intent อย่างน้อย 2 Intent ก่อนถึงจะสามารถใช้งานบอทได้ครับ'}
-    X = [re.sub(re.compile(r'\s+'), '', i) for i in sum_text]
+
+    if len(X) == 1 and len(answers) == 1:
+        return {'require': 'ต้องสร้าง Intent สอนบอทอย่างน้อย 2 Intent ก่อนถึงจะสามารถใช้งานบอทได้'}
+    X = [re.sub(re.compile(r'\s+'), '', i) for i in X]
     tf_vect = CountVectorizer(tokenizer=tokenize)
     x_train_vect = tf_vect.fit_transform(X)
     clf = LogisticRegression(penalty='none')
-    clf.fit(x_train_vect, embedding)
-    message = list(message)
-    x_test_vect = tf_vect.transform(message)
+    clf.fit(x_train_vect, y)
+    x_test_vect = tf_vect.transform([message])
     if X_test:
         predicted = clf.predict(x_test_vect)
         pred_proba = clf.predict_proba(x_test_vect)[0][predicted]
-        acc = np.mean(predicted == embedding)
+        acc = np.mean(predicted == y)
         return {'accuracy': acc, 'pred_prob': pred_proba,
                 'predicted': predicted}
     predicted = clf.predict(x_test_vect)
     pred_proba = clf.predict_proba(x_test_vect)[0][predicted]
-    intent = data[predicted[0]]
+    confidence = (0.3565152559 / ((len(y) * pred_proba) ** 0.5)) ** 2
+    intent = db[predicted[0]]
     return {
         'predicted': predicted,
-        'confident': pred_proba,
-        'answers': ans_text,
+        'confidence': confidence,
+        'answers': answers,
         'name': intent.get('name'),
         'card': intent.get('card'),
+        'ready': intent.get('ready'),
+        'id': intent.get('_id'),
+        'status_flex': intent.get('status_flex')
+    }
+
+
+async def intent_model(
+        X: list,
+        y: list,
+        db: list,
+        answers: list,
+        message: str,
+):
+    """
+        :param
+    """
+
+    if len(X) == 1 and len(answers) == 1:
+        return {'require': 'ต้องสร้าง Intent อย่างน้อย 2 Intent ก่อนถึงจะสามารถใช้งานบอทได้ครับ'}
+    sum_text = [re.sub(re.compile(r'\s+'), '', i) for i in X]
+    tf_vect = TfidfVectorizer(tokenizer=tokenize)
+    x_train_vect = tf_vect.fit_transform(sum_text)
+    my_classifire = LogisticRegression(penalty='none')
+    my_classifire.fit(x_train_vect, y)
+    x_test_vect = tf_vect.transform([message])
+    predicted = my_classifire.predict(x_test_vect)
+    pred_proba = my_classifire.predict_proba(x_test_vect)[0][predicted]
+    intent = db[predicted[0]]
+    return {
+        'predicted': predicted,
+        'confidence': pred_proba,
+        'answers': answers,
+        'name': intent.get('name'),
+        'card': intent.get('card'),
+        'ready': intent.get('ready'),
+        'id': intent.get('_id'),
         'status_flex': intent.get('status_flex')
     }
