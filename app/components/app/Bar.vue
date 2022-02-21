@@ -46,7 +46,9 @@
           >
             <div class="mx-auto text-center">
               <v-avatar>
-                <img :src="$auth.user.img_path" alt="src">
+                <img :src="$auth.user.img_path" alt="src"
+                     @error="setFallbackImageUrl"
+                >
               </v-avatar>
               <div class="m-2">
                 <div class="font-semibold">{{ $auth.user.full_name }}</div>
@@ -95,7 +97,11 @@ export default {
           .then(() => {
             this.$router.push('/authentication')
           })
-    }
+    },
+    setFallbackImageUrl(event) {
+      console.log('Image failed to load, setting fallback.')
+      event.target.src = require(`~/assets/images/mango-profile.jpg`)
+    },
   }
 }
 
