@@ -170,7 +170,7 @@ async def client_webhook(
     create_file_json("static/log/line.json", payload)
     try:
         signature = request.headers['X-Line-Signature']
-        body = json.dumps(payload)
+        body = await request.body()
         events = payload["events"][0]
         event_type = events["type"]
         if event_type == "follow":
@@ -191,12 +191,12 @@ async def client_webhook(
                     profile = await get_profile(userId, model.access_token)
                     profile["message"] = message
                     await db.insert_one(collection="message_user", data=profile)
-                    handler.handle(body=body, signature=signature)
+                    handler.handle(str(body, encoding='utf8'), signature)
                     await handler_message(events, model)
                 except InvalidSignatureError as v:
                     raise HTTPException(
                         status_code=status.HTTP_400_BAD_REQUEST,
-                        detail={"status_code": v.status_code, "message": v.message},
+                        detail={"status_code": 400, "message": v.message},
                     )
             else:
                 no_event = len(payload["events"])
@@ -225,7 +225,6 @@ def event_handler(events, model):
 
 
 async def handler_message(events, model):
-    print(events)
     line_bot_api = LineBotApi(model.access_token)
     text = events["message"]["text"]
     reply_token = events["replyToken"]
