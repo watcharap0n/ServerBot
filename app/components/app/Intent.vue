@@ -101,12 +101,14 @@
     <v-card-actions>
       <v-spacer></v-spacer>
       <v-btn
-          color="#12AE7E"
+          color="success"
           text
           x-large
           :loading="!spin"
           @click="todo"
-      >บันทึกประเภทการตอบ
+      >
+        <v-icon left>mdi-database-plus</v-icon>
+        บันทึกประเภทการตอบ
       </v-btn>
       <v-btn
           color="red"
