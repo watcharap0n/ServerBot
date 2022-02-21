@@ -55,7 +55,9 @@
             >
               <div class="mx-auto text-center">
                 <v-avatar>
-                  <img :src="$auth.user.img_path" alt="src">
+                  <img :src="$auth.user.img_path" alt="src"
+                       @error="setFallbackImageUrl"
+                  >
                 </v-avatar>
                 <div class="m-2">
                   <div class="font-semibold">{{ $auth.user.full_name }}</div>
@@ -103,7 +105,9 @@
         <v-divider></v-divider>
         <v-list-item two-line v-if="$auth.loggedIn">
           <v-list-item-avatar>
-            <img :src="$auth.user.img_path">
+            <img :src="$auth.user.img_path"
+                 @error="setFallbackImageUrl"
+            >
           </v-list-item-avatar>
           <v-list-item-content>
             <v-list-item-title>{{ $auth.user.username }}</v-list-item-title>
@@ -161,6 +165,10 @@ export default {
     }
   },
   methods: {
+    setFallbackImageUrl(event) {
+      console.log('Image failed to load, setting fallback.')
+      event.target.src = require(`~/assets/images/mango-profile.jpg`)
+    },
     handler(router) {
       this.itemsRouter = [
         {title: 'หน้าหลัก', icon: 'mdi-home', url: `/`},
