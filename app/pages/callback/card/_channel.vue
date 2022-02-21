@@ -110,7 +110,7 @@ export default {
     return {
       dialog: false,
       dialogDelete: false,
-      spinSave: true,
+      spinSave: false,
       btnShow: false,
       setName: '',
       form: {
@@ -193,11 +193,11 @@ export default {
           })
     },
     async save() {
-      this.spinSave = false
+      this.spinSave = true
       await this.fetchToken()
       this.form.name = this.elements[0].value
       const path = '/card/create'
-      this.$axios.post(path, this.form)
+      await this.$axios.post(path, this.form)
           .then((res) => {
             this.form = res.data
             this.form.id = this.form._id
@@ -223,19 +223,19 @@ export default {
             }
           })
       this.dialog = false;
-      this.spinSave = true
+      this.spinSave = false
       this.elements[0].value = ''
     },
     deleteCard() {
       this.dialogDelete = true
     },
     async remove() {
-      this.spinSave = false
+      this.spinSave = true
       const path = `/card/query/delete/${this.selected._id}`
       this.$store.commit('features/setDynamicPath', path)
       await this.$store.dispatch('features/deleteItem')
       this.users.splice(this.users.indexOf(this.selected), 1)
-      this.spinSave = true
+      this.spinSave = false
       this.dialogDelete = false
       this.$notifier.showMessage({
         content: `ลบการ์ดแล้ว!`,
@@ -243,10 +243,10 @@ export default {
       })
     },
     async todo() {
-      this.spinSave = false
+      this.spinSave = true
       this.form = Object.assign({}, this.selected)
       const path = `/card/query/update/${this.selected._id}`;
-      this.$axios.put(path, this.form)
+      await this.$axios.put(path, this.form)
           .then(() => {
             this.$notifier.showMessage({
               content: `แก้ไขการ์ดแล้ว!`,
@@ -260,7 +260,7 @@ export default {
               color: 'red'
             })
           })
-      this.spinSave = true
+      this.spinSave = false
     }
   }
 }

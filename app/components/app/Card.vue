@@ -38,14 +38,14 @@
           <v-btn
               text
               color="success"
-              :loading="spin"
+              :loading="!spin"
               @click="updateCard"
           >
             <v-icon left>mdi-database-plus</v-icon>
             บันทึกข้อมูล
           </v-btn>
           <v-btn
-              :loading="spin"
+              :loading="!spin"
               color="red"
               dark
               @click="deleteCard"
