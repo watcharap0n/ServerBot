@@ -290,16 +290,16 @@ async def handler_message(events, model):
             message=message,
             db=intents
         )
-        if result_intent.get('require'):
-            line_bot_api.reply_message(reply_token, TextSendMessage(text=result_intent.get('require')))
+        if result_intent.require:
+            line_bot_api.reply_message(reply_token, TextSendMessage(text=result_intent.require))
 
-        confidence = result_intent.get('confidence')[0] * 100
-        status_flex = result_intent['status_flex']
-        predicted = result_intent['predicted'][0]
-        answers = result_intent['answers']
-        card = result_intent['card']
-        ready = result_intent['ready']
-        id_intent = result_intent['id']
+        confidence = result_intent.confidence[0] * 100
+        status_flex = result_intent.status_flex
+        predicted = result_intent.predicted[0]
+        answers = result_intent.answers
+        card = result_intent.card
+        ready = result_intent.ready
+        id_intent = result_intent.id
 
         buttons = await db.find_one(collection='quick_reply', query={'intent': id_intent})
         if buttons:
