@@ -1,7 +1,10 @@
 import json
 from db import db
+from numpy import random
+from pydantic import BaseModel
 from starlette.responses import JSONResponse
 from modules.item_static import item_user
+from modules.flex_message import flex_dynamic
 from models.callback import Webhook, LineToken, UpdateLineToken
 from random import randint
 from typing import Optional, List
@@ -9,7 +12,8 @@ from fastapi import APIRouter, Depends, Body, Request, status, HTTPException, Pa
 from oauth2 import get_current_active, User
 from fastapi.encoders import jsonable_encoder
 from linebot import LineBotApi, WebhookHandler
-from linebot.models import StickerSendMessage, TextSendMessage
+from linebot.models import StickerSendMessage, TextSendMessage, QuickReply, QuickReplyButton, MessageAction
+from modules.mg_chatbot import chatbot_standard, intent_model
 from linebot.exceptions import InvalidSignatureError, LineBotApiError
 
 router = APIRouter()
@@ -165,6 +169,7 @@ async def client_webhook(
     :param payload:
     :return:
     """
+
     model = await get_webhook(token)
     handler = WebhookHandler(model.secret_token)
     create_file_json("static/log/line.json", payload)
@@ -224,8 +229,107 @@ def event_handler(events, model):
     )
 
 
+def quick_reply_custom(line_bot_api, userId: str, send_text: str, labels: list, texts: list):
+    line_bot_api.reply_message(
+        userId,
+        TextSendMessage(
+            text=send_text,
+            quick_reply=QuickReply(items=[
+                QuickReplyButton(action=MessageAction(label=label, text=text)) for label, text in zip(labels, texts)
+            ])
+        )
+    )
+
+
+async def get_card_content(card):
+    content_card = await db.find_one(collection='card', query={'_id': card})
+    content = json.loads(content_card.get('content'))
+    flex_msg = flex_dynamic(alt_text=content_card.get('name'), contents=content)
+    return flex_msg
+
+
+class Word(BaseModel):
+    X: list
+    y: list
+    answers: Optional[list] = None
+
+
+def preprocessing_words(db):
+    sum_word = []
+    ans_list = [x['answer'] for x in db]
+    embedding = [x for x in range(len(ans_list))]
+    for words in db:
+        text = str()
+        for word in words['question']:
+            text += word
+        sum_word.append(text)
+    return Word(X=sum_word, y=embedding, answers=ans_list)
+
+
+def iterate_item(items: list, condition: str, match: str) -> dict:
+    for item in items:
+        if item.get(condition) == match:
+            return item
+
+
 async def handler_message(events, model):
     line_bot_api = LineBotApi(model.access_token)
-    text = events["message"]["text"]
+    message = events["message"]["text"]
     reply_token = events["replyToken"]
-    line_bot_api.reply_message(reply_token, TextSendMessage(text=text))
+
+    items_keyword = await db.find(collection='rule_based', query={'access_token': model.access_token})
+    keyword = iterate_item(items=items_keyword, condition='keyword', match=message)
+
+    if not keyword:
+        intents = list(await db.find(collection='intents', query={'access_token': model.access_token}))
+        words = preprocessing_words(db=intents)
+        result_intent = await intent_model(
+            X=words.X,
+            y=words.y,
+            answers=words.answers,
+            message=message,
+            db=intents
+        )
+        if result_intent.get('require'):
+            line_bot_api.reply_message(reply_token, TextSendMessage(text=result_intent.get('require')))
+
+        confidence = result_intent.get('confidence')[0] * 100
+        status_flex = result_intent['status_flex']
+        predicted = result_intent['predicted'][0]
+        answers = result_intent['answers']
+        card = result_intent['card']
+        ready = result_intent['ready']
+        id_intent = result_intent['id']
+
+        buttons = await db.find_one(collection='quick_reply', query={'intent': id_intent})
+        if buttons:
+            labels = buttons['labels']
+            texts = buttons['texts']
+            reply_message = buttons['reply']
+            reply = random.choice(reply_message)
+            quick_reply_custom(line_bot_api, reply_token, reply, labels, texts)
+
+        elif not buttons:
+            if ready:
+                if confidence > 69:
+                    if status_flex:
+                        flex_msg = await get_card_content(card)
+                        line_bot_api.reply_message(reply_token, flex_msg)
+
+                    elif not status_flex:
+                        reply = random.choice(answers[predicted])
+                        line_bot_api.reply_message(reply_token, TextSendMessage(text=reply))
+                else:
+                    line_bot_api.reply_message(reply_token, TextSendMessage(text='.'))
+
+    elif keyword:
+        answer_keyword = keyword.get('answer')
+        card_keyword = keyword.get('card')
+        if keyword.get('ready'):
+            if keyword.get('status_flex'):
+                flex_msg = await get_card_content(card_keyword)
+                line_bot_api.reply_message(reply_token, flex_msg)
+
+            elif not keyword.get('status_flex'):
+                reply = random.choice(answer_keyword)
+                line_bot_api.reply_message(reply_token, TextSendMessage(text=reply))
