@@ -5,7 +5,7 @@ from modules.item_static import item_user
 from models.callback import Webhook, LineToken, UpdateLineToken
 from random import randint
 from typing import Optional, List
-from fastapi import APIRouter, Depends, Body, Request, status, HTTPException
+from fastapi import APIRouter, Depends, Body, Request, status, HTTPException, Path
 from oauth2 import get_current_active, User
 from fastapi.encoders import jsonable_encoder
 from linebot import LineBotApi, WebhookHandler
@@ -27,7 +27,7 @@ def create_file_json(path: str, data):
         json.dump(data, jsonfile)
 
 
-def get_profile(userId: str, access_token: str) -> dict:
+async def get_profile(userId: str, access_token: str):
     line_bot_api = LineBotApi(access_token)
     profile = line_bot_api.get_profile(userId)
     displayName = profile.display_name
@@ -155,7 +155,7 @@ async def delete_channel(
 @router.post("/{token}")
 async def client_webhook(
         request: Request,
-        token: str,
+        token: Optional[str] = Path(...),
         payload: Optional[dict] = Body(None),
 ):
     """
@@ -165,17 +165,17 @@ async def client_webhook(
     :param payload:
     :return:
     """
-    model = get_webhook(token)
+    model = await get_webhook(token)
     handler = WebhookHandler(model.secret_token)
     create_file_json("static/log/line.json", payload)
     try:
-        signature = request.headers["X-Line-Signature"]
-        body = await request.body()
+        signature = request.headers['X-Line-Signature']
+        body = json.dumps(payload)
         events = payload["events"][0]
         event_type = events["type"]
         if event_type == "follow":
             userId = events["source"]["userId"]
-            follower = get_profile(userId, model.access_token)
+            follower = await get_profile(userId, model.access_token)
             db.insert_one(collection="follower_linebot", data=follower)
         elif event_type == "unfollow":
             userId = events["source"]["userId"]
@@ -188,11 +188,11 @@ async def client_webhook(
                 try:
                     userId = events["source"]["userId"]
                     message = events["message"]["text"]
-                    profile = get_profile(userId, model.access_token)
+                    profile = await get_profile(userId, model.access_token)
                     profile["message"] = message
                     await db.insert_one(collection="message_user", data=profile)
-                    handler.handle(str(body, encoding="utf8"), signature)
-                    handler_message(events, model)
+                    handler.handle(body=body, signature=signature)
+                    await handler_message(events, model)
                 except InvalidSignatureError as v:
                     raise HTTPException(
                         status_code=status.HTTP_400_BAD_REQUEST,
@@ -224,7 +224,8 @@ def event_handler(events, model):
     )
 
 
-def handler_message(events, model):
+async def handler_message(events, model):
+    print(events)
     line_bot_api = LineBotApi(model.access_token)
     text = events["message"]["text"]
     reply_token = events["replyToken"]
