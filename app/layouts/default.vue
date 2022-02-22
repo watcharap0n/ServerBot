@@ -10,7 +10,7 @@
         <v-btn
             style="margin-right: 20px"
             small
-            class="hidden-xs-only "
+            class="hidden-xs-only"
             @click="drawer = !drawer"
             fab
 
@@ -171,13 +171,13 @@ export default {
     },
     handler(router) {
       this.itemsRouter = [
-        {title: 'หน้าหลัก', icon: 'mdi-home', url: `/`},
-        {title: 'แดชบอร์ด', icon: 'mdi-view-dashboard', url: `/callback/dashboard/${router.channel}`},
-        {title: 'สร้างการ์ด', icon: 'mdi-cards-outline', url: `/callback/card/${router.channel}`},
-        {title: 'สอนบอท', icon: 'mdi-robot-happy', url: `/callback/intent/${router.channel}`},
-        {title: 'สร้างกฏ', icon: 'mdi-key-variant', url: `/callback/rule/${router.channel}`},
-        {title: 'ตอบโดยเร็ว', icon: 'mdi-reply', url: `/callback/button/${router.channel}`},
-        {title: 'ตั้งค่า', icon: 'mdi-account-box', url: `/callback/setting/${router.channel}`},
+        {title: 'Home', icon: 'mdi-home', url: `/`},
+        {title: 'Dashboard', icon: 'mdi-view-dashboard', url: `/callback/dashboard/${router.channel}`},
+        {title: 'Flex Message', icon: 'mdi-cards-outline', url: `/callback/card/${router.channel}`},
+        {title: 'Intent', icon: 'mdi-robot-happy', url: `/callback/intent/${router.channel}`},
+        {title: 'Rule-Based', icon: 'mdi-key-variant', url: `/callback/rule/${router.channel}`},
+        {title: 'Quick-Reply', icon: 'mdi-reply', url: `/callback/button/${router.channel}`},
+        {title: 'Settings', icon: 'mdi-account-box', url: `/callback/setting/${router.channel}`},
       ]
     },
     logout() {
