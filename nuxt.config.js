@@ -35,7 +35,7 @@ module.exports = {
             },
             {
                 rel: 'stylesheet',
-                href: 'https://fonts.googleapis.com/css2?family=Prompt:wght@500&display=swap'
+                href: 'https://fonts.googleapis.com/css2?family=Prompt:wght@400&display=swap'
             },
             {
                 rel: 'stylesheet',
