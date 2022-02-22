@@ -2,17 +2,17 @@
   <div class="h-auto">
     <v-card>
       <v-toolbar
-          color="#12AE7E"
+          color="info"
           dark
           flat
       >
         <v-icon>mdi-card-plus</v-icon>&nbsp;
         <v-toolbar-title>Flex Message</v-toolbar-title>
         <v-spacer></v-spacer>
-        <v-btn color="info"
-               rounded
+        <v-btn color="white"
                @click="dialog = true"
                :hidden="!btnShow"
+               text
         >
           <v-icon left>mdi-card-plus-outline</v-icon>
           Add Flex Message

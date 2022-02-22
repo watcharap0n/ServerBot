@@ -1,8 +1,12 @@
 <template>
   <div>
     <Bar name-title="Platform Chatbot | HOME"/>
-    <div class="text-4xl m-16 text-center">
-      <h2>Select Your BOT</h2>
+    <div class="text-4xl font-extrabold text-green-500 p-4 m-16 text-center">
+      <v-icon
+          color="#12AE7E"
+          x-large>mdi-robot
+      </v-icon>&nbsp;
+      Select Your Channels
     </div>
 
     <v-item-group multiple>
