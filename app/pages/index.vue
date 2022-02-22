@@ -2,7 +2,7 @@
   <div>
     <Bar name-title="Platform Chatbot | HOME"/>
     <div class="text-4xl m-16 text-center">
-      <h2>เลือกบอทที่ต้องการใช้งาน</h2>
+      <h2>Select Your BOT</h2>
     </div>
 
     <v-item-group multiple>
@@ -49,17 +49,17 @@
 
               <v-card-text>
                 <v-container class="-m-5">
-                  <div class="text-base font-bold text-gray-900">รายละเอียดบอท :</div>
+                  <div class="text-base font-bold text-gray-900">description :</div>
                   <v-row class="m-2">
-                    <div class="font-medium text-gray-800">ชื่อ:</div> &nbsp;
+                    <div class="font-medium text-gray-800">name:</div> &nbsp;
                     <div>{{ v.bot_info.display_name }}</div>
                   </v-row>
                   <v-row class="m-2">
-                    <div class="font-medium text-gray-800">ไอดี:</div> &nbsp;
+                    <div class="font-medium text-gray-800">id line:</div> &nbsp;
                     <div>{{ v.bot_info.basic_id }}</div>
                   </v-row>
                   <v-row class="m-2">
-                    <div class="font-medium text-gray-800">ไอดีผู้ใช้:</div> &nbsp;
+                    <div class="font-medium text-gray-800">user id:</div> &nbsp;
                     <div>{{ v.bot_info.user_id }}</div>
                   </v-row>
                   <v-row class="m-2">
@@ -68,13 +68,13 @@
                     <div>{{ v.bot_info.premium }}</div>
                   </v-row>
                   <v-row class="m-2">
-                    <div class="font-medium text-gray-800">แชทโหมด:</div> &nbsp;
+                    <div class="font-medium text-gray-800">chat mode:</div> &nbsp;
                     <div>{{ v.bot_info.chat_mode }}</div>
                   </v-row>
                   <v-row class="m-2">
                     <div class="font-medium text-gray-800">endpoint:</div> &nbsp;
                     <div @click="copyEndpoint(v.url)">
-                      คัดลอก
+                      copy
                       <v-icon>
                         mdi-content-copy
                       </v-icon>
@@ -89,19 +89,19 @@
                        color="primary"
                        text
                        class="text-decoration-none"
-                >ไปยังช่องทาง
+                >go to channel
                 </v-btn>
 
                 <v-btn color="warning"
                        text
                        @click="updateChannel(v)"
-                >แก้ไข
+                >update
                 </v-btn>
 
                 <v-btn color="red"
                        text
                        @click="deleteChannel(v)"
-                >ลบ
+                >delete
                 </v-btn>
               </v-card-actions>
             </v-card>
@@ -123,14 +123,14 @@
 
     <Dialog :dialog.sync="dialogDelete"
             header="ลบข้อมูล"
-            body="คุณแน่ใจที่จะลบข้อมูล"
+            body="are you sure delete!"
             :submit-dialog="saveD"
             :loading-dialog.sync="btnSpin"
     />
 
     <Dialog :dialog.sync="dialogUpdate"
             :element-forms.sync="elements"
-            header="แก้ไขข้อมูล"
+            header="update"
             max-width="500"
             :submit-dialog="save"
             :loading-dialog.sync="btnSpin"
@@ -174,20 +174,20 @@ export default {
       elements: [
         {
           color: 'primary',
-          label: 'ชื่อช่องทาง',
-          rules: [v => !!v || 'กรุณากรอกข้อมูล'],
+          label: 'name',
+          rules: [v => !!v || 'required'],
           value: this.name
         },
         {
           color: 'primary',
           label: 'Access Token',
-          rules: [v => !!v || 'กรุณากรอกข้อมูล'],
+          rules: [v => !!v || 'required'],
           value: this.access_token
         },
         {
           color: 'primary',
           label: 'Secret Token',
-          rules: [v => !!v || 'กรุณากรอกข้อมูล'],
+          rules: [v => !!v || 'required'],
           value: this.secret_token
         },
       ],
@@ -260,7 +260,7 @@ export default {
       this.$copyText(url)
           .then(() => {
             this.$notifier.showMessage({
-              content: 'คัดลอก URL แล้ว สามารถนำไปวางยัง Webhook ของคุณได้ที่ LINE',
+              content: 'URL is copied, you can paste it to your webhook on LINE.',
               color: 'info'
             })
           })

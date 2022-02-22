@@ -13,7 +13,7 @@
               prepend-inner-icon="mdi-account-outline"
               :rules="userNameRules"
               v-model="userName"
-              label="ชื่อผู้ใช้งาน"
+              label="Username"
               rounded
           ></v-text-field>
           <br>
@@ -22,7 +22,7 @@
               prepend-inner-icon="mdi-card-account-details-outline"
               :rules="firstNameRules"
               v-model="firstName"
-              label="ชื่อจริง"
+              label="First Name"
               rounded
           ></v-text-field>
           <br>
@@ -31,7 +31,7 @@
               prepend-inner-icon="mdi-card-account-details-outline"
               :rules="lastNameRules"
               v-model="lastName"
-              label="นามสกุล"
+              label="Last Name"
               rounded
           ></v-text-field>
           <br>
@@ -40,7 +40,7 @@
               prepend-inner-icon="mdi-at"
               :rules="emailRules"
               v-model="email"
-              label="อีเมล"
+              label="Email"
               rounded
           ></v-text-field>
           <br>
@@ -48,7 +48,7 @@
               class="border-4 "
               prepend-inner-icon="mdi-lock"
               v-model="password"
-              label="รหัสผ่าน"
+              label="Password"
               rounded
               :append-icon="show ? 'mdi-eye' : 'mdi-eye-off'"
               :rules="rules"
@@ -60,7 +60,7 @@
               class="border-4 "
               prepend-inner-icon="mdi-lock-alert"
               v-model="confirmPassword"
-              label="ยืนยันรหัสผ่าน"
+              label="Confirm Password"
               rounded
               :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"
               :rules="[rules, passwordConfirmationRule]"
@@ -72,7 +72,7 @@
 
               :rules="imageRules"
               v-model="fileImage"
-              label="รูปภาพ"
+              label="Picture"
               prepend-icon="mdi-camera-outline"
               accept="image/png, image/jpeg, image/bmp"
           ></v-file-input>
@@ -86,7 +86,7 @@
               @click="summitData"
               :loading="spinSubmit"
               :disabled="!valid"
-          >สมัครสมาชิก
+          >Sign Up
           </v-btn>
         </v-form>
       </v-col>
@@ -112,24 +112,24 @@ export default {
       show1: false,
       fileImage: null,
       rules: [
-        value => !!value || 'กรุณากรอกรหัสผ่าน',
-        v => v && v.length >= 6 || 'กรุณากรอกรหัสผ่านอย่างน้อย 6 ตัว'
+        value => !!value || 'please enter password',
+        v => v && v.length >= 6 || 'please enter at least 6 character'
       ],
       emailRules: [
-        v => !!v || 'กรุณากรอกอีเมล',
+        v => !!v || 'please enter email',
       ],
       userNameRules: [
-        v => !!v || 'กรุณากรอกชื่อผู้ใช้งาน',
+        v => !!v || 'please enter username',
       ],
       firstNameRules: [
-        v => !!v || 'กรุณากรอกชื่อจริง',
+        v => !!v || 'please enter your first name',
       ],
       lastNameRules: [
-        v => !!v || 'กรุณากรอกนามสกุล',
+        v => !!v || 'please enter your last name',
       ],
       imageRules: [
-        value => !!value || 'กรุณาอัพโหลดรูปภาพ',
-        value => !value || value.size < 1000000 || 'รูปภาพควรมีขนาด 1MB!'
+        value => !!value || 'please upload picture',
+        value => !value || value.size < 1000000 || 'picture should 1MB!'
       ],
       spinSubmit: false,
     }
@@ -157,7 +157,7 @@ export default {
             this.$swal.fire({
               position: 'top-end',
               icon: 'success',
-              title: 'สมัครใช้งานสำเร็จ',
+              title: 'Sign Up success',
               showConfirmButton: false,
               timer: 1500
             }).then(() => {
@@ -170,14 +170,14 @@ export default {
             this.$refs.formRegister.reset()
             this.$swal.fire({
               icon: 'error',
-              title: 'ผิดพลาด',
-              text: 'มีบางอย่างผิดพลาด',
+              title: 'Error',
+              text: 'Something wrong!',
             })
             if (err.response.status === 403) {
               this.$swal.fire({
                 icon: 'warning',
-                title: 'อีเมลนี้ถูกใช้งานไปแล้ว',
-                text: 'กรุณาใช้อีเมลอื่น',
+                title: 'Email already exists',
+                text: 'please use another email',
 
               })
             }
@@ -187,7 +187,7 @@ export default {
   },
   computed: {
     passwordConfirmationRule() {
-      return () => (this.password === this.confirmPassword) || 'โปรดใส่รหัสผ่านให้ถูกต้อง'
+      return () => (this.password === this.confirmPassword) || 'please enter a valid password'
     }
   }
 }

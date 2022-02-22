@@ -1,14 +1,14 @@
 <template>
   <div>
-    <v-card>
 
+    <v-card>
       <v-toolbar
           color="#12AE7E"
           dark
           flat
       >
         <v-icon>mdi-key-variant</v-icon>&nbsp;
-        <v-toolbar-title>กฎ</v-toolbar-title>
+        <v-toolbar-title>Rule Based</v-toolbar-title>
         <v-spacer></v-spacer>
         <v-btn color="info"
                rounded
@@ -16,7 +16,7 @@
                :hidden="!btnShow"
         >
           <v-icon left>mdi-key-plus</v-icon>
-          เพิ่มกฎ
+          Add Rule Based
         </v-btn>
 
       </v-toolbar>
@@ -36,7 +36,7 @@
               transition
           >
             <template v-slot:prepend="{ item }">
-              <v-icon v-if="!item.children" color="info">
+              <v-icon v-if="!item.children" color="red">
                 mdi-shield-key-outline
               </v-icon>
             </template>
@@ -58,7 +58,7 @@
                 class="text-h6 grey--text text--lighten-1 font-weight-light"
                 style="align-self: center;"
             >
-              เลือกรายการ
+              selecte item
             </div>
             <v-card
                 v-else
@@ -80,11 +80,12 @@
         </v-col>
       </v-row>
     </v-card>
+
     <Dialog :dialog.sync="dialog"
-            header="เพิ่มกฎ"
+            header="Add Rule Based"
             :element-forms="elements"
             max-width="450"
-            body="กรุณาตั้งชื่อกฎเพิ่มสร้างกฎของท่าน"
+            body="Please set your name Rule Based!"
             :loading-dialog="!spinSave"
             :submit-dialog="save"
     />
@@ -132,7 +133,7 @@ export default {
       elements: [
         {
           color: 'primary',
-          label: 'ตั้งชื่อกฏ',
+          label: 'Name Rule Based',
           rules: [v => !!v || 'กรุณากรอกข้อมูล'],
           icon: 'mdi-fencing',
           value: this.setName
@@ -145,7 +146,7 @@ export default {
     items() {
       return [
         {
-          name: 'กฎของฉัน',
+          name: 'My Rule Based',
           children: this.users,
         },
       ]
@@ -187,7 +188,7 @@ export default {
           })
           .catch((err) => {
             this.$notifier.showMessage({
-              content: 'มีบางอย่างผิดพลาด',
+              content: `something wrong ${err.response.status} `,
               color: 'red'
             })
             console.error(err);
@@ -205,7 +206,7 @@ export default {
             this.users.push(this.form)
             this.form = Object.assign({}, this.defaultForm)
             this.$notifier.showMessage({
-              content: 'สร้างกฎสำเร็จ คุณสามารถกำหนดรูปแบบได้แล้ว',
+              content: 'created rule-based successfully',
               color: 'success'
             })
           })
@@ -213,12 +214,12 @@ export default {
             console.error(err)
             if (err.response.status === 400) {
               this.$notifier.showMessage({
-                content: `ชื่อกฎนี้เคยมีการสร้างแล้ว  ${this.form.name}`,
+                content: `duplicate name rule-based  ${this.form.name}`,
                 color: 'red'
               })
             } else {
               this.$notifier.showMessage({
-                content: `มีบางอย่างผิดพลาด! ${err.response.status}`,
+                content: `something wrong! ${err.response.status}`,
                 color: 'red'
               })
             }

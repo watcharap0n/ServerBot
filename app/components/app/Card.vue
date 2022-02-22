@@ -3,33 +3,33 @@
     <v-card-text>
       <v-form ref="formCard"
               v-model="valid">
-        <p class="text-xl font-normal font-extrabold text-green-500">ชื่อการ์ด</p>
+        <p class="text-xl font-normal font-extrabold text-green-500">Name</p>
         <v-text-field
             color="#12AE7E"
             prepend-icon="mdi-card-text"
             v-model="card.name"
-            label="ชื่อการ์ด"
+            label="input name"
             filled
         ></v-text-field>
-        <p class="text-xl font-normal font-extrabold text-green-500">โค้ด</p>
+        <p class="text-xl font-normal font-extrabold text-green-500">Code</p>
         <v-textarea
             color="#12AE7E"
             prepend-icon="mdi-code-braces"
             v-model="card.content"
-            label="โค้ด"
+            label="code"
         >
         </v-textarea>
 
-        <p class="text-xl font-normal font-extrabold text-green-500">อธิบาย</p>
+        <p class="text-xl font-normal font-extrabold text-green-500">Description</p>
         <v-text-field
             color="#12AE7E"
             prepend-icon="mdi-message-bulleted"
             v-model="card.message"
-            label="ข้อความ"
+            label="input description"
             outlined
         ></v-text-field>
         <v-row justify="center">
-          <p class="text-center font-extrabold text-red-400">*คุณสามารถไปออกแบบการ์ดได้ที่:</p> &nbsp;&nbsp;&nbsp;
+          <p class="text-center font-extrabold text-red-400">*You can go to design a flex message at:</p> &nbsp;&nbsp;&nbsp;
           <a class="text-center text-base" href="https://developers.line.biz/flex-simulator/" target="_blank">
             Flex Message
           </a>
@@ -42,7 +42,7 @@
               @click="updateCard"
           >
             <v-icon left>mdi-database-plus</v-icon>
-            บันทึกข้อมูล
+            submit
           </v-btn>
           <v-btn
               :loading="!spin"
@@ -52,7 +52,7 @@
               text
           >
             <v-icon left>mdi-delete</v-icon>
-            ลบข้อมูล
+            delete
           </v-btn>
         </v-row>
       </v-form>

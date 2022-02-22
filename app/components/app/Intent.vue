@@ -1,10 +1,11 @@
 <template>
 
   <v-card class="text-center p-2" flat>
+
     <v-card-text>
       <v-switch
           dense
-          :color="`${intent.ready ? '#12AE7E': 'red'}`"
+          :color="`${intent.ready ? 'success': 'red'}`"
           :label="`${intent.ready ? 'Enabled': 'Disabled'}`"
           v-model="intent.ready"
       ></v-switch>
@@ -14,7 +15,7 @@
             append-outer-icon="mdi-send"
             @click:append-outer="sendQues"
             v-model="question"
-            label="Question"
+            label="input question"
             filled
             @keydown.enter="sendQues"
             clearable
@@ -37,7 +38,6 @@
                 @click:close="removeQuestion(item)"
             >
               <strong>{{ item }}</strong>&nbsp;
-
             </v-chip>
           </template>
         </v-combobox>
@@ -47,6 +47,7 @@
         <v-switch
             v-model="intent.status_flex"
             label="Enable Flex Message"
+            :color="`${intent.status_flex ? 'success': 'red'}`"
         >
         </v-switch>
         <div v-if="!intent.status_flex">
@@ -54,7 +55,7 @@
               append-outer-icon="mdi-send"
               @click:append-outer="sendAns"
               v-model="answer"
-              label="Answer"
+              label="input answer"
               filled
               @keyup.enter="sendAns"
               clearable
@@ -92,7 +93,7 @@
               append-outer-icon="mdi-card-bulleted-outline"
               menu-props="auto"
               hide-details
-              label="Select"
+              label="select your flex messages"
               single-line
           ></v-select>
         </div>

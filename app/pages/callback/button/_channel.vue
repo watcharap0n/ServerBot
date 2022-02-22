@@ -1,14 +1,14 @@
 <template>
   <div>
-    <v-card>
 
+    <v-card>
       <v-toolbar
           color="#12AE7E"
           dark
           flat
       >
         <v-icon>mdi-reply</v-icon>&nbsp;
-        <v-toolbar-title>ตอบเร็ว</v-toolbar-title>
+        <v-toolbar-title>Quick Reply</v-toolbar-title>
         <v-spacer></v-spacer>
         <v-btn color="info"
                rounded
@@ -16,7 +16,7 @@
                :hidden="!btnShow"
         >
           <v-icon left>mdi-reply</v-icon>
-          เพิ่มตอบเร็ว
+          Add Quick Reply
         </v-btn>
 
       </v-toolbar>
@@ -36,7 +36,8 @@
               transition
           >
             <template v-slot:prepend="{ item }">
-              <v-icon v-if="!item.children" color="info">
+              <v-icon v-if="!item.children"
+                      color="red">
                 mdi-reply
               </v-icon>
             </template>
@@ -57,7 +58,7 @@
                 class="text-h6 grey--text text--lighten-1 font-weight-light"
                 style="align-self: center;"
             >
-              เลือกรายการ
+              select item
             </div>
             <v-card
                 v-else
@@ -71,7 +72,6 @@
                     :users.sync="users"
                     :intent="intent"
                 >
-
                 </QuickReply>
 
               </v-card-text>
@@ -81,14 +81,16 @@
         </v-col>
       </v-row>
     </v-card>
+
     <Dialog :dialog.sync="dialog"
-            header="เพิ่มตอบเร็ว"
+            header="Add Quick Reply"
             :element-forms="elements"
             max-width="450"
-            body="กรุณาตั้งชื่อตอบเร็วเพิ่มสร้างตอบเร็วของท่าน"
+            body="Please set your name Quick Reply!"
             :loading-dialog="!spinSave"
             :submit-dialog="save"
     />
+
   </div>
 </template>
 
@@ -131,8 +133,8 @@ export default {
       elements: [
         {
           color: 'primary',
-          label: 'ตั้งชื่อกฏ',
-          rules: [v => !!v || 'กรุณากรอกข้อมูล'],
+          label: 'Name Quick reply',
+          rules: [v => !!v || 'required'],
           icon: 'mdi-reply',
           value: this.setName
         }
@@ -143,7 +145,7 @@ export default {
     items() {
       return [
         {
-          name: 'ตอบเร็วของฉัน',
+          name: 'My Quick Reply',
           children: this.users,
         },
       ]
@@ -185,7 +187,7 @@ export default {
           })
           .catch((err) => {
             this.$notifier.showMessage({
-              content: 'มีบางอย่างผิดพลาด',
+              content: `something wrong ${err.response.status}`,
               color: 'red'
             })
             console.error(err);
@@ -203,7 +205,7 @@ export default {
             this.users.push(this.form)
             this.form = Object.assign({}, this.defaultForm)
             this.$notifier.showMessage({
-              content: 'สร้างตอบเร็วสำเร็จ คุณสามารถกำหนดรูปแบบได้แล้ว',
+              content: 'created quick reply successfully',
               color: 'success'
             })
           })
@@ -211,12 +213,12 @@ export default {
             console.error(err)
             if (err.response.status === 400) {
               this.$notifier.showMessage({
-                content: `ชื่อตอบเร็วนี้เคยมีการสร้างแล้ว  ${this.form.name}`,
+                content: `duplicate name quick reply  ${this.form.name}`,
                 color: 'red'
               })
             } else {
               this.$notifier.showMessage({
-                content: `มีบางอย่างผิดพลาด! ${err.response.status}`,
+                content: `something wrong! ${err.response.status}`,
                 color: 'red'
               })
             }

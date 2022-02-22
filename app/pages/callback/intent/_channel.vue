@@ -35,7 +35,7 @@
               transition
           >
             <template v-slot:prepend="{ item }">
-              <v-icon v-if="!item.children" color="info">
+              <v-icon v-if="!item.children" color="red">
                 mdi-robot
               </v-icon>
             </template>
@@ -81,10 +81,10 @@
       </v-row>
     </v-card>
     <Dialog :dialog.sync="dialog"
-            header="เพิ่มหัวข้อ"
+            header="Intent"
             :element-forms="elements"
             max-width="450"
-            body="Set name Intent"
+            body="Please set your name intent!"
             :loading-dialog="!spinSave"
             :submit-dialog="save"
     />

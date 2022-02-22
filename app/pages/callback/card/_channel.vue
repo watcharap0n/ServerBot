@@ -7,7 +7,7 @@
           flat
       >
         <v-icon>mdi-card-plus</v-icon>&nbsp;
-        <v-toolbar-title>การ์ด</v-toolbar-title>
+        <v-toolbar-title>Flex Message</v-toolbar-title>
         <v-spacer></v-spacer>
         <v-btn color="info"
                rounded
@@ -15,7 +15,7 @@
                :hidden="!btnShow"
         >
           <v-icon left>mdi-card-plus-outline</v-icon>
-          เพิ่มการ์ด
+          Add Flex Message
         </v-btn>
 
       </v-toolbar>
@@ -35,7 +35,7 @@
               transition
           >
             <template v-slot:prepend="{ item }">
-              <v-icon v-if="!item.children" color="info">
+              <v-icon v-if="!item.children" color="red">
                 mdi-card
               </v-icon>
             </template>
@@ -57,7 +57,7 @@
                 class="text-h6 grey--text text--lighten-1 font-weight-light"
                 style="align-self: center;"
             >
-              เลือกรายการ
+              select item
             </div>
             <v-card
                 v-else
@@ -79,23 +79,24 @@
         </v-col>
       </v-row>
     </v-card>
+
     <Dialog :dialog.sync="dialog"
-            header="เพิ่มการ์ด"
+            header="Add flex message"
             :element-forms="elements"
             max-width="450"
-            body="กรุณาตั้งชื่อการ์ดเพิ่มสร้างการ์ดของท่าน"
+            body="Please set your name Flex Message!"
             :loading-dialog="spinSave"
             :submit-dialog="save"
     />
 
-
     <Dialog :dialog.sync="dialogDelete"
-            header="ลบข้อมูล"
-            body="คุณแน่ใจว่าจะลบข้อมูล ?"
+            header="delete Flex Message"
+            body="are you sure to delete ?"
             max-width="350"
             :loading-dialog="spinSave"
             :submit-dialog="remove"
     />
+
   </div>
 </template>
 
@@ -133,8 +134,8 @@ export default {
       elements: [
         {
           color: 'primary',
-          label: 'ตั้งชื่อการ์ด',
-          rules: [v => !!v || 'กรุณากรอกข้อมูล'],
+          label: 'Name Flex Message',
+          rules: [v => !!v || 'required'],
           icon: 'mdi-card-plus',
           value: this.setName
         }
@@ -148,7 +149,7 @@ export default {
     items() {
       return [
         {
-          name: 'การ์ดของฉัน',
+          name: 'Flex Message',
           children: this.users,
         },
       ]
@@ -186,7 +187,7 @@ export default {
           })
           .catch((err) => {
             this.$notifier.showMessage({
-              content: 'มีบางอย่างผิดพลาด',
+              content: `something wrong ${err.response.status}`,
               color: 'red'
             })
             console.error(err);
@@ -204,7 +205,7 @@ export default {
             this.users.push(this.form)
             this.form = Object.assign({}, this.defaultForm)
             this.$notifier.showMessage({
-              content: 'สร้างการ์ดสำเร็จ คุณสามารถกำหนดรูปแบบได้แล้ว',
+              content: 'create card successfully',
               color: 'success'
             })
           })
@@ -212,12 +213,12 @@ export default {
             console.error(err)
             if (err.response.status === 400) {
               this.$notifier.showMessage({
-                content: `ชื่อการ์ดนี้เคยมีการสร้างแล้ว  ${this.form.name}`,
+                content: `duplicate name  ${this.form.name}`,
                 color: 'red'
               })
             } else {
               this.$notifier.showMessage({
-                content: `มีบางอย่างผิดพลาด! ${err.response.status}`,
+                content: `something wrong! ${err.response.status}`,
                 color: 'red'
               })
             }
@@ -238,7 +239,7 @@ export default {
       this.spinSave = false
       this.dialogDelete = false
       this.$notifier.showMessage({
-        content: `ลบการ์ดแล้ว!`,
+        content: `deleted!`,
         color: 'success'
       })
     },
@@ -249,14 +250,14 @@ export default {
       await this.$axios.put(path, this.form)
           .then(() => {
             this.$notifier.showMessage({
-              content: `แก้ไขการ์ดแล้ว!`,
+              content: `updated!`,
               color: 'success'
             })
             this.form = Object.assign({}, this.defaultForm)
           })
           .catch((err) => {
             this.$notifier.showMessage({
-              content: `มีบางอย่างผิดพลาด status code ${err.response.status}`,
+              content: `something wrong status code ${err.response.status}`,
               color: 'red'
             })
           })
