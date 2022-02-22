@@ -40,44 +40,14 @@
 
       <p class="text-xl font-normal font-extrabold text-green-500">ข้อความ</p>
       <v-text-field
-          v-model="texts"
-          @keydown.enter="sendTexts"
+          v-model="label"
+          @keydown.enter="sendLabel"
           label="ข้อความ"
       >
       </v-text-field>
       <v-combobox
-          v-model="button.texts"
-          label="แสดงข้อความ"
-          :items="button.texts"
-          chips
-          multiple
-          hide-selected
-          readonly
-      >
-        <template v-slot:selection="{ attrs, item, select, selected }">
-          <v-chip
-              v-bind="attrs"
-              :input-value="selected"
-              close
-              @click="select"
-              @click:close="removeTexts(item)"
-          >
-            <strong>{{ item }}</strong>&nbsp;
-
-          </v-chip>
-        </template>
-      </v-combobox>
-
-      <p class="text-xl font-normal font-extrabold text-green-500">ป้าย</p>
-      <v-text-field
-          v-model="label"
-          @keydown.enter="sendLabel"
-          label="ข้อความที่ส่งไป"
-      >
-      </v-text-field>
-      <v-combobox
           v-model="button.labels"
-          label="แสดงข้อความที่ส่งไป"
+          label="แสดงข้อความ"
           :items="button.labels"
           chips
           multiple
@@ -91,6 +61,36 @@
               close
               @click="select"
               @click:close="removeLabel(item)"
+          >
+            <strong>{{ item }}</strong>&nbsp;
+
+          </v-chip>
+        </template>
+      </v-combobox>
+
+      <p class="text-xl font-normal font-extrabold text-green-500">ป้าย</p>
+      <v-text-field
+          v-model="text"
+          @keydown.enter="sendTexts"
+          label="ข้อความที่ส่งไป"
+      >
+      </v-text-field>
+      <v-combobox
+          v-model="button.texts"
+          label="แสดงข้อความที่ส่งไป"
+          :items="button.texts"
+          chips
+          multiple
+          hide-selected
+          readonly
+      >
+        <template v-slot:selection="{ attrs, item, select, selected }">
+          <v-chip
+              v-bind="attrs"
+              :input-value="selected"
+              close
+              @click="select"
+              @click:close="removeTexts(item)"
           >
             <strong>{{ item }}</strong>&nbsp;
 
@@ -155,15 +155,15 @@ export default {
       dialog: false,
       spin: true,
       selected: "",
-      texts: "",
+      text: "",
       label: "",
       reply: ""
     }
   },
   methods: {
     sendTexts() {
-      this.button.texts.push(this.texts)
-      this.texts = ''
+      this.button.texts.push(this.text)
+      this.text = ''
     },
     sendLabel() {
       this.button.labels.push(this.label)
