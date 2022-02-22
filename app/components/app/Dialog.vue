@@ -3,7 +3,7 @@
     <v-card>
       <v-toolbar
           flat
-          color="#12AE7E"
+          color="info"
           dark
       >
         {{ header }}

@@ -3,17 +3,17 @@
 
     <v-card>
       <v-toolbar
-          color="#12AE7E"
+          color="info"
           dark
           flat
       >
         <v-icon>mdi-key-variant</v-icon>&nbsp;
         <v-toolbar-title>Rule Based</v-toolbar-title>
         <v-spacer></v-spacer>
-        <v-btn color="info"
-               rounded
+        <v-btn color="white"
                @click="dialog = true"
                :hidden="!btnShow"
+               text
         >
           <v-icon left>mdi-key-plus</v-icon>
           Add Rule Based
