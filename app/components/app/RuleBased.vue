@@ -8,38 +8,38 @@
           dense
           :color="`${ruleBased.ready ? '#12AE7E': 'red'}`"
           v-model="ruleBased.ready"
-          :label="`${ruleBased.ready ? 'เปิดใช้งาน': 'ปิดใช้งาน'}`"
+          :label="`${ruleBased.ready ? 'Enabled': 'Disabled'}`"
       >
       </v-switch>
       <div :hidden="!ruleBased.ready">
-        <p class="text-xl font-normal font-extrabold text-green-500">สร้างคีย์เวิร์ด</p>
+        <p class="text-xl font-normal font-extrabold text-green-500">Keyword</p>
         <v-text-field
             v-model="ruleBased.keyword"
-            label="คีย์เวิร์ด"
+            label="input keyword"
             filled
             clearable
         ></v-text-field>
 
-        <p class="text-xl font-normal font-extrabold text-green-500">คำตอบ</p>
+        <p class="text-xl font-normal font-extrabold text-green-500">Answer</p>
         <v-switch
             dense
             :color="`${ruleBased.status_flex ? '#12AE7E': 'red'}`"
             v-model="ruleBased.status_flex"
-            :label="`${ruleBased.status_flex ? 'เปิดใช้งานตอบแบบการ์ด': 'ปิดใช้งานตอบแบบการ์ด'}`"
+            :label="`${ruleBased.status_flex ? 'Enable Flex Message': 'Disabled Flex Message'}`"
         >
         </v-switch>
 
         <div v-if="!ruleBased.status_flex">
           <v-text-field
               v-model="answer"
-              label="คำตอบ"
+              label="input answer"
               filled
               @keyup.enter="sendAns"
               clearable
           ></v-text-field>
           <v-combobox
               v-model="ruleBased.answer"
-              label="คำตอบ"
+              label="answers"
               deletable-chips
               chips
               multiple
@@ -70,7 +70,7 @@
               append-outer-icon="mdi-card-bulleted-outline"
               menu-props="auto"
               hide-details
-              label="เลือกการ์ดที่ต้องการใช้งาน"
+              label="select your flex messages"
               single-line
           ></v-select>
         </div>
@@ -87,7 +87,7 @@
           @click="todo"
       >
         <v-icon left>mdi-database-plus</v-icon>
-        บันทึกข้อมูล
+        submit
       </v-btn>
       <v-btn
           color="red"
@@ -96,12 +96,12 @@
           @click="dialog = true"
       >
         <v-icon left>mdi-delete</v-icon>
-        ลบข้อมูล
+        delete
       </v-btn>
     </v-card-actions>
     <Dialog :dialog.sync="dialog"
             header="ลบข้อมูล"
-            body="คุณแน่ใจว่าจะลบข้อมูล ?"
+            body="are you sure delete rule based?"
             max-width="350"
             :loading-dialog="!spin"
             :submit-dialog="remove"
@@ -161,7 +161,7 @@ export default {
       this.spinSave = true
       this.dialogDelete = false
       this.$notifier.showMessage({
-        content: `ลบกฎแล้ว!`,
+        content: `deleted!`,
         color: 'success'
       })
       this.spin = true
@@ -172,13 +172,13 @@ export default {
       await this.$axios.put(path, this.ruleBased)
        .then((res) => {
          this.$notifier.showMessage({
-              content: `แก้ไขกฎแล้ว ${res.data.name}`,
+              content: `updated ${res.data.name}`,
               color: 'success'
             })
        })
       .catch((err) => {
             this.$notifier.showMessage({
-              content: `มีบางอย่างผิดพลาด status code ${err.response.status}`,
+              content: `something wrong status code ${err.response.status}`,
               color: 'red'
             })
           })

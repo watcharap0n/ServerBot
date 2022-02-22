@@ -55,7 +55,7 @@
               >
                 <v-radio
 
-                    label="จดจำฉัน"
+                    label="Remember me"
                     color="primary"
                     value="primary"
                 ></v-radio>
@@ -64,7 +64,7 @@
 
             <v-col sm="4">
               <NuxtLink to="/authentication/forgot" class="text-body">
-                ลืมรหัสผ่าน?
+                forgot password?
               </NuxtLink>
             </v-col>
           </v-row>
@@ -78,7 +78,7 @@
               @click="submitLogin"
               :loading="spinSubmit"
               :disabled="!valid"
-          >เข้าสู่ระบบ
+          >Sign In
           </v-btn>
           <br>
           <br>
@@ -89,7 +89,7 @@
             <NuxtLink to="/authentication/register"
                       style="color: #3BBBBC"
             >
-              สมัครสมาชิก
+              Sign Up
             </NuxtLink>
           </v-row>
         </v-form>
@@ -109,11 +109,11 @@ export default {
       show1: false,
       valid: true,
       emailRules: [
-        v => !!v || 'กรุณากรอกอีเมล',
-        v => /.+@.+\..+/.test(v) || 'กรุณากรอกอีเมลให้ถูกต้อง',
+        v => !!v || 'please enter your email',
+        v => /.+@.+\..+/.test(v) || 'Please enter a valid email address.',
       ],
       passwordRules: [
-        v => !!v || 'กรุณากรอกรหัสผ่าน',
+        v => !!v || 'please enter your password',
       ],
       spinSubmit: false,
       email: '',
@@ -137,7 +137,6 @@ export default {
       this.spinSubmit = true
       this.$auth.loginWith('local', {data: formData})
           .then(() => {
-            // console.log(this.$auth.strategy.token.get())
             this.$router.push('/');
             this.spinSubmit = false
             this.$refs.form.reset();
@@ -147,16 +146,16 @@ export default {
             if (response === 403) {
               this.$swal.fire({
                 icon: 'warning',
-                title: 'กรุณายืนยันตัวตน',
-                text: 'กรุณายืนยันตัวตนผ่านอีเมล',
+                title: 'Verify!',
+                text: 'please verification your email',
               })
               this.spinSubmit = false
               this.$refs.form.reset();
             } else {
               this.$swal.fire({
                 icon: 'error',
-                title: 'ผิดพลาด',
-                text: 'มีบางอย่างผิดพลาด อีเมลหรือพาสเวิดไม่ถูกต้อง'
+                title: 'something wrong',
+                text: 'something wrong email or password invalid'
               })
               this.spinSubmit = false
               this.$refs.form.reset();

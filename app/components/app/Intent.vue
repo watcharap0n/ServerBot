@@ -1,27 +1,28 @@
 <template>
 
   <v-card class="text-center p-2" flat>
+
     <v-card-text>
       <v-switch
           dense
-          :color="`${intent.ready ? '#12AE7E': 'red'}`"
-          :label="`${intent.ready ? 'เปิดใช้งาน': 'ปิดใช้งาน'}`"
+          :color="`${intent.ready ? 'success': 'red'}`"
+          :label="`${intent.ready ? 'Enabled': 'Disabled'}`"
           v-model="intent.ready"
       ></v-switch>
       <div :hidden="!intent.ready">
-        <p class="text-xl font-normal font-extrabold text-green-500">สอนบอท</p>
+        <p class="text-xl font-normal font-extrabold text-green-500">Intent</p>
         <v-text-field
             append-outer-icon="mdi-send"
             @click:append-outer="sendQues"
             v-model="question"
-            label="คำถาม"
+            label="input question"
             filled
             @keydown.enter="sendQues"
             clearable
         ></v-text-field>
         <v-combobox
             v-model="intent.question"
-            label="คำถามที่สอนไป"
+            label="Questions taught"
             :items="intent.question"
             chips
             multiple
@@ -37,16 +38,16 @@
                 @click:close="removeQuestion(item)"
             >
               <strong>{{ item }}</strong>&nbsp;
-
             </v-chip>
           </template>
         </v-combobox>
 
 
-        <p class="text-xl font-normal font-extrabold text-green-500">คำตอบ</p>
+        <p class="text-xl font-normal font-extrabold text-green-500">Answer</p>
         <v-switch
             v-model="intent.status_flex"
-            label="Card"
+            label="Enable Flex Message"
+            :color="`${intent.status_flex ? 'success': 'red'}`"
         >
         </v-switch>
         <div v-if="!intent.status_flex">
@@ -54,14 +55,14 @@
               append-outer-icon="mdi-send"
               @click:append-outer="sendAns"
               v-model="answer"
-              label="คำตอบ"
+              label="input answer"
               filled
               @keyup.enter="sendAns"
               clearable
           ></v-text-field>
           <v-combobox
               v-model="intent.answer"
-              label="คำตอบทั้งหมด"
+              label="Answers"
               deletable-chips
               chips
               multiple
@@ -92,7 +93,7 @@
               append-outer-icon="mdi-card-bulleted-outline"
               menu-props="auto"
               hide-details
-              label="Select"
+              label="select your flex messages"
               single-line
           ></v-select>
         </div>
@@ -108,7 +109,7 @@
           @click="todo"
       >
         <v-icon left>mdi-database-plus</v-icon>
-        บันทึกประเภทการตอบ
+        Submit
       </v-btn>
       <v-btn
           color="red"
@@ -117,13 +118,13 @@
           @click="dialog = true"
       >
         <v-icon left>mdi-delete</v-icon>
-        ลบข้อมูล
+        Delete
       </v-btn>
     </v-card-actions>
     <Dialog
         :dialog.sync="dialog"
-        header="ลบข้อมูล"
-        body="คุณแน่ใจว่าจะลบข้อมูล ?"
+        header="Delete data"
+        body="Are you sure to delete the data ?"
         max-width="350"
         :loading-dialog="!spin"
         :submit-dialog="remove"
@@ -187,13 +188,13 @@ export default {
       await this.$axios.put(path, this.intent)
           .then((res) => {
             this.$notifier.showMessage({
-              content: `แก้ไขสอนบอทแล้ว ${res.data.name}`,
+              content: `Intent updated! ${res.data.name}`,
               color: 'success'
             })
           })
           .catch((err) => {
             this.$notifier.showMessage({
-              content: `มีบางอย่างผิดพลาด status code ${err.response.status}`,
+              content: `something wrong status code ${err.response.status}`,
               color: 'red'
             })
           })
@@ -209,7 +210,7 @@ export default {
       this.spinSave = true
       this.dialogDelete = false
       this.$notifier.showMessage({
-        content: `ลบกฎแล้ว!`,
+        content: `Intent Deleted!`,
         color: 'success'
       })
       this.spin = true

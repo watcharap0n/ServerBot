@@ -1,23 +1,23 @@
 <template>
   <v-card class="text-center p-2" flat>
     <v-card-text>
-      <p class="text-xl font-normal font-extrabold text-green-500">ตอบเร็ว</p>
+      <p class="text-xl font-normal font-extrabold text-green-500">Quick Reply</p>
       <v-select
           v-model="button.intent"
           :items="intent"
           item-text="name"
           item-value="_id"
-          label="เลือกสอนบอทที่ต้องการสร้างตอบเร็ว"
+          label="Select you intents"
       ></v-select>
       <v-text-field
           v-model="reply"
           @keydown.enter="sendReply"
-          label="ตอบเร็ว"
+          label="input answer"
       >
       </v-text-field>
       <v-combobox
           v-model="button.reply"
-          label="แสดงตอบเร็ว"
+          label="Answers"
           :items="button.reply"
           chips
           multiple
@@ -38,46 +38,16 @@
         </template>
       </v-combobox>
 
-      <p class="text-xl font-normal font-extrabold text-green-500">ข้อความ</p>
-      <v-text-field
-          v-model="texts"
-          @keydown.enter="sendTexts"
-          label="ข้อความ"
-      >
-      </v-text-field>
-      <v-combobox
-          v-model="button.texts"
-          label="แสดงข้อความ"
-          :items="button.texts"
-          chips
-          multiple
-          hide-selected
-          readonly
-      >
-        <template v-slot:selection="{ attrs, item, select, selected }">
-          <v-chip
-              v-bind="attrs"
-              :input-value="selected"
-              close
-              @click="select"
-              @click:close="removeTexts(item)"
-          >
-            <strong>{{ item }}</strong>&nbsp;
-
-          </v-chip>
-        </template>
-      </v-combobox>
-
-      <p class="text-xl font-normal font-extrabold text-green-500">ป้าย</p>
+      <p class="text-xl font-normal font-extrabold text-green-500">Label</p>
       <v-text-field
           v-model="label"
           @keydown.enter="sendLabel"
-          label="ข้อความที่ส่งไป"
+          label="input label"
       >
       </v-text-field>
       <v-combobox
           v-model="button.labels"
-          label="แสดงข้อความที่ส่งไป"
+          label="Labels"
           :items="button.labels"
           chips
           multiple
@@ -97,16 +67,46 @@
           </v-chip>
         </template>
       </v-combobox>
+
+      <p class="text-xl font-normal font-extrabold text-green-500">label</p>
+      <v-text-field
+          v-model="text"
+          @keydown.enter="sendTexts"
+          label="input text"
+      >
+      </v-text-field>
+      <v-combobox
+          v-model="button.texts"
+          label="Texts"
+          :items="button.texts"
+          chips
+          multiple
+          hide-selected
+          readonly
+      >
+        <template v-slot:selection="{ attrs, item, select, selected }">
+          <v-chip
+              v-bind="attrs"
+              :input-value="selected"
+              close
+              @click="select"
+              @click:close="removeTexts(item)"
+          >
+            <strong>{{ item }}</strong>&nbsp;
+
+          </v-chip>
+        </template>
+      </v-combobox>
     </v-card-text>
     <v-card-actions>
       <v-spacer></v-spacer>
       <v-btn
-          color="#12AE7E"
+          color="success"
           text
           x-large
           :loading="!spin"
           @click="todo"
-      >บันทึกข้อมูล
+      >submit
       </v-btn>
       <v-btn
           color="red"
@@ -115,13 +115,14 @@
           @click="dialog = true"
       >
         <v-icon left>mdi-delete</v-icon>
-        ลบข้อมูล
+        delete
       </v-btn>
     </v-card-actions>
+
     <Dialog
         :dialog.sync="dialog"
-        header="ลบข้อมูล"
-        body="คุณแน่ใจว่าจะลบข้อมูล ?"
+        header="delete!"
+        body="are you sure delete ?"
         max-width="350"
         :loading-dialog="!spin"
         :submit-dialog="remove"
@@ -155,15 +156,15 @@ export default {
       dialog: false,
       spin: true,
       selected: "",
-      texts: "",
+      text: "",
       label: "",
       reply: ""
     }
   },
   methods: {
     sendTexts() {
-      this.button.texts.push(this.texts)
-      this.texts = ''
+      this.button.texts.push(this.text)
+      this.text = ''
     },
     sendLabel() {
       this.button.labels.push(this.label)
@@ -195,7 +196,7 @@ export default {
       this.spinSave = true
       this.dialogDelete = false
       this.$notifier.showMessage({
-        content: `ลบตอบเร็วแล้ว!`,
+        content: `deleted!`,
         color: 'red'
       })
       this.spin = true
@@ -207,20 +208,20 @@ export default {
         await this.$axios.put(path, this.button)
             .then((res) => {
               this.$notifier.showMessage({
-                content: `แก้ไขตอบเร็วแล้ว ${res.data.name}`,
+                content: `updated ${res.data.name}`,
                 color: 'success'
               })
             })
             .catch((err) => {
               this.$notifier.showMessage({
-                content: `มีบางอย่างผิดพลาด status code ${err.response.status}`,
+                content: `something wrong status code ${err.response.status}`,
                 color: 'red'
               })
             })
         this.spin = true
       } else {
         this.$notifier.showMessage({
-          content: `กรุณาใส่จำนวน ข้อความและจำนวนป้าย ให้มีจำนวนเท่ากันด้วย`,
+          content: `Please enter text and labels. equal!`,
           color: 'red'
         })
 

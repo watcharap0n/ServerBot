@@ -7,7 +7,7 @@
           flat
       >
         <v-icon>mdi-robot</v-icon>&nbsp;
-        <v-toolbar-title>หัวข้อ</v-toolbar-title>
+        <v-toolbar-title>Intent</v-toolbar-title>
         <v-spacer></v-spacer>
         <v-btn color="info"
                rounded
@@ -15,7 +15,7 @@
                :hidden="!btnShow"
         >
           <v-icon left>mdi-robot</v-icon>
-          เพิ่มหัวข้อ
+          Add Intent
         </v-btn>
 
       </v-toolbar>
@@ -35,7 +35,7 @@
               transition
           >
             <template v-slot:prepend="{ item }">
-              <v-icon v-if="!item.children" color="info">
+              <v-icon v-if="!item.children" color="red">
                 mdi-robot
               </v-icon>
             </template>
@@ -57,7 +57,7 @@
                 class="text-h6 grey--text text--lighten-1 font-weight-light"
                 style="align-self: center;"
             >
-              เลือกรายการ
+              select item
             </div>
             <v-card
                 v-else
@@ -81,10 +81,10 @@
       </v-row>
     </v-card>
     <Dialog :dialog.sync="dialog"
-            header="เพิ่มหัวข้อ"
+            header="Intent"
             :element-forms="elements"
             max-width="450"
-            body="กรุณาตั้งชื่อหัวข้อเพิ่มสร้างหัวข้อของท่าน"
+            body="Please set your name intent!"
             :loading-dialog="!spinSave"
             :submit-dialog="save"
     />
@@ -125,8 +125,8 @@ export default {
       elements: [
         {
           color: 'primary',
-          label: 'ตั้งชื่อหัวข้อ',
-          rules: [v => !!v || 'กรุณากรอกข้อมูล'],
+          label: 'Name Intent',
+          rules: [v => !!v || 'required!'],
           icon: 'mdi-robot',
           value: this.setName
         }
@@ -137,7 +137,7 @@ export default {
     items() {
       return [
         {
-          name: 'สอนบอทของฉัน',
+          name: 'My Intents',
           children: this.users,
         },
       ]
@@ -179,7 +179,7 @@ export default {
           })
           .catch((err) => {
             this.$notifier.showMessage({
-              content: 'มีบางอย่างผิดพลาด',
+              content: `something wrong! ${err.response.status}`,
               color: 'red'
             })
             console.error(err);
@@ -197,7 +197,7 @@ export default {
             this.users.push(this.form)
             this.form = Object.assign({}, this.defaultForm)
             this.$notifier.showMessage({
-              content: 'สร้างหัวข้อสำเร็จ คุณสามารถกำหนดรูปแบบได้แล้ว',
+              content: 'create intent successfully',
               color: 'success'
             })
           })
@@ -205,12 +205,12 @@ export default {
             console.error(err)
             if (err.response.status === 400) {
               this.$notifier.showMessage({
-                content: `ชื่อหัวข้อนี้เคยมีการสร้างแล้ว  ${this.form.name}`,
+                content: `data intent duplicate!  ${this.form.name}`,
                 color: 'red'
               })
             } else {
               this.$notifier.showMessage({
-                content: `มีบางอย่างผิดพลาด! ${err.response.status}`,
+                content: `something wrong! ${err.response.status}`,
                 color: 'red'
               })
             }
