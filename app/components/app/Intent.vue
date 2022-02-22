@@ -12,6 +12,7 @@
       <div :hidden="!intent.ready">
         <p class="text-xl font-normal font-extrabold text-green-500">Intent</p>
         <v-text-field
+            color="red"
             append-outer-icon="mdi-send"
             @click:append-outer="sendQues"
             v-model="question"
@@ -31,6 +32,8 @@
         >
           <template v-slot:selection="{ attrs, item, select, selected }">
             <v-chip
+                dark
+                color="info"
                 v-bind="attrs"
                 :input-value="selected"
                 close
@@ -52,6 +55,7 @@
         </v-switch>
         <div v-if="!intent.status_flex">
           <v-text-field
+              color="red"
               append-outer-icon="mdi-send"
               @click:append-outer="sendAns"
               v-model="answer"
@@ -71,6 +75,8 @@
           >
             <template v-slot:selection="{ attrs, item, select, selected }">
               <v-chip
+                  dark
+                  color="info"
                   v-bind="attrs"
                   :input-value="selected"
                   close
@@ -89,9 +95,11 @@
               v-model="intent.card"
               :items="cards"
               item-text="name"
+              color="red"
               item-value="_id"
               append-outer-icon="mdi-card-bulleted-outline"
               menu-props="auto"
+              item-color="red"
               hide-details
               label="select your flex messages"
               single-line

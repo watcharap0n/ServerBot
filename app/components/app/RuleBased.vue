@@ -48,6 +48,8 @@
           >
             <template v-slot:selection="{ attrs, item, select, selected }">
               <v-chip
+                  dark
+                  color="info"
                   v-bind="attrs"
                   :input-value="selected"
                   close
