@@ -84,7 +84,7 @@
             :element-forms="elements"
             max-width="450"
             body="กรุณาตั้งชื่อการ์ดเพิ่มสร้างการ์ดของท่าน"
-            :loading-dialog="!spinSave"
+            :loading-dialog="spinSave"
             :submit-dialog="save"
     />
 
@@ -93,7 +93,7 @@
             header="ลบข้อมูล"
             body="คุณแน่ใจว่าจะลบข้อมูล ?"
             max-width="350"
-            :loading-dialog="!spinSave"
+            :loading-dialog="spinSave"
             :submit-dialog="remove"
     />
   </div>
