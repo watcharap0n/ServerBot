@@ -3,6 +3,8 @@
     <v-card-text>
       <p class="text-xl font-normal font-extrabold text-green-500">Quick Reply</p>
       <v-select
+          rounded
+          filled
           v-model="button.intent"
           :items="intent"
           item-text="name"
@@ -10,12 +12,16 @@
           label="Select you intents"
       ></v-select>
       <v-text-field
+          rounded
+          filled
           v-model="reply"
           @keydown.enter="sendReply"
           label="input answer"
       >
       </v-text-field>
       <v-combobox
+          rounded
+          filled
           v-model="button.reply"
           label="Answers"
           :items="button.reply"
@@ -42,12 +48,16 @@
 
       <p class="text-xl font-normal font-extrabold text-green-500">Label</p>
       <v-text-field
+          rounded
+          filled
           v-model="label"
           @keydown.enter="sendLabel"
           label="input label"
       >
       </v-text-field>
       <v-combobox
+          rounded
+          filled
           v-model="button.labels"
           label="Labels"
           :items="button.labels"
@@ -67,19 +77,22 @@
               @click:close="removeLabel(item)"
           >
             <strong>{{ item }}</strong>&nbsp;
-
           </v-chip>
         </template>
       </v-combobox>
 
       <p class="text-xl font-normal font-extrabold text-green-500">label</p>
       <v-text-field
+          rounded
+          filled
           v-model="text"
           @keydown.enter="sendTexts"
           label="input text"
       >
       </v-text-field>
       <v-combobox
+          rounded
+          filled
           v-model="button.texts"
           label="Texts"
           :items="button.texts"
@@ -99,7 +112,6 @@
               @click:close="removeTexts(item)"
           >
             <strong>{{ item }}</strong>&nbsp;
-
           </v-chip>
         </template>
       </v-combobox>
