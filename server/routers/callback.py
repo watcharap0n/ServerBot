@@ -22,6 +22,8 @@ collection = "webhook"
 
 async def get_webhook(token):
     user = await db.find_one(collection=collection, query={"token": token})
+    if not user:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f'Not found token {token}')
     user = Webhook(**user)
     return user
 
@@ -186,7 +188,7 @@ async def client_webhook(
             userId = events["source"]["userId"]
             db.delete_one("follower_linebot", query={"userId": userId})
         elif event_type == "postback":
-            event_postback(events, model)
+            await event_postback(events, model)
         elif event_type == "message":
             message_type = events["message"]["type"]
             if message_type == "text":
@@ -215,8 +217,22 @@ async def client_webhook(
     return payload
 
 
-def event_postback(events, model):
+async def event_postback(events, model):
+    line_bot_api = LineBotApi(model.access_token)
+    reply_token = events["replyToken"]
     postback = events['postback']['data']
+    item = await db.find_one(collection='rule_based',
+                             query={'access_token': model.access_token, 'keyword': postback})
+    card = item.get('card')
+    status_flex = item.get('status_flex')
+    answer = item.get('answer')
+
+    if status_flex:
+        flex_msg = await get_card_content(card)
+        line_bot_api.reply_message(reply_token, flex_msg)
+    else:
+        reply = random.choice(answer)
+        line_bot_api.reply_message(reply_token, reply)
 
 
 def event_handler(events, model):
@@ -266,19 +282,13 @@ def preprocessing_words(db):
     return Word(X=sum_word, y=embedding, answers=ans_list)
 
 
-def iterate_item(items: list, condition: str, match: str) -> dict:
-    for item in items:
-        if item.get(condition) == match:
-            return item
-
-
 async def handler_message(events, model):
     line_bot_api = LineBotApi(model.access_token)
     message = events["message"]["text"]
     reply_token = events["replyToken"]
 
-    items_keyword = await db.find(collection='rule_based', query={'access_token': model.access_token})
-    keyword = iterate_item(items=items_keyword, condition='keyword', match=message)
+    keyword = await db.find_one(collection='rule_based',
+                                query={'access_token': model.access_token, 'keyword': message})
 
     if not keyword:
         intents = list(await db.find(collection='intents', query={'access_token': model.access_token}))
