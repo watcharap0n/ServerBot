@@ -7,7 +7,7 @@
           dark
           flat
       >
-        <v-icon>mdi-key-variant</v-icon>&nbsp;
+        <v-icon>mdi-brush</v-icon>&nbsp;
         <v-toolbar-title>Rule Based</v-toolbar-title>
         <v-spacer></v-spacer>
         <v-btn color="white"
@@ -37,7 +37,7 @@
           >
             <template v-slot:prepend="{ item }">
               <v-icon v-if="!item.children" color="red">
-                mdi-shield-key-outline
+                mdi-brush
               </v-icon>
             </template>
 
@@ -135,7 +135,7 @@ export default {
           color: 'primary',
           label: 'Name Rule Based',
           rules: [v => !!v || 'กรุณากรอกข้อมูล'],
-          icon: 'mdi-fencing',
+          icon: 'mdi-brush',
           value: this.setName
         }
       ]
