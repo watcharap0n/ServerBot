@@ -216,7 +216,7 @@ async def client_webhook(
 
 
 def event_postback(events, model):
-    pass
+    postback = events['postback']['data']
 
 
 def event_handler(events, model):
