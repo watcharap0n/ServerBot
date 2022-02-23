@@ -18,7 +18,7 @@ async def check_rule_based_duplicate(rule_based: RuleBased):
     )
     items = list(items)
     for item in items:
-        if item['keyword'] is None:
+        if item['keyword'] is None or not item['keyword']:
             return rule_based
         elif item["keyword"] == rule_based.keyword:
             raise HTTPException(

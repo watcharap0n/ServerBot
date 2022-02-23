@@ -8,6 +8,7 @@ class RuleBased(BaseModel):
     id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
     name: str
     access_token: str
+    postback: Optional[bool] = False
     status_flex: Optional[bool] = False
     ready: Optional[bool] = True
     card: Optional[str] = None
@@ -20,6 +21,7 @@ class RuleBased(BaseModel):
             "example": {
                 "name": "rule based",
                 "access_token": "access token long live",
+                "postback": False,
                 "status_flex": False,
                 "ready": True,
                 "card": "id card query collection card",
@@ -45,6 +47,7 @@ class TokenUser(RuleBased):
 class UpdateRuleBased(BaseModel):
     name: str
     access_token: str
+    postback: Optional[bool] = False
     status_flex: Optional[bool] = False
     ready: Optional[bool] = True
     card: Optional[str] = None
@@ -58,6 +61,7 @@ class UpdateRuleBased(BaseModel):
             "example": {
                 "name": "update rule based",
                 "access_token": "access token long live",
+                "postback": False,
                 "status_flex": False,
                 "ready": True,
                 "card": "update id card query collection card",
