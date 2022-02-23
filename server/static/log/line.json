@@ -1,1 +1,1 @@
-{"destination": "U2b8eccac7257c817069a30e6b1b4c52b", "events": [{"type": "postback", "postback": {"data": "hello"}, "timestamp": 1645584717894, "source": {"type": "user", "userId": "U1780eb9b4c602ad032c4733c64234353"}, "replyToken": "9741b0e0a2314976a7a476cf3b85de4c", "mode": "active"}]}
+{"destination": "U2b8eccac7257c817069a30e6b1b4c52b", "events": [{"type": "postback", "postback": {"data": "mango"}, "timestamp": 1645600620849, "source": {"type": "user", "userId": "U1780eb9b4c602ad032c4733c64234353"}, "replyToken": "a35d1f51340648af93e06aa03e5fd3cb", "mode": "active"}]}

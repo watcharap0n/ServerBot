@@ -1,7 +1,15 @@
 <template>
   <v-snackbar v-model="show" :color="color">
     {{ message }}
-    <v-btn text @click="show = false">close</v-btn>
+    <template v-slot:action="{ attrs }">
+      <v-btn
+          text
+          v-bind="attrs"
+          @click="show = false"
+      >
+        Close
+      </v-btn>
+    </template>
   </v-snackbar>
 </template>
 

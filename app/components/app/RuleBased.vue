@@ -24,7 +24,7 @@
         <v-text-field
             rounded
             v-model="ruleBased.keyword"
-            label="input keyword"
+            :label="`${ruleBased.postback ? 'Postback': 'Keyword'}`"
             filled
             clearable
         ></v-text-field>
