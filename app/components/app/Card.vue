@@ -5,6 +5,7 @@
               v-model="valid">
         <p class="text-xl font-normal font-extrabold text-green-500">Name</p>
         <v-text-field
+            rounded
             color="#12AE7E"
             prepend-icon="mdi-card-text"
             v-model="card.name"
@@ -13,6 +14,8 @@
         ></v-text-field>
         <p class="text-xl font-normal font-extrabold text-green-500">Code</p>
         <v-textarea
+            rounded
+            filled
             color="#12AE7E"
             prepend-icon="mdi-code-braces"
             v-model="card.content"
@@ -22,11 +25,12 @@
 
         <p class="text-xl font-normal font-extrabold text-green-500">Description</p>
         <v-text-field
+            rounded
+            filled
             color="#12AE7E"
             prepend-icon="mdi-message-bulleted"
             v-model="card.message"
             label="input description"
-            outlined
         ></v-text-field>
         <v-row justify="center">
           <p class="text-center font-extrabold text-red-400">*You can go to design a flex message at:</p> &nbsp;&nbsp;&nbsp;

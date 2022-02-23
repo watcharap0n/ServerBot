@@ -12,6 +12,7 @@
       <div :hidden="!intent.ready">
         <p class="text-xl font-normal font-extrabold text-green-500">Intent</p>
         <v-text-field
+            rounded
             color="red"
             append-outer-icon="mdi-send"
             @click:append-outer="sendQues"
@@ -22,6 +23,8 @@
             clearable
         ></v-text-field>
         <v-combobox
+            rounded
+            filled
             v-model="intent.question"
             label="Questions taught"
             :items="intent.question"
@@ -55,6 +58,7 @@
         </v-switch>
         <div v-if="!intent.status_flex">
           <v-text-field
+              rounded
               color="red"
               append-outer-icon="mdi-send"
               @click:append-outer="sendAns"
@@ -65,6 +69,8 @@
               clearable
           ></v-text-field>
           <v-combobox
+              rounded
+              filled
               v-model="intent.answer"
               label="Answers"
               deletable-chips
@@ -92,6 +98,8 @@
 
         <div v-else>
           <v-select
+              rounded
+              filled
               v-model="intent.card"
               :items="cards"
               item-text="name"

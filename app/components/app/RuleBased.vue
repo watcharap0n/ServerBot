@@ -3,17 +3,26 @@
   <v-card class="text-center p-2" flat>
 
     <v-card-text>
-
       <v-switch
           dense
-          :color="`${ruleBased.ready ? '#12AE7E': 'red'}`"
+          :color="`${ruleBased.ready ? 'red': ''}`"
           v-model="ruleBased.ready"
           :label="`${ruleBased.ready ? 'Enabled': 'Disabled'}`"
       >
       </v-switch>
       <div :hidden="!ruleBased.ready">
-        <p class="text-xl font-normal font-extrabold text-green-500">Keyword</p>
+        <p class="text-xl font-normal font-extrabold text-green-500"
+           v-text="`${ruleBased.postback ? 'Postback': 'Keyword'}`"
+        ></p>
+        <v-switch
+            dense
+            :color="`${ruleBased.postback ? '#12AE7E': 'red'}`"
+            v-model="ruleBased.postback"
+            :label="`${ruleBased.postback ? 'Postback': 'Keyword'}`"
+        >
+        </v-switch>
         <v-text-field
+            rounded
             v-model="ruleBased.keyword"
             label="input keyword"
             filled
@@ -31,6 +40,7 @@
 
         <div v-if="!ruleBased.status_flex">
           <v-text-field
+              rounded
               v-model="answer"
               label="input answer"
               filled
@@ -38,6 +48,8 @@
               clearable
           ></v-text-field>
           <v-combobox
+              rounded
+              filled
               v-model="ruleBased.answer"
               label="answers"
               deletable-chips
@@ -65,6 +77,8 @@
 
         <div v-else>
           <v-select
+              rounded
+              filled
               v-model="ruleBased.card"
               :items="cards"
               item-text="name"
@@ -116,10 +130,11 @@
 <script>
 
 import Dialog from "@/components/app/Dialog";
+
 export default {
-  components:{Dialog},
+  components: {Dialog},
   props: {
-    ruleBased:{
+    ruleBased: {
       required: false,
       type: Object
     },
@@ -168,17 +183,17 @@ export default {
       })
       this.spin = true
     },
-    async todo(){
+    async todo() {
       this.spin = false
       const path = `/rule_based/query/update/${this.ruleBased.id}`
       await this.$axios.put(path, this.ruleBased)
-       .then((res) => {
-         this.$notifier.showMessage({
+          .then((res) => {
+            this.$notifier.showMessage({
               content: `updated ${res.data.name}`,
               color: 'success'
             })
-       })
-      .catch((err) => {
+          })
+          .catch((err) => {
             this.$notifier.showMessage({
               content: `something wrong status code ${err.response.status}`,
               color: 'red'
