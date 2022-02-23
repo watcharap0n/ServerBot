@@ -52,7 +52,7 @@
               </v-card-title>
 
               <v-card-text>
-                <v-container class="-m-5">
+                <v-container class="-m-2">
                   <div class="text-base font-bold text-gray-900">description :</div>
                   <v-row class="m-2">
                     <div class="font-medium text-gray-800">name:</div> &nbsp;
