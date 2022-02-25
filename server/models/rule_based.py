@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, Any
 from bson import ObjectId
 from pydantic import BaseModel, Field
 from db import PyObjectId
@@ -11,7 +11,7 @@ class RuleBased(BaseModel):
     postback: Optional[bool] = False
     status_flex: Optional[bool] = False
     ready: Optional[bool] = True
-    card: Optional[str] = None
+    card: Optional[Any] = None
     keyword: Optional[str] = None
     answer: Optional[list] = []
 
@@ -24,7 +24,11 @@ class RuleBased(BaseModel):
                 "postback": False,
                 "status_flex": False,
                 "ready": True,
-                "card": "id card query collection card",
+                "card": {
+                    "_id": "1234",
+                    "name": "name flex message",
+                    "content": "content flex message"
+                },
                 "keyword": 'erp',
                 "answer": ["answer bot"],
             }
@@ -50,7 +54,7 @@ class UpdateRuleBased(BaseModel):
     postback: Optional[bool] = False
     status_flex: Optional[bool] = False
     ready: Optional[bool] = True
-    card: Optional[str] = None
+    card: Optional[Any] = None
     keyword: Optional[str] = None
     answer: Optional[list] = []
 
@@ -64,7 +68,11 @@ class UpdateRuleBased(BaseModel):
                 "postback": False,
                 "status_flex": False,
                 "ready": True,
-                "card": "update id card query collection card",
+                "card": {
+                    "_id": "1234",
+                    "name": "name flex message",
+                    "content": "content flex message"
+                },
                 "keyword": 'erp',
                 "answer": ["answer bot"],
             }
