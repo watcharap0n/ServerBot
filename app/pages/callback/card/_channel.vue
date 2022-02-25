@@ -1,12 +1,14 @@
 <template>
   <div class="h-auto">
-    <v-card>
+
+    <v-card flat>
       <v-toolbar
           color="info"
           dark
+          dense
           flat
       >
-        <v-icon>mdi-card-plus</v-icon>&nbsp;
+        <v-icon>mdi-card-outline</v-icon>&nbsp;
         <v-toolbar-title>Flex Message</v-toolbar-title>
         <v-spacer></v-spacer>
         <v-btn color="white"
@@ -14,7 +16,7 @@
                :hidden="!btnShow"
                text
         >
-          <v-icon left>mdi-card-plus-outline</v-icon>
+          <v-icon left>mdi-plus</v-icon>
           Add Flex Message
         </v-btn>
 
@@ -25,6 +27,7 @@
       >
         <v-col cols="12" sm="4">
           <v-treeview
+              dense
               :active.sync="active"
               :items="items"
               :load-children="fetchItems"
@@ -35,9 +38,14 @@
               transition
           >
             <template v-slot:prepend="{ item }">
-              <v-icon v-if="!item.children" color="red">
-                mdi-card
-              </v-icon>
+              <div v-if="!item.children && selected">
+                <v-icon v-if="item.id === selected.id" color="red">
+                  mdi-card
+                </v-icon>
+                <v-icon v-else color="red">
+                  mdi-card-outline
+                </v-icon>
+              </div>
             </template>
 
             <template v-slot:label="{item}">
@@ -73,7 +81,6 @@
                     :set-object="selected" @input="selected = $event"
                 />
               </v-card-text>
-
             </v-card>
           </v-scroll-y-transition>
         </v-col>
@@ -149,7 +156,7 @@ export default {
     items() {
       return [
         {
-          name: 'Flex Message',
+          name: 'My Flex Message',
           children: this.users,
         },
       ]

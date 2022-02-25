@@ -4,6 +4,7 @@
     <v-card>
       <v-toolbar
           color="info"
+          dense
           dark
           flat
       >
@@ -26,6 +27,7 @@
       >
         <v-col cols="12" sm="4">
           <v-treeview
+              dense
               :active.sync="active"
               :items="items"
               :load-children="fetchItems"
@@ -36,10 +38,14 @@
               transition
           >
             <template v-slot:prepend="{ item }">
-              <v-icon v-if="!item.children"
-                      color="red">
-                mdi-reply
-              </v-icon>
+              <div v-if="!item.children && selected">
+                <v-icon v-if="item.id === selected.id" color="red">
+                  mdi-reply
+                </v-icon>
+                <v-icon v-else color="red">
+                  mdi-reply-outline
+                </v-icon>
+              </div>
             </template>
 
             <template v-slot:label="{item}">
@@ -227,7 +233,7 @@ export default {
       this.spinSave = true
       this.elements[0].value = ''
     },
-    async getIntent(accessToken){
+    async getIntent(accessToken) {
       const path = `/intents/?access_token=${accessToken}`
       this.$store.commit('features/setDynamicPath', path)
       await this.$store.dispatch('features/fetchCard')
