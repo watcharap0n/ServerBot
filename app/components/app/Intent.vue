@@ -3,14 +3,8 @@
   <v-card class="text-center p-2" flat>
 
     <v-card-text>
-      <v-switch
-          dense
-          :color="`${intent.ready ? 'success': 'red'}`"
-          :label="`${intent.ready ? 'Enabled': 'Disabled'}`"
-          v-model="intent.ready"
-      ></v-switch>
       <div :hidden="!intent.ready">
-        <p class="text-xl font-normal font-extrabold text-green-500">Intent</p>
+        <p class="text-xl font-normal font-extrabold">Intent</p>
         <v-text-field
             rounded
             color="red"
@@ -22,9 +16,8 @@
             @keydown.enter="sendQues"
             clearable
         ></v-text-field>
+
         <v-combobox
-            rounded
-            filled
             v-model="intent.question"
             label="Questions taught"
             :items="intent.question"
@@ -33,27 +26,58 @@
             hide-selected
             readonly
         >
-          <template v-slot:selection="{ attrs, item, select, selected }">
-            <v-chip
-                dark
-                color="info"
-                v-bind="attrs"
-                :input-value="selected"
-                close
-                @click="select"
-                @click:close="removeQuestion(item)"
+          <template v-slot:append-outer>
+            <v-btn icon
+                   color="info"
+                   @click="show = !show"
             >
-              <strong>{{ item }}</strong>&nbsp;
-            </v-chip>
+              <v-icon
+                  v-text="`${show ? 'mdi-format-vertical-align-center' : 'mdi-format-line-spacing'}`"
+              ></v-icon>
+            </v-btn>
+          </template>
+          <template v-slot:selection="{ attrs, item, select, selected, index }">
+            <div v-if="!show">
+              <v-chip
+                  v-if="index <= 3"
+                  dark
+                  color="info"
+                  v-bind="attrs"
+                  :input-value="selected"
+                  close
+                  @click="select"
+                  @click:close="removeQuestion(item)"
+              >
+                <strong>{{ item }}</strong>&nbsp;
+              </v-chip>
+              <span v-if="index === 4"
+                    class="grey--text text-caption"
+              >
+                (+{{ intent.question.length - 4 }} others)
+              </span>
+            </div>
+            <div v-else-if="show">
+              <v-chip
+                  dark
+                  color="info"
+                  v-bind="attrs"
+                  :input-value="selected"
+                  close
+                  @click="select"
+                  @click:close="removeQuestion(item)"
+              >
+                <strong>{{ item }}</strong>&nbsp;
+              </v-chip>
+            </div>
           </template>
         </v-combobox>
 
 
-        <p class="text-xl font-normal font-extrabold text-green-500">Answer</p>
+        <p class="text-xl font-normal font-extrabold">Answer</p>
         <v-switch
             v-model="intent.status_flex"
             label="Enable Flex Message"
-            :color="`${intent.status_flex ? 'success': 'red'}`"
+            color="info"
         >
         </v-switch>
         <div v-if="!intent.status_flex">
@@ -69,8 +93,6 @@
               clearable
           ></v-text-field>
           <v-combobox
-              rounded
-              filled
               v-model="intent.answer"
               label="Answers"
               deletable-chips
@@ -79,19 +101,49 @@
               hide-selected
               readonly
           >
-            <template v-slot:selection="{ attrs, item, select, selected }">
-              <v-chip
-                  dark
-                  color="info"
-                  v-bind="attrs"
-                  :input-value="selected"
-                  close
-                  @click="select"
-                  @click:close="removeAns(item)"
+            <template v-slot:append-outer>
+              <v-btn icon
+                     color="info"
+                     @click="showAnswer = !showAnswer"
               >
-                <strong>{{ item }}</strong>&nbsp;
-
-              </v-chip>
+                <v-icon
+                    v-text="`${showAnswer ? 'mdi-format-vertical-align-center' : 'mdi-format-line-spacing'}`"
+                ></v-icon>
+              </v-btn>
+            </template>
+            <template v-slot:selection="{ attrs, item, select, selected, index }">
+              <div v-if="!showAnswer">
+                <v-chip
+                    v-if="index <= 1"
+                    dark
+                    color="info"
+                    v-bind="attrs"
+                    :input-value="selected"
+                    close
+                    @click="select"
+                    @click:close="removeAns(item)"
+                >
+                  <strong>{{ item }}</strong>&nbsp;
+                </v-chip>
+                <span v-if="index === 2"
+                      class="grey--text text-caption"
+                >
+                (+{{ intent.answer.length - 2 }} others)
+              </span>
+              </div>
+              <div v-else-if="showAnswer">
+                <v-chip
+                    dark
+                    color="info"
+                    v-bind="attrs"
+                    :input-value="selected"
+                    close
+                    @click="select"
+                    @click:close="removeAns(item)"
+                >
+                  <strong>{{ item }}</strong>&nbsp;
+                </v-chip>
+              </div>
             </template>
           </v-combobox>
         </div>
@@ -116,27 +168,34 @@
       </div>
     </v-card-text>
     <v-card-actions>
+      <v-switch
+          style="margin-left:5px "
+          dense
+          color="info"
+          :label="`${intent.ready ? 'Enabled': 'Disabled'}`"
+          v-model="intent.ready"
+      ></v-switch>
       <v-spacer></v-spacer>
       <v-btn
-          color="success"
           text
-          x-large
+          color="info"
           :loading="!spin"
           @click="todo"
       >
         <v-icon left>mdi-database-plus</v-icon>
-        Submit
+        Save
       </v-btn>
       <v-btn
-          color="red"
-          dark
           text
+          color="grey"
+          dark
           @click="dialog = true"
       >
         <v-icon left>mdi-delete</v-icon>
         Delete
       </v-btn>
     </v-card-actions>
+
     <Dialog
         :dialog.sync="dialog"
         header="Delete data"
@@ -170,6 +229,8 @@ export default {
   },
   data() {
     return {
+      show: false,
+      showAnswer: false,
       items: [],
       dialog: false,
       spin: true,

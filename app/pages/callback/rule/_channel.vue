@@ -3,11 +3,12 @@
 
     <v-card>
       <v-toolbar
+          dense
           color="info"
           dark
           flat
       >
-        <v-icon>mdi-brush</v-icon>&nbsp;
+        <v-icon>mdi-dice-5-outline</v-icon>&nbsp;
         <v-toolbar-title>Rule Based</v-toolbar-title>
         <v-spacer></v-spacer>
         <v-btn color="white"
@@ -15,7 +16,7 @@
                :hidden="!btnShow"
                text
         >
-          <v-icon left>mdi-key-plus</v-icon>
+          <v-icon left>mdi-plus</v-icon>
           Add Rule Based
         </v-btn>
 
@@ -26,6 +27,7 @@
       >
         <v-col cols="12" sm="4">
           <v-treeview
+              dense
               :active.sync="active"
               :items="items"
               :load-children="fetchItems"
@@ -35,15 +37,15 @@
               open-on-click
               transition
           >
-            <template v-slot:prepend="{ item }">
-              <v-icon v-if="!item.children" color="red">
-                mdi-brush
-              </v-icon>
-            </template>
-
-            <template v-slot:label="{item}">
-              <div>{{ item.name }}</div>
-              <small v-if="selected">{{ item.keyword }}</small>
+           <template v-slot:prepend="{ item }">
+              <div v-if="!item.children && selected">
+                <v-icon v-if="item.id === selected.id" color="red">
+                  mdi-dice-5
+                </v-icon>
+                <v-icon v-else color="red">
+                  mdi-dice-5-outline
+                </v-icon>
+              </div>
             </template>
 
           </v-treeview>
@@ -135,7 +137,7 @@ export default {
           color: 'primary',
           label: 'Name Rule Based',
           rules: [v => !!v || 'กรุณากรอกข้อมูล'],
-          icon: 'mdi-brush',
+          icon: 'mdi-dice-5-outline',
           value: this.setName
         }
       ]

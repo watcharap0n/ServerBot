@@ -1,12 +1,13 @@
 <template>
   <div>
-    <v-card>
+    <v-card flat>
       <v-toolbar
+          dense
           color="info"
           dark
           flat
       >
-        <v-icon>mdi-robot</v-icon>&nbsp;
+        <v-icon>mdi-robot-outline</v-icon>&nbsp;
         <v-toolbar-title>Intent</v-toolbar-title>
         <v-spacer></v-spacer>
         <v-btn color="white"
@@ -14,7 +15,7 @@
                :hidden="!btnShow"
                text
         >
-          <v-icon left>mdi-robot</v-icon>
+          <v-icon left>mdi-plus</v-icon>
           Add Intent
         </v-btn>
 
@@ -23,8 +24,10 @@
           class="pa-4"
           justify="space-between"
       >
+
         <v-col cols="12" sm="4">
           <v-treeview
+              dense
               :active.sync="active"
               :items="items"
               :load-children="fetchItems"
@@ -35,16 +38,20 @@
               transition
           >
             <template v-slot:prepend="{ item }">
-              <v-icon v-if="!item.children" color="red">
-                mdi-robot
-              </v-icon>
+              <div v-if="!item.children && selected">
+                <v-icon v-if="item.id === selected.id" color="red">
+                  mdi-robot
+                </v-icon>
+                <v-icon v-else color="red">
+                  mdi-robot-outline
+                </v-icon>
+              </div>
             </template>
 
             <template v-slot:label="{item}">
               <div>{{ item.name }}</div>
               <small v-if="selected">{{ item.message }}</small>
             </template>
-
           </v-treeview>
         </v-col>
 
@@ -59,6 +66,7 @@
             >
               select item
             </div>
+
             <v-card
                 v-else
                 :key="selected.id"
@@ -72,10 +80,9 @@
                     :users.sync="users"
 
                 />
-
               </v-card-text>
-
             </v-card>
+
           </v-scroll-y-transition>
         </v-col>
       </v-row>
