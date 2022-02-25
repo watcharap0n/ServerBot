@@ -1,7 +1,8 @@
 <template>
+
   <v-card class="text-center p-2" flat>
     <v-card-text>
-      <p class="text-xl font-normal font-extrabold text-green-500">Quick Reply</p>
+      <p class="text-xl font-normal font-extrabold">Quick Reply</p>
       <v-select
           rounded
           filled
@@ -20,8 +21,6 @@
       >
       </v-text-field>
       <v-combobox
-          rounded
-          filled
           v-model="button.reply"
           label="Answers"
           :items="button.reply"
@@ -30,23 +29,53 @@
           hide-selected
           readonly
       >
-        <template v-slot:selection="{ attrs, item, select, selected }">
-          <v-chip
-              dark
-              color="info"
-              v-bind="attrs"
-              :input-value="selected"
-              close
-              @click="select"
-              @click:close="removeReply(item)"
+        <template v-slot:append-outer>
+          <v-btn icon
+                 color="info"
+                 @click="show1 = !show1"
           >
-            <strong>{{ item }}</strong>&nbsp;
-
-          </v-chip>
+            <v-icon
+                v-text="`${show1 ? 'mdi-format-vertical-align-center' : 'mdi-format-line-spacing'}`"
+            ></v-icon>
+          </v-btn>
+        </template>
+        <template v-slot:selection="{ attrs, item, select, selected, index }">
+          <div v-if="!show1">
+            <v-chip
+                v-if="index <= 3"
+                dark
+                color="info"
+                v-bind="attrs"
+                :input-value="selected"
+                close
+                @click="select"
+                @click:close="removeReply(item)"
+            >
+              <strong>{{ item }}</strong>&nbsp;
+            </v-chip>
+            <span v-if="index === 4"
+                  class="grey--text text-caption"
+            >
+                (+{{ button.reply.length - 4 }} others)
+              </span>
+          </div>
+          <div v-else-if="show1">
+            <v-chip
+                dark
+                color="info"
+                v-bind="attrs"
+                :input-value="selected"
+                close
+                @click="select"
+                @click:close="removeReply(item)"
+            >
+              <strong>{{ item }}</strong>&nbsp;
+            </v-chip>
+          </div>
         </template>
       </v-combobox>
 
-      <p class="text-xl font-normal font-extrabold text-green-500">Label</p>
+      <p class="text-xl font-normal font-extrabold ">Label</p>
       <v-text-field
           rounded
           filled
@@ -56,8 +85,6 @@
       >
       </v-text-field>
       <v-combobox
-          rounded
-          filled
           v-model="button.labels"
           label="Labels"
           :items="button.labels"
@@ -66,22 +93,54 @@
           hide-selected
           readonly
       >
-        <template v-slot:selection="{ attrs, item, select, selected }">
-          <v-chip
-              dark
-              color="info"
-              v-bind="attrs"
-              :input-value="selected"
-              close
-              @click="select"
-              @click:close="removeLabel(item)"
+        <template v-slot:append-outer>
+          <v-btn icon
+                 color="info"
+                 @click="show2 = !show2"
           >
-            <strong>{{ item }}</strong>&nbsp;
-          </v-chip>
+            <v-icon
+                v-text="`${show2 ? 'mdi-format-vertical-align-center' : 'mdi-format-line-spacing'}`"
+            ></v-icon>
+          </v-btn>
+        </template>
+
+        <template v-slot:selection="{ attrs, item, select, selected, index }">
+          <div v-if="!show2">
+            <v-chip
+                v-if="index <= 3"
+                dark
+                color="info"
+                v-bind="attrs"
+                :input-value="selected"
+                close
+                @click="select"
+                @click:close="removeLabel(item)"
+            >
+              <strong>{{ item }}</strong>&nbsp;
+            </v-chip>
+            <span v-if="index === 4"
+                  class="grey--text text-caption"
+            >
+                (+{{ button.labels.length - 4 }} others)
+              </span>
+          </div>
+          <div v-else-if="show2">
+            <v-chip
+                dark
+                color="info"
+                v-bind="attrs"
+                :input-value="selected"
+                close
+                @click="select"
+                @click:close="removeLabel(item)"
+            >
+              <strong>{{ item }}</strong>&nbsp;
+            </v-chip>
+          </div>
         </template>
       </v-combobox>
 
-      <p class="text-xl font-normal font-extrabold text-green-500">label</p>
+      <p class="text-xl font-normal font-extrabold ">label</p>
       <v-text-field
           rounded
           filled
@@ -91,8 +150,6 @@
       >
       </v-text-field>
       <v-combobox
-          rounded
-          filled
           v-model="button.texts"
           label="Texts"
           :items="button.texts"
@@ -101,20 +158,53 @@
           hide-selected
           readonly
       >
-        <template v-slot:selection="{ attrs, item, select, selected }">
-          <v-chip
-              dark
-              color="info"
-              v-bind="attrs"
-              :input-value="selected"
-              close
-              @click="select"
-              @click:close="removeTexts(item)"
+        <template v-slot:append-outer>
+          <v-btn icon
+                 color="info"
+                 @click="show3 = !show3"
           >
-            <strong>{{ item }}</strong>&nbsp;
-          </v-chip>
+            <v-icon
+                v-text="`${show3 ? 'mdi-format-vertical-align-center' : 'mdi-format-line-spacing'}`"
+            ></v-icon>
+          </v-btn>
+        </template>
+
+        <template v-slot:selection="{ attrs, item, select, selected, index }">
+          <div v-if="!show3">
+            <v-chip
+                v-if="index <= 3"
+                dark
+                color="info"
+                v-bind="attrs"
+                :input-value="selected"
+                close
+                @click="select"
+                @click:close="removeTexts(item)"
+            >
+              <strong>{{ item }}</strong>&nbsp;
+            </v-chip>
+            <span v-if="index === 4"
+                  class="grey--text text-caption"
+            >
+                (+{{ button.texts.length - 4 }} others)
+              </span>
+          </div>
+          <div v-else-if="show3">
+            <v-chip
+                dark
+                color="info"
+                v-bind="attrs"
+                :input-value="selected"
+                close
+                @click="select"
+                @click:close="removeTexts(item)"
+            >
+              <strong>{{ item }}</strong>&nbsp;
+            </v-chip>
+          </div>
         </template>
       </v-combobox>
+
     </v-card-text>
     <v-card-actions>
       <v-spacer></v-spacer>
@@ -171,6 +261,9 @@ export default {
   },
   data() {
     return {
+      show1: false,
+      show2: false,
+      show3: false,
       dialog: false,
       spin: true,
       selected: "",

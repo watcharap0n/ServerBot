@@ -3,20 +3,13 @@
   <v-card class="text-center p-2" flat>
 
     <v-card-text>
-      <v-switch
-          dense
-          :color="`${ruleBased.ready ? 'red': ''}`"
-          v-model="ruleBased.ready"
-          :label="`${ruleBased.ready ? 'Enabled': 'Disabled'}`"
-      >
-      </v-switch>
       <div :hidden="!ruleBased.ready">
-        <p class="text-xl font-normal font-extrabold text-green-500"
+        <p class="text-xl font-normal font-extrabold "
            v-text="`${ruleBased.postback ? 'Postback': 'Keyword'}`"
         ></p>
         <v-switch
             dense
-            :color="`${ruleBased.postback ? '#12AE7E': 'red'}`"
+            color="info"
             v-model="ruleBased.postback"
             :label="`${ruleBased.postback ? 'Postback': 'Keyword'}`"
         >
@@ -29,10 +22,10 @@
             clearable
         ></v-text-field>
 
-        <p class="text-xl font-normal font-extrabold text-green-500">Answer</p>
+        <p class="text-xl font-normal font-extrabold ">Answer</p>
         <v-switch
             dense
-            :color="`${ruleBased.status_flex ? '#12AE7E': 'red'}`"
+            color="info"
             v-model="ruleBased.status_flex"
             :label="`${ruleBased.status_flex ? 'Enable Flex Message': 'Disabled Flex Message'}`"
         >
@@ -48,29 +41,57 @@
               clearable
           ></v-text-field>
           <v-combobox
-              rounded
-              filled
               v-model="ruleBased.answer"
-              label="answers"
+              label="Answers"
               deletable-chips
               chips
               multiple
               hide-selected
               readonly
           >
-            <template v-slot:selection="{ attrs, item, select, selected }">
-              <v-chip
-                  dark
-                  color="info"
-                  v-bind="attrs"
-                  :input-value="selected"
-                  close
-                  @click="select"
-                  @click:close="removeAns(item)"
+            <template v-slot:append-outer>
+              <v-btn icon
+                     color="info"
+                     @click="show = !show"
               >
-                <strong>{{ item }}</strong>&nbsp;
-
-              </v-chip>
+                <v-icon
+                    v-text="`${show ? 'mdi-format-vertical-align-center' : 'mdi-format-line-spacing'}`"
+                ></v-icon>
+              </v-btn>
+            </template>
+            <template v-slot:selection="{ attrs, item, select, selected, index }">
+              <div v-if="!show">
+                <v-chip
+                    v-if="index <= 1"
+                    dark
+                    color="info"
+                    v-bind="attrs"
+                    :input-value="selected"
+                    close
+                    @click="select"
+                    @click:close="removeAns(item)"
+                >
+                  <strong>{{ item }}</strong>&nbsp;
+                </v-chip>
+                <span v-if="index === 2"
+                      class="grey--text text-caption"
+                >
+                (+{{ ruleBased.answer.length - 2 }} others)
+              </span>
+              </div>
+              <div v-else-if="show">
+                <v-chip
+                    dark
+                    color="info"
+                    v-bind="attrs"
+                    :input-value="selected"
+                    close
+                    @click="select"
+                    @click:close="removeAns(item)"
+                >
+                  <strong>{{ item }}</strong>&nbsp;
+                </v-chip>
+              </div>
             </template>
           </v-combobox>
         </div>
@@ -83,7 +104,7 @@
               :items="cards"
               item-text="name"
               item-value="_id"
-              append-outer-icon="mdi-card-bulleted-outline"
+              append-outer-icon="mdi-dice-5-outline"
               menu-props="auto"
               hide-details
               label="select your flex messages"
@@ -95,26 +116,36 @@
 
     <v-card-actions>
 
+      <v-switch
+          dense
+          color="info"
+          v-model="ruleBased.ready"
+          :label="`${ruleBased.ready ? 'Enabled': 'Disabled'}`"
+      >
+      </v-switch>
+
       <v-spacer></v-spacer>
+
       <v-btn
           text
-          color="success"
+          color="info"
           :loading="!spin"
           @click="todo"
       >
         <v-icon left>mdi-database-plus</v-icon>
-        submit
+        save
       </v-btn>
       <v-btn
-          color="red"
-          dark
           text
+          color="grey"
+          dark
           @click="dialog = true"
       >
         <v-icon left>mdi-delete</v-icon>
         delete
       </v-btn>
     </v-card-actions>
+
     <Dialog :dialog.sync="dialog"
             header="ลบข้อมูล"
             body="are you sure delete rule based?"
@@ -147,6 +178,7 @@ export default {
   },
   data() {
     return {
+      show: false,
       answer: "",
       items: [],
       dialog: false,
