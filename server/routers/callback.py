@@ -199,7 +199,7 @@ async def client_webhook(
                     profile["message"] = message
                     await db.insert_one(collection="message_user", data=profile)
                     handler.handle(str(body, encoding='utf8'), signature)
-                    await handler_message(events, model)
+                    await handle_message(events, model)
                 except InvalidSignatureError as v:
                     raise HTTPException(
                         status_code=status.HTTP_400_BAD_REQUEST,
@@ -282,7 +282,7 @@ def preprocessing_words(db):
     return Word(X=sum_word, y=embedding, answers=ans_list)
 
 
-async def handler_message(events, model):
+async def handle_message(events, model):
     line_bot_api = LineBotApi(model.access_token)
     message = events["message"]["text"]
     reply_token = events["replyToken"]
