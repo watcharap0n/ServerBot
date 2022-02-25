@@ -3,31 +3,31 @@
     <v-card-text>
       <v-form ref="formCard"
               v-model="valid">
-        <p class="text-xl font-normal font-extrabold text-green-500">Name</p>
+        <p class="text-xl font-normal font-extrabold ">Name</p>
         <v-text-field
             rounded
-            color="#12AE7E"
+            color="red"
             prepend-icon="mdi-card-text"
             v-model="card.name"
             label="input name"
             filled
         ></v-text-field>
-        <p class="text-xl font-normal font-extrabold text-green-500">Code</p>
+        <p class="text-xl font-normal font-extrabold ">Code</p>
         <v-textarea
             rounded
             filled
-            color="#12AE7E"
+            color="red"
             prepend-icon="mdi-code-braces"
             v-model="card.content"
             label="code"
         >
         </v-textarea>
 
-        <p class="text-xl font-normal font-extrabold text-green-500">Description</p>
+        <p class="text-xl font-normal font-extrabold ">Description</p>
         <v-text-field
             rounded
             filled
-            color="#12AE7E"
+            color="red"
             prepend-icon="mdi-message-bulleted"
             v-model="card.message"
             label="input description"
@@ -41,16 +41,16 @@
         <v-row justify="end">
           <v-btn
               text
-              color="success"
+              color="info"
               :loading="!spin"
               @click="updateCard"
           >
             <v-icon left>mdi-database-plus</v-icon>
-            submit
+            Save
           </v-btn>
           <v-btn
               :loading="!spin"
-              color="red"
+              color="grey"
               dark
               @click="deleteCard"
               text
