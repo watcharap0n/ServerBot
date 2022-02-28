@@ -1,7 +1,7 @@
 <template>
   <div>
 
-    <v-card>
+    <v-card flat>
       <v-toolbar
           dense
           color="info"
