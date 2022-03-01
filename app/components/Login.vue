@@ -25,7 +25,7 @@
               prepend-inner-icon="mdi-account-outline"
               :rules="emailRules"
               v-model="email"
-              label="อีเมล"
+              label="email"
               rounded
               @keyup.enter="submitLogin"
           >
@@ -39,7 +39,7 @@
               prepend-inner-icon="mdi-lock"
               :rules="passwordRules"
               v-model="password"
-              label="รหัสผ่าน"
+              label="password"
               rounded
               @keyup.enter="submitLogin"
           >
