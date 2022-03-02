@@ -148,7 +148,7 @@ def custom_openapi():
         return app.openapi_schema
     openapi_schema = get_openapi(
         title="Mango-Server BOT",
-        version="2.5.0",
+        version="2.6.0",
         description=description,
         routes=app.routes,
     )
