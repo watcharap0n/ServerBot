@@ -1,7 +1,7 @@
 import os
 import pytz
 from uuid import uuid4
-from models.oauth2 import User
+from models.oauth2 import User, UpdateSettingsProfile
 from bson import ObjectId
 from firebase_admin import auth, exceptions
 from db import db, generate_token, firebaseAuth, firebaseConfig
@@ -276,6 +276,18 @@ async def logout():
 
 @router.get("/forgot")
 async def forgot(email: str):
-    print(email)
     pb.send_password_reset_email(email)
     return {"message": "success", "status": True}
+
+
+@router.post('/settings/profile', response_model=UpdateSettingsProfile)
+async def settings_profile(payload: UpdateSettingsProfile, current_user: User = Depends(get_current_active)):
+    auth.update_user(
+        uid=current_user.data.uid,
+        email=payload.email,
+        password=payload.password,
+        display_name=payload.display_name,
+        photo_url=payload.photo_url,
+        phone_number=payload.phone_number
+    )
+    return payload
