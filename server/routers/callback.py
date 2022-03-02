@@ -41,6 +41,7 @@ async def get_profile(userId: str, access_token: str):
     img = profile.picture_url
     status = profile.status_message
     result = {
+        "access_token": access_token,
         "displayName": displayName,
         "userId": userId,
         "img": img,
@@ -197,7 +198,7 @@ async def client_webhook(
                     message = events["message"]["text"]
                     profile = await get_profile(userId, model.access_token)
                     profile["message"] = message
-                    await db.insert_one(collection="message_user", data=profile)
+                    await db.insert_one(collection="messages_user", data=profile)
                     handler.handle(str(body, encoding='utf8'), signature)
                     await handle_message(events, model)
                 except InvalidSignatureError as v:
@@ -286,6 +287,7 @@ async def handle_message(events, model):
     line_bot_api = LineBotApi(model.access_token)
     message = events["message"]["text"]
     reply_token = events["replyToken"]
+    userId = events["source"]["userId"]
 
     keyword = await db.find_one(collection='rule_based',
                                 query={'access_token': model.access_token, 'keyword': message})
