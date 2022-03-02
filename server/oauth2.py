@@ -1,7 +1,7 @@
 import os
 import pytz
 from uuid import uuid4
-from models.oauth2 import User
+from models.oauth2 import User, UpdateSettingsProfile
 from bson import ObjectId
 from db import db, generate_token
 from firebase_admin import auth, exceptions
@@ -21,7 +21,6 @@ from fastapi import (
     UploadFile,
     Request,
     Response,
-
 )
 
 EXPIRES_TOKEN = 60 * 60 * 1
@@ -90,7 +89,7 @@ async def get_current_active(current_user: dict = Depends(get_current_user)):
 
 
 async def authentication_cookie(
-    response: Response, form_data: OAuth2PasswordRequestForm = Depends()
+        response: Response, form_data: OAuth2PasswordRequestForm = Depends()
 ):
     """
 
@@ -176,13 +175,13 @@ async def login(user=Depends(authentication_cookie)):
 
 @router.post("/register")
 async def register(
-    request: Request,
-    file: UploadFile = File(...),
-    email: str = Form(...),
-    hashed_password: str = Form(...),
-    username: str = Form(...),
-    full_name: str = Form(...),
-    disabled: bool = Form(True),
+        request: Request,
+        file: UploadFile = File(...),
+        email: str = Form(...),
+        hashed_password: str = Form(...),
+        username: str = Form(...),
+        full_name: str = Form(...),
+        disabled: bool = Form(True),
 ):
     """
 
@@ -282,14 +281,13 @@ async def logout():
     return response
 
 
-@router.get("/auth/setting/forgot")
+@router.get("/settings/forgot")
 async def forgot(email: str):
-    print(email)
     pb.send_password_reset_email(email)
     return {"message": "success", "status": True}
 
 
-@router.delete("/auth/setting/delete", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete("/settings/delete", status_code=status.HTTP_204_NO_CONTENT)
 async def revoke_user(uid: str):
     try:
         auth.delete_user(uid)
@@ -300,3 +298,16 @@ async def revoke_user(uid: str):
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="No user record found for the given identifier",
         )
+
+
+@router.post('/settings/profile', response_model=UpdateSettingsProfile)
+async def settings_profile(payload: UpdateSettingsProfile, current_user: User = Depends(get_current_active)):
+    auth.update_user(
+        uid=current_user.data.uid,
+        email=payload.email,
+        password=payload.password,
+        display_name=payload.display_name,
+        photo_url=payload.photo_url,
+        phone_number=payload.phone_number
+    )
+    return payload
