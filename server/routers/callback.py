@@ -194,11 +194,6 @@ async def client_webhook(
             message_type = events["message"]["type"]
             if message_type == "text":
                 try:
-                    userId = events["source"]["userId"]
-                    message = events["message"]["text"]
-                    profile = await get_profile(userId, model.access_token)
-                    profile["message"] = message
-                    await db.insert_one(collection="messages_user", data=profile)
                     handler.handle(str(body, encoding='utf8'), signature)
                     await handle_message(events, model)
                 except InvalidSignatureError as v:
@@ -320,6 +315,10 @@ async def handle_message(events, model):
             reply_message = buttons['reply']
             reply = random.choice(reply_message)
             quick_reply_custom(line_bot_api, reply_token, reply, labels, texts)
+            profile = await get_profile(userId, model.access_token)
+            profile["question"] = message
+            profile['answer'] = reply
+            await db.insert_one(collection="messages_user", data=profile)
 
         elif not buttons:
             if ready:
@@ -327,12 +326,24 @@ async def handle_message(events, model):
                     if status_flex:
                         flex_msg = await get_card_content(card)
                         line_bot_api.reply_message(reply_token, flex_msg)
+                        profile = await get_profile(userId, model.access_token)
+                        profile["question"] = message
+                        profile['answer'] = card
+                        await db.insert_one(collection="messages_user", data=profile)
 
                     elif not status_flex:
                         reply = random.choice(answers[predicted])
                         line_bot_api.reply_message(reply_token, TextSendMessage(text=reply))
+                        profile = await get_profile(userId, model.access_token)
+                        profile["question"] = message
+                        profile['answer'] = reply
+                        await db.insert_one(collection="messages_user", data=profile)
                 else:
                     line_bot_api.reply_message(reply_token, TextSendMessage(text='.'))
+                    profile = await get_profile(userId, model.access_token)
+                    profile["question"] = message
+                    profile['answer'] = '.'
+                    await db.insert_one(collection="messages_user", data=profile)
 
     elif keyword:
         answer_keyword = keyword.get('answer')
@@ -341,7 +352,15 @@ async def handle_message(events, model):
             if keyword.get('status_flex'):
                 flex_msg = await get_card_content(card_keyword)
                 line_bot_api.reply_message(reply_token, flex_msg)
+                profile = await get_profile(userId, model.access_token)
+                profile["question"] = message
+                profile['answer'] = card_keyword
+                await db.insert_one(collection="messages_user", data=profile)
 
             elif not keyword.get('status_flex'):
                 reply = random.choice(answer_keyword)
                 line_bot_api.reply_message(reply_token, TextSendMessage(text=reply))
+                profile = await get_profile(userId, model.access_token)
+                profile["question"] = message
+                profile['answer'] = reply
+                await db.insert_one(collection="messages_user", data=profile)
