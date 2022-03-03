@@ -27,14 +27,18 @@ class MessageFactory(BaseModel):
 
 
 class PushMessage(BaseModel):
-    user_id: str
+    user_id: list
+    broadcast: Optional[bool] = False
+    multicast: Optional[bool] = False
     access_token: str
     message: Optional[str] = 'None'
 
     class Config:
         schema_extra = {
             "example": {
-                "user_id": "U12345",
+                "user_id": ["U12345"],
+                "broadcast": False,
+                "multicast": False,
                 "access_token": "access token long live",
                 "message": "hello world"
             }
@@ -42,14 +46,18 @@ class PushMessage(BaseModel):
 
 
 class PushFlex(BaseModel):
-    user_id: str
+    user_id: list
+    broadcast: Optional[bool] = False
+    multicast: Optional[bool] = False
     access_token: str
     id_card: Any
 
     class Config:
         schema_extra = {
             "example": {
-                "user_id": "U12345",
+                "user_id": ["U12345"],
+                "broadcast": False,
+                "multicast": False,
                 "access_token": "access token long live",
                 "id_card": "your id card"
             }
@@ -57,7 +65,9 @@ class PushFlex(BaseModel):
 
 
 class PushFlexDefault(BaseModel):
-    user_id: str
+    user_id: list
+    broadcast: Optional[bool] = False
+    multicast: Optional[bool] = False
     access_token: str
     content: dict
     config_default_card: Optional[DefaultCard] = {
@@ -74,14 +84,19 @@ class PushFlexDefault(BaseModel):
     class Config:
         schema_extra = {
             "example": {
-                "user_id": "U12345",
+                "user_id": ["U12345"],
+                "broadcast": False,
+                "multicast": False,
+                "content": {"key1": "value", "key2": "value!"},
                 "access_token": "access token long live",
             }
         }
 
 
 class PushImage(BaseModel):
-    user_id: str
+    user_id: list
+    broadcast: Optional[bool] = False
+    multicast: Optional[bool] = False
     access_token: str
     image_original: str
     image_preview: str
@@ -89,7 +104,9 @@ class PushImage(BaseModel):
     class Config:
         schema_extra = {
             "example": {
-                "user_id": "U12345",
+                "user_id": ["U12345"],
+                "broadcast": False,
+                "multicast": False,
                 "access_token": "access token long live",
                 "image_original": "https://exampleOriginal.com",
                 "image_preview": "https://examplePreview.com"
@@ -98,7 +115,9 @@ class PushImage(BaseModel):
 
 
 class PushSticker(BaseModel):
-    user_id: str
+    user_id: list
+    broadcast: Optional[bool] = False
+    multicast: Optional[bool] = False
     access_token: str
     sticker_id: str
     package_id: str
@@ -106,7 +125,9 @@ class PushSticker(BaseModel):
     class Config:
         schema_extra = {
             "example": {
-                "user_id": "U12345",
+                "user_id": ["U12345"],
+                "broadcast": False,
+                "multicast": False,
                 "access_token": "access token long live",
                 "sticker_id": "001",
                 "package_id": "112"

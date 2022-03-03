@@ -1,7 +1,7 @@
+import json
 from typing import List
 from db import db
 from linebot import LineBotApi
-from linebot.exceptions import LineBotApiError
 from oauth2 import get_current_active, User
 from fastapi import APIRouter, Depends, HTTPException, status
 from modules.flex_message import flex_dynamic, content_card_dynamic
@@ -17,24 +17,22 @@ async def chat_list(access_token: str, current_user: User = Depends(get_current_
     return items
 
 
-async def check_access_token(payload,
-                             current_user: User = Depends(get_current_active)):
-    try:
-        line_bot_api = LineBotApi(payload.access_token)
-        line_bot_api.get_bot_info()
-        return payload
-    except LineBotApiError as ex:
-        raise HTTPException(status_code=ex.status_code, detail=ex.message)
-
-
 @router.post('/push/message', response_model=PushMessage)
-async def push_message(payload: PushMessage = Depends(check_access_token),
+async def push_message(payload: PushMessage,
                        current_user: User = Depends(get_current_active)):
     line_bot_api = LineBotApi(payload.access_token)
-    line_bot_api.push_message(payload.user_id, TextSendMessage(text=payload.message))
+    message = TextSendMessage(text=payload.message)
+    if payload.broadcast:
+        line_bot_api.broadcast(message)
+        return payload
+    if payload.multicast:
+        line_bot_api.multicast(payload.user_id, message)
+        return payload
+    line_bot_api.push_message(payload.user_id[0], message)
+    return payload
 
 
-async def query_card(payload: PushFlex = Depends(check_access_token),
+async def query_card(payload: PushFlex,
                      current_user: User = Depends(get_current_active)):
     item = await db.find_one(collection='card', query={'uid': current_user.data.uid,
                                                        '_id': payload.id_card})
@@ -45,14 +43,22 @@ async def query_card(payload: PushFlex = Depends(check_access_token),
 
 
 @router.post('/push/flex/any', response_model=PushFlex)
-async def push_flex(payload: PushFlex = Depends(check_access_token),
+async def push_flex(payload: PushFlex = Depends(query_card),
                     current_user: User = Depends(get_current_active)):
     line_bot_api = LineBotApi(payload.access_token)
-    line_bot_api.push_message(payload.user_id, payload.content)
+    flex = json.loads(payload.id_card)
+    if payload.broadcast:
+        line_bot_api.broadcast(flex_dynamic(flex))
+        return payload
+    if payload.multicast:
+        line_bot_api.multicast(payload.user_id, flex)
+        return payload
+    line_bot_api.push_message(payload.user_id[0], flex)
+    return payload
 
 
-@router.post('/push/flex/defalut', response_model=PushFlexDefault)
-async def push_flex_default(payload: PushFlexDefault = Depends(check_access_token),
+@router.post('/push/flex/default', response_model=PushFlexDefault)
+async def push_flex_default(payload: PushFlexDefault,
                             current_user: User = Depends(get_current_active)):
     keys = payload.content.keys()
     values = payload.content.values()
@@ -68,24 +74,45 @@ async def push_flex_default(payload: PushFlexDefault = Depends(check_access_toke
         url_btn=content_default.get('url_btn')
     )
     line_bot_api = LineBotApi(payload.access_token)
-    line_bot_api.push_message(payload.user_id, func)
-    return PushFlexDefault
+    if payload.broadcast:
+        line_bot_api.broadcast(func)
+        return payload
+    if payload.multicast:
+        line_bot_api.multicast(payload.user_id, func)
+        return payload
+    line_bot_api.push_message(payload.user_id[0], func)
+    return payload
 
 
 @router.post('/push/image', response_model=PushImage)
-async def push_image(payload: PushImage = Depends(check_access_token)):
+async def push_image(payload: PushImage):
     line_bot_api = LineBotApi(payload.access_token)
-    line_bot_api.push_message(payload.user_id, ImageSendMessage(
+    image = ImageSendMessage(
         original_content_url=payload.image_original,
         preview_image_url=payload.image_preview,
-    ))
-    return PushImage
+    )
+    if payload.broadcast:
+        line_bot_api.broadcast(image)
+        return payload
+    if payload.multicast:
+        line_bot_api.multicast(payload.user_id, image)
+        return payload
+    line_bot_api.push_message(payload.user_id[0], image)
+    return payload
 
 
 @router.post('/push/sticker', response_model=PushSticker)
-async def push_sticker(payload: PushSticker = Depends(check_access_token)):
+async def push_sticker(payload: PushSticker):
     line_bot_api = LineBotApi(payload.access_token)
-    line_bot_api.push_message(payload.user_id, StickerSendMessage(
+    sticker = StickerSendMessage(
         sticker_id=payload.sticker_id,
         package_id=payload.package_id
-    ))
+    )
+    if payload.broadcast:
+        line_bot_api.broadcast(sticker)
+        return payload
+    if payload.multicast:
+        line_bot_api.multicast(payload.user_id, sticker)
+        return payload
+    line_bot_api.push_message(payload.user_id[0], sticker)
+    return payload
