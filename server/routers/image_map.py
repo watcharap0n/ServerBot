@@ -14,16 +14,7 @@ router = APIRouter()
 collection = 'images_map'
 
 
-async def check_access_token(image: ImageMap):
-    try:
-        line_bot_api = LineBotApi(image.access_token)
-        line_bot_api.get_bot_info()
-        return image
-    except LineBotApiError as ex:
-        raise HTTPException(status_code=ex.status_code, detail=ex.message)
-
-
-async def check_name_image(image: ImageMap = Depends(check_access_token)):
+async def check_name_image(image: ImageMap):
     item = await db.find_one(collection=collection,
                              query={'access_token': image.access_token, 'name': image.name})
     if item:
