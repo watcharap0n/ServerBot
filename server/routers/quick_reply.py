@@ -13,13 +13,13 @@ collection = "quick_reply"
 
 
 async def check_quick_reply_duplicate(quick_reply: QuickReply):
-    item = await db.find(
+    item = await db.find_one(
         collection=collection,
         query={"access_token": quick_reply.access_token, "name": quick_reply.name}
     )
     if item:
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, detail="item name duplicate"
+            status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid duplicate name."
         )
     return quick_reply
 
