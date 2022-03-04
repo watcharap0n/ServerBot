@@ -22,11 +22,10 @@ async def get_card(
 
 
 async def check_duplication_name_card(card: Card):
-    items = await db.find(collection=collection, query={"access_token": card.access_token})
-    items = list(items)
-    for item in items:
-        if item['name'] == card.name:
-            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail='card name is duplicate')
+    item = await db.find_one(collection=collection,
+                              query={"access_token": card.access_token, "name": card.name})
+    if item:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail='card name is duplicate')
     return card
 
 
