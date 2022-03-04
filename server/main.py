@@ -140,8 +140,8 @@ app.include_router(
 
 app.include_router(
     image_map.router,
-    prefix='/map',
-    tags=['Map'],
+    prefix='/mapping',
+    tags=['Mapping'],
     responses={418: {"description": "I'm teapot"}},
 )
 
