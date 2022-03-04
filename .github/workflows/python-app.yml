@@ -18,8 +18,8 @@ jobs:
         env:
           GITHUB_RUN_ID: ${{ secrets.GITHUB_RUN_ID }}
           GITHUB_REPOSITORY: ${{ secrets.GITHUB_REPOSITORY }}
-          GITHUB_WORKFLOW: ${{ secrets.GITHUB_WORKFLOW }}
-        run: echo "$GITHUB_RUN_ID $GITHUB_REPOSITORY $GITHUB_WORKFLOW"
+          GITHUB_EVENT_NAME: ${{ secrets.GITHUB_EVENT_NAME }}
+        run: echo "$GITHUB_RUN_ID $GITHUB_REPOSITORY $GITHUB_EVENT_NAME"
 
       - uses: actions/checkout@v2
       - name: Set up Python 3.9.6
