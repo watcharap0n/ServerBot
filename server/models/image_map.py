@@ -52,7 +52,7 @@ class TokenUser(ImageMap):
         }
 
 
-class UpdateIntent(BaseModel):
+class UpdateImageMap(BaseModel):
     name: str
     access_token: str
     width: int
@@ -61,8 +61,6 @@ class UpdateIntent(BaseModel):
     map: Optional[List[Map]] = None
 
     class Config:
-        arbitrary_types_allowed = True
-        json_encoders = {ObjectId: str}
         schema_extra = {
             "example": {
                 "name": "update mapping",
