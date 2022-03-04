@@ -36,6 +36,7 @@ origins = [
     "http://localhost:8000",
     "https://www.mangoconsultant.net",
     "https://mangoserverbot.herokuapp.com",
+    "https://platformchatbot.herokuapp.com"
 ]
 
 app.add_middleware(
