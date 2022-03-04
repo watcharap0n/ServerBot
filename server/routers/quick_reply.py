@@ -13,7 +13,7 @@ collection = "quick_reply"
 
 
 async def check_quick_reply_duplicate(quick_reply: QuickReply):
-    item = await db.find(
+    item = await db.find_one(
         collection=collection,
         query={"access_token": quick_reply.access_token, "name": quick_reply.name}
     )
