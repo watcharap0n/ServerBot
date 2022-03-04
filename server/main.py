@@ -143,6 +143,7 @@ app.include_router(
     prefix='/mapping',
     tags=['Mapping'],
     responses={418: {"description": "I'm teapot"}},
+    dependencies=[Depends(get_current_active)]
 )
 
 description = """
