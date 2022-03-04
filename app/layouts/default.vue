@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-app style="font-family: 'Prompt', sans-serif;" class="bg-gray-100 h-screen">
+    <v-app style="font-family: 'Prompt', sans-serif;" class="bg-gray-100 h-auto">
       <v-app-bar
           flat
           fixed
@@ -299,7 +299,6 @@ export default {
   },
   methods: {
     setFallbackImageUrl(event) {
-      console.log('Image failed to load, setting fallback.')
       event.target.src = require(`~/assets/images/mango-profile.jpg`)
     },
     handler(router) {
