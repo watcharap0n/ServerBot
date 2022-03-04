@@ -19,7 +19,7 @@ jobs:
           GITHUB_RUN_ID: ${{ secrets.GITHUB_RUN_ID }}
           GITHUB_REPOSITORY: ${{ secrets.GITHUB_REPOSITORY }}
           GITHUB_WORKFLOW: ${{ secrets.GITHUB_WORKFLOW }}
-        run: echo "$GITHUB_RUN_ID $GITHUB_REPOSITORY $GITHUB_WORKFLOW
+        run: echo "$GITHUB_RUN_ID $GITHUB_REPOSITORY $GITHUB_WORKFLOW"
 
       - uses: actions/checkout@v2
       - name: Set up Python 3.9.6
