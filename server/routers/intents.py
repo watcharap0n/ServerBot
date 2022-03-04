@@ -13,21 +13,21 @@ collection = "intents"
 
 
 async def check_intent_duplicate(intent: Intent):
-    items = await db.find(
-        collection=collection, query={"access_token": intent.access_token}
+    item = await db.find_one(
+        collection=collection,
+        query={"access_token": intent.access_token, "name": intent.name}
     )
-    items = list(items)
-    for item in items:
-        if item["name"] == intent.name:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST, detail="item name duplicate"
-            )
+    if item:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail="item name duplicate"
+        )
     return intent
 
 
 @router.get("/", response_model=List[TokenUser])
 async def get_intents(
-        access_token: Optional[str] = None, current_user: User = Depends(get_current_active)
+        access_token: Optional[str] = None,
+        current_user: User = Depends(get_current_active)
 ):
     items = await db.find(collection=collection, query={"access_token": access_token})
     items = list(items)
@@ -48,7 +48,8 @@ async def create_intents(
 
 @router.put("/query/update/{id}", response_model=UpdateIntent)
 async def update_query_intent(
-        id: str, payload: UpdateIntent, current_user: User = Depends(get_current_active)
+        id: str, payload: UpdateIntent,
+        current_user: User = Depends(get_current_active)
 ):
     data = jsonable_encoder(payload)
     query = {"_id": id}
@@ -56,7 +57,8 @@ async def update_query_intent(
 
     if payload.status_flex:
         if (await db.find_one(collection='card', query={'_id': payload.card})) is None:
-            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f'id card not found {payload.card}')
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
+                                detail=f'id card not found {payload.card}')
 
     if (await db.update_one(collection=collection, query=query, values=values)) == 0:
         raise HTTPException(
