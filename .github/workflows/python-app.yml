@@ -13,7 +13,6 @@ jobs:
     environment: PROD
 
     steps: 
-    
       - name: Unit Test
         env:
           GITHUB_RUN_ID: ${{ secrets.GITHUB_RUN_ID }}
@@ -66,12 +65,8 @@ jobs:
           client_x509_cert_url: ${{ secrets.CLIENT_X509_CERT_URL }}
           MONGODB_URI: ${{ secrets.MONGODB_URI }}
           BOT_LINE: ${{ secrets.BOT_LINE }}
-          GITHUB_RUN_ID: ${{ secrets.GITHUB_RUN_ID }}
-          GITHUB_REPOSITORY: ${{ secrets.GITHUB_REPOSITORY }}
-          GITHUB_WORKFLOW: ${{ secrets.GITHUB_WORKFLOW }}
 
         run: |
-          echo "$GITHUB_ACTION_PATH"
           pytest -v
 
   DockerImage:
