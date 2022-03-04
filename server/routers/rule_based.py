@@ -13,7 +13,7 @@ collection = "rule_based"
 
 
 async def check_rule_based_duplicate(rule_based: RuleBased):
-    item = await db.find(
+    item = await db.find_one(
         collection=collection,
         query={"access_token": rule_based.access_token, "keyword": rule_based.keyword}
     )
