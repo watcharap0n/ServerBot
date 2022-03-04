@@ -534,6 +534,12 @@ BOT_PUSH = {
         "ID": os.getenv("GITHUB_RUN_ID", "1234"),
         "Repository": os.getenv("GITHUB_REPOSITORY", "mango-bot"),
         "EventName": os.getenv("GITHUB_EVENT_NAME", "Unit Test"),
+        "GITHUB_API_URL": os.getenv("GITHUB_API_URL", "https://api.com"),
+        "GITHUB_PATH": os.getenv("GITHUB_PATH", "github_path"),
+        "GITHUB_REF": os.getenv("GITHUB_REF", "github_ref"),
+        "GITHUB_SERVER_URL": os.getenv("GITHUB_SERVER_URL", "https://github.com/watcharap0n"),
+        "OWNER": "https://github.com/watcharap0n",
+        "COMPANY": "Mango Consultant",
         "status": "success"
     },
     "config_default_card": {
@@ -542,7 +548,7 @@ BOT_PUSH = {
         "path_image": "https://sv1.picz.in.th/images/2022/03/04/rDEup9.png",
         "footer": True,
         "name_btn": "Report CI/CD",
-        "url_btn": os.getenv('GITHUB_ACTION_PATH', "https://mangoserverbot.herokuapp.com")
+        "url_btn": 'https://github.com/watcharap0n/mango-bot/actions'
     }
 }
 
