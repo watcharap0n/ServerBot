@@ -1,3 +1,4 @@
+import os
 from fastapi import status
 from fastapi.testclient import TestClient
 from main import app, get_settings
@@ -43,7 +44,7 @@ def test_intent_create():
 def test_intent_duplicate():
     response = client.post("/intents/create", json=PAYLOAD_INTENT, headers=headers)
     assert response.status_code == status.HTTP_400_BAD_REQUEST
-    assert response.json() == {"detail": "item name duplicate"}
+    assert response.json() == {"detail": "Invalid duplicate name."}
 
 
 def test_intent_invalid():
@@ -142,7 +143,7 @@ def test_rule_based_duplicate():
         "/rule_based/create", json=PAYLOAD_RuleBased, headers=headers
     )
     assert response.status_code == status.HTTP_400_BAD_REQUEST
-    assert response.json() == {"detail": "item keyword duplicate"}
+    assert response.json() == {"detail": "Invalid duplicate keyword."}
 
 
 def test_rule_based_invalid():
@@ -410,7 +411,7 @@ def test_button_create():
 def test_button_duplicate():
     response = client.post("/button/create", json=PAYLOAD_QUICK_REPLY, headers=headers)
     assert response.status_code == status.HTTP_400_BAD_REQUEST
-    assert response.json() == {"detail": "item name duplicate"}
+    assert response.json() == {"detail": "Invalid duplicate name."}
 
 
 def test_button_create_invalid():
@@ -468,3 +469,92 @@ def test_button_delete_not_found():
     response = client.delete(f"/button/query/delete/{id}", headers=headers)
     assert response.status_code == status.HTTP_400_BAD_REQUEST
     assert response.json() == {"detail": f"Quick Reply not found {id}"}
+
+
+"""
+quick reply test success
+100%
+"""
+
+PAYLOAD_IMAGE_MAP = {
+    "name": "test hello mapping",
+    "access_token": "wrMkegzd86hC66VHLi2p093mzNEIXR7RGh7H9ZQv7iElY5W6amsHqkeXhmqfxdYBi0fnSh5FifqHD0lS9D2SbCfxgZy6CJk3Y2e7iWA1BNPi/3BaN6llOk+ldGUCLwaCegax6tD/1dyLV9P5sVfwZAdB04t89/1O/w1cDnyilFU=",
+    "width": 240,
+    "height": 480,
+    "map": [
+        {
+            "area": {
+                "x": 0,
+                "y": 0,
+                "w": 0,
+                "h": 0
+            },
+            "data": "test send data",
+            "type": "test message"
+        }
+    ],
+    "description": "description mapping"
+}
+
+
+def test_mapping_create():
+    response = client.post("/mapping/create", json=PAYLOAD_IMAGE_MAP, headers=headers)
+    global ids_mapping
+    ids_mapping = response.json()["_id"]
+    assert response.status_code == status.HTTP_201_CREATED
+
+
+def test_mapping_duplicate_item():
+    response = client.post("/mapping/create", json=PAYLOAD_IMAGE_MAP, headers=headers)
+    assert response.status_code == status.HTTP_400_BAD_REQUEST
+    assert response.json() == {'detail': 'Invalid duplicate name.'}
+
+
+def test_mapping_invalid_access_token():
+    PAYLOAD_IMAGE_MAP['access_token'] = 'fake access token'
+    response = client.post("/mapping/create", json=PAYLOAD_IMAGE_MAP, headers=headers)
+    assert response.status_code == status.HTTP_401_UNAUTHORIZED
+    assert response.json() == {"detail": "Authentication failed. "
+                                         "Confirm that the access token in the authorization header is valid."}
+
+
+def test_mapping_update():
+    PAYLOAD_IMAGE_MAP['name'] = 'update name item'
+    response = client.put(f'/mapping/query/update/{ids_mapping}',
+                          json=PAYLOAD_IMAGE_MAP, headers=headers)
+    assert response.status_code == status.HTTP_200_OK
+
+
+def test_mapping_delete():
+    response = client.delete(f'/mapping/query/delete/{ids_mapping}',
+                             json=PAYLOAD_IMAGE_MAP, headers=headers)
+    assert response.status_code == status.HTTP_204_NO_CONTENT
+
+
+"""
+progress ...100%
+"""
+BOT_PUSH = {
+    "access_token": "J8BtpEBu0bRLFsmBk67ZkoJY/a7WmEulj3M93h5j3+M3mGUnnXfcAURmVYI5nwFXD6y4HXvpnDWZgkBE7may4k19BnHEOFZTLEwPn24zp2Hlp8p49krr9i7PsDKKjLd6PT0s6whcrfsXZM67eXVgTwdB04t89/1O/w1cDnyilFU=",
+    "broadcast": True,
+    "content": {
+        "ID": os.getenv("GITHUB_RUN_ID", "1234"),
+        "Repository": os.getenv("GITHUB_REPOSITORY", "mango-bot"),
+        "EventName": os.getenv("GITHUB_EVENT_NAME", "Unit Test"),
+        "status": "success"
+    },
+    "config_default_card": {
+        "header": "Unit Test Report",
+        "image": True,
+        "path_image": "https://sv1.picz.in.th/images/2022/03/04/rDEup9.png",
+        "footer": True,
+        "name_btn": "Report CI/CD",
+        "url_btn": os.getenv('GITHUB_ACTION_PATH', "https://mangoserverbot.herokuapp.com")
+    }
+}
+
+
+def test_push_unit_test_success_to_line():
+    response = client.post(f'/bot/push/flex/default',
+                           json=BOT_PUSH, headers=headers)
+    assert response.status_code == status.HTTP_200_OK
