@@ -52,7 +52,8 @@ module.exports = {
         ]
     },
     plugins: [
-        '~/plugins/notifier.js'
+        '~/plugins/notifier.js',
+        '~/plugins/vue-apexchart.js'
     ],
     buildModules: [
         "@nuxtjs/vuetify",
