@@ -27,7 +27,7 @@
               <v-text-field
                   :rules="nameRules"
                   v-model="elements.name"
-                  label="ชื่อ"
+                  label="Name"
               ></v-text-field>
               <v-text-field
                   :rules="accessRules"
@@ -50,11 +50,11 @@
                   @click="submit"
                   :loading="!spinChannel"
                   :disabled="!valid"
-              >ตกลง
+              >Save
               </v-btn>
               <div class="p-8">
                 <v-row justify="center">
-                  <p>วิธีการติดตั้งและใช้งาน </p>
+                  <p>How to install and use </p>&nbsp;
                   <p>Platform CHATBOT</p>
                 </v-row>
               </div>
@@ -82,13 +82,13 @@ export default {
       },
       valid: true,
       nameRules: [
-        v => !!v || 'กรุณากรอกชื่อ',
+        v => !!v || 'please enter your name.',
       ],
       accessRules: [
-        v => !!v || 'กรุณากรอกAccess Token',
+        v => !!v || 'please enter your secret token.',
       ],
       secretRules: [
-        v => !!v || 'กรุณากรอกSecret Token',
+        v => !!v || 'please enter your access token.',
       ],
     }
   },
@@ -100,7 +100,7 @@ export default {
         this.save()
       } else {
         this.$notifier.showMessage({
-          content: 'กรุณากรอกข้อมูลให้ครบ',
+          content: 'Please complete the information.',
           color: 'red'
         })
         this.spinChannel = false
@@ -111,7 +111,7 @@ export default {
       await this.$axios.post(path, this.elements)
           .then(() => {
             this.$notifier.showMessage({
-              content: `สามารถไปคัดลอก URL Webhook ของคุณได้ที่หน้าหลัก channel ${this.elements.name}`,
+              content: `Your channel ${this.elements.name}.`,
               color: 'info'
             })
             this.spinChannel = true
@@ -121,12 +121,12 @@ export default {
             let status = err.response.status
             if (status === 401) {
               this.$notifier.showMessage({
-                content: 'Access Token ไม่ถูกต้อง',
+                content: 'Invalid Access Token',
                 color: 'red'
               })
             } else if (err.response.status === 400) {
               this.$notifier.showMessage({
-                content: 'Access token เคยสร้างไว้แล้ว',
+                content: 'Access token already registered',
                 color: 'red'
               })
             }
