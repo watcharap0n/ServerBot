@@ -57,8 +57,14 @@ jobs:
           auth_provider_x509_cert_url: ${{ secrets.AUTH_PROVIDER_X509_CERT_URL }}
           client_x509_cert_url: ${{ secrets.CLIENT_X509_CERT_URL }}
           MONGODB_URI: ${{ secrets.MONGODB_URI }}
+          BOT_LINE: ${{ secrets.BOT_LINE }}
+          GITHUB_RUN_ID: ${{ secrets.GITHUB_RUN_ID }}
+          GITHUB_REPOSITORY: ${{ secrets.GITHUB_REPOSITORY }}
+          GITHUB_EVENT_NAME: ${{ secrets.GITHUB_EVENT_NAME }}
+          GITHUB_ACTION_PATH: ${{ secrets.GITHUB_ACTION_PATH }}
 
         run: |
+          echo "$GITHUB_ACTION_PATH"
           pytest -v
 
   DockerImage:
