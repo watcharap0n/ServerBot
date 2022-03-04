@@ -13,17 +13,16 @@ collection = "rule_based"
 
 
 async def check_rule_based_duplicate(rule_based: RuleBased):
-    items = await db.find(
-        collection=collection, query={"access_token": rule_based.access_token}
+    item = await db.find(
+        collection=collection,
+        query={"access_token": rule_based.access_token, "keyword": rule_based.keyword}
     )
-    items = list(items)
-    for item in items:
-        if item['keyword'] is None or not item['keyword']:
-            return rule_based
-        elif item["keyword"] == rule_based.keyword:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST, detail="item keyword duplicate"
-            )
+    if item['keyword'] is None or not item['keyword']:
+        return rule_based
+    elif item:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail="item keyword duplicate"
+        )
     return rule_based
 
 
