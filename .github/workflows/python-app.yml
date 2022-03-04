@@ -14,7 +14,7 @@ jobs:
 
     steps: 
       - name: Test ENV
-      - env:
+        env:
           GITHUB_RUN_ID: ${{ secrets.GITHUB_RUN_ID }}
           GITHUB_REPOSITORY: ${{ secrets.GITHUB_REPOSITORY }}
           GITHUB_EVENT_NAME: ${{ secrets.GITHUB_EVENT_NAME }}
