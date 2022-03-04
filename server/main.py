@@ -10,7 +10,8 @@ import os
 import secrets
 import oauth2
 from functools import lru_cache
-from routers import callback, intents, card, rule_based, quick_reply, notification, bot
+from routers import (callback, intents, card, rule_based,
+                     quick_reply, notification, bot, image_map)
 from models.oauth2 import User
 from oauth2 import get_current_active
 from fastapi import FastAPI, Depends, HTTPException, status
@@ -35,7 +36,6 @@ origins = [
     "http://localhost:8000",
     "https://www.mangoconsultant.net",
     "https://mangoserverbot.herokuapp.com",
-    "https://platformchatbot.herokuapp.com",
 ]
 
 app.add_middleware(
@@ -135,6 +135,13 @@ app.include_router(
     bot.router,
     prefix='/bot',
     tags=['BOT'],
+    responses={418: {"description": "I'm teapot"}},
+)
+
+app.include_router(
+    image_map.router,
+    prefix='/mapping',
+    tags=['Mapping'],
     responses={418: {"description": "I'm teapot"}},
 )
 
