@@ -64,14 +64,14 @@ async def push_flex_default(payload: PushFlexDefault,
     values = payload.content.values()
     content_default = payload.config_default_card
     func, content = content_card_dynamic(
-        header=content_default.get('header'),
-        image=content_default.get('image'),
-        path_image=content_default.get('path_image'),
-        footer=content_default.get('footer'),
+        header=content_default.header,
+        image=content_default.image,
+        path_image=content_default.path_image,
+        footer=content_default.footer,
         body_key=keys,
         body_value=values,
-        name_btn=content_default.get('name_btn'),
-        url_btn=content_default.get('url_btn')
+        name_btn=content_default.name_btn,
+        url_btn=content_default.url_btn
     )
     line_bot_api = LineBotApi(payload.access_token)
     if payload.broadcast:

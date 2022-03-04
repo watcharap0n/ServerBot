@@ -1,5 +1,5 @@
 from db import PyObjectId
-from typing import Optional, Any
+from typing import Optional, Any, Dict
 from bson import ObjectId
 from pydantic import BaseModel, Field, HttpUrl
 from models.notification import DefaultCard
@@ -27,7 +27,7 @@ class MessageFactory(BaseModel):
 
 
 class PushMessage(BaseModel):
-    user_id: list
+    user_id: Optional[list] = None
     broadcast: Optional[bool] = False
     multicast: Optional[bool] = False
     access_token: str
@@ -46,7 +46,7 @@ class PushMessage(BaseModel):
 
 
 class PushFlex(BaseModel):
-    user_id: list
+    user_id: Optional[list] = None
     broadcast: Optional[bool] = False
     multicast: Optional[bool] = False
     access_token: str
@@ -65,21 +65,12 @@ class PushFlex(BaseModel):
 
 
 class PushFlexDefault(BaseModel):
-    user_id: list
+    user_id: Optional[list] = None
     broadcast: Optional[bool] = False
     multicast: Optional[bool] = False
     access_token: str
     content: dict
-    config_default_card: Optional[DefaultCard] = {
-        "header": "header card",
-        "image": False,
-        "path_image": "https://scdn.line-apps.com/n/channel_devcenter/img/fx/01_1_cafe.png",
-        "footer": False,
-        "body_key": ['name', 'company'],
-        "body_value": ['watcharapon', 'mango consultant'],
-        "name_btn": "URL",
-        "url_btn": "https://mangoserverbot.herokuapp.com"
-    }
+    config_default_card: Optional[DefaultCard] = None
 
     class Config:
         schema_extra = {
@@ -88,13 +79,23 @@ class PushFlexDefault(BaseModel):
                 "broadcast": False,
                 "multicast": False,
                 "content": {"key1": "value", "key2": "value!"},
+                "config_default_card": {
+                    "header": "header card",
+                    "image": False,
+                    "path_image": "https://scdn.line-apps.com/n/channel_devcenter/img/fx/01_1_cafe.png",
+                    "footer": False,
+                    "body_key": ['name', 'company'],
+                    "body_value": ['watcharapon', 'mango consultant'],
+                    "name_btn": "URL",
+                    "url_btn": "https://mangoserverbot.herokuapp.com"
+                },
                 "access_token": "access token long live",
             }
         }
 
 
 class PushImage(BaseModel):
-    user_id: list
+    user_id: Optional[list] = None
     broadcast: Optional[bool] = False
     multicast: Optional[bool] = False
     access_token: str
@@ -115,7 +116,7 @@ class PushImage(BaseModel):
 
 
 class PushSticker(BaseModel):
-    user_id: list
+    user_id: Optional[list] = None
     broadcast: Optional[bool] = False
     multicast: Optional[bool] = False
     access_token: str
