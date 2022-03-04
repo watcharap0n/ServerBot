@@ -13,14 +13,13 @@ jobs:
     environment: PROD
 
     steps: 
-      - name: Test ENV
+    
+      - name: Unit Test
         env:
           GITHUB_RUN_ID: ${{ secrets.GITHUB_RUN_ID }}
           GITHUB_REPOSITORY: ${{ secrets.GITHUB_REPOSITORY }}
-          GITHUB_EVENT_NAME: ${{ secrets.GITHUB_EVENT_NAME }}
-          GITHUB_ACTION_PATH: ${{ secrets.GITHUB_ACTION_PATH }}
-        run: echo "$GITHUB_ACTION_PATH"
-    
+        run: echo "$GITHUB_RUN_ID $GITHUB_REPOSITORY"
+
       - uses: actions/checkout@v2
       - name: Set up Python 3.9.6
         uses: actions/setup-python@v2
