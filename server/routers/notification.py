@@ -36,12 +36,12 @@ async def post_content(payload: Post = Depends(check_access_token),
                                      query={'uid': current_user.data.uid, '_id': payload.id_card})
             if not card:
                 raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
-                                    detail={f'not found id card {payload.id_card}'})
-            elif card:
-                content = json.loads(card.get('content'))
-                flex_msg = flex_dynamic(alt_text=card.get('name'), contents=content)
-                line_bot_api.push_message(payload.user_id, flex_msg)
-        return payload
+                                    detail={f'Not found {payload.id_card}'})
+            content = json.loads(card.get('content'))
+            flex_msg = flex_dynamic(alt_text=card.get('name'), contents=content)
+            line_bot_api.push_message(payload.user_id, flex_msg)
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
+                            detail='No content flex message')
 
     line_bot_api.push_message(payload.user_id, TextSendMessage(text=payload.message))
     item_model = jsonable_encoder(payload)
@@ -58,14 +58,14 @@ async def post_any(notify: Post = Depends(post_content),
     values = notify.content.values()
     content_default = notify.config_default_card
     func, content = content_card_dynamic(
-        header=content_default.get('header'),
-        image=content_default.get('image'),
-        path_image=content_default.get('path_image'),
-        footer=content_default.get('footer'),
+        header=content_default.header,
+        image=content_default.image,
+        path_image=content_default.path_image,
+        footer=content_default.footer,
         body_key=keys,
         body_value=values,
-        name_btn=content_default.get('name_btn'),
-        url_btn=content_default.get('url_btn')
+        name_btn=content_default.name_btn,
+        url_btn=content_default.url_btn,
     )
     line_bot_api = LineBotApi(notify.access_token)
     line_bot_api.push_message(notify.user_id, func)

@@ -14,19 +14,6 @@ class DefaultCard(BaseModel):
     name_btn: Optional[str] = 'URL',
     url_btn: Optional[HttpUrl] = 'https://linecorp.com'
 
-    class Config:
-        schema_extra = {
-            "example": {
-                "header": "header card",
-                "image": False,
-                "path_image": "https://scdn.line-apps.com/n/channel_devcenter/img/fx/01_1_cafe.png",
-                "footer": False,
-                "body_key": ['name', 'company'],
-                "body_value": ['watcharapon', 'mango consultant'],
-                "name_btn": "URL",
-                "url_btn": "https://mangoserverbot.herokuapp.com"
-            }
-        }
 
 
 class Post(BaseModel):
