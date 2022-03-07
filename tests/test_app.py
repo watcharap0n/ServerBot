@@ -547,7 +547,7 @@ BOT_PUSH = {
         "GITHUB_SERVER_URL": os.getenv("GITHUB_SERVER_URL", "https://github.com/watcharap0n"),
         "OWNER": "https://github.com/watcharap0n",
         "COMPANY": "Mango Consultant",
-        "status": "success"
+        "status": "Unit Test Success"
     },
     "config_default_card": {
         "header": "Unit Test Report",
