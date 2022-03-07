@@ -1,12 +1,14 @@
+import json
+from typing import Optional, Any
 from db import db
 from typing import List
 from oauth2 import get_current_active, User
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Body
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
 from linebot import LineBotApi
 from linebot.exceptions import LineBotApiError
-from models.image_map import ImageMap, TokenUser, UpdateImageMap
+from models.image_map import ImageMap, TokenUser, Mapping, UpdateImageMap
 from modules.item_static import item_user
 
 router = APIRouter()
@@ -31,6 +33,12 @@ async def check_name_image(image: ImageMap = Depends(check_access_token)):
     return image
 
 
+def json_loads_encoder(content):
+    if content:
+        return json.loads(content)
+    pass
+
+
 @router.get('/', response_model=List[TokenUser])
 async def images_map(access_token: str):
     items = await db.find(collection=collection,
@@ -48,16 +56,24 @@ async def image_map(access_token: str, id: str):
 @router.post('/create', response_model=TokenUser, status_code=status.HTTP_201_CREATED)
 async def add_image_map(image: ImageMap = Depends(check_name_image),
                         current_user: User = Depends(get_current_active)):
+    content = json_loads_encoder(image.content)
     item_model = jsonable_encoder(image)
-    await db.insert_one(collection=collection, data=item_model)
-    item_model = item_user(item_model, current_user)
-    item_store = TokenUser(**item_model)
+    item_model['size'] = content.get('size') if content else ''
+    item_model['areas'] = content.get('areas') if content else ''
+    item_model_mapping = Mapping(**item_model)
+    item_model_mapping = jsonable_encoder(item_model_mapping)
+    item_model_mapping = item_user(item_model_mapping, current_user)
+    await db.insert_one(collection=collection, data=item_model_mapping)
+    item_store = TokenUser(**item_model_mapping)
     return item_store
 
 
 @router.put('/query/update/{id}', response_model=UpdateImageMap)
 async def update_image_map(payload: UpdateImageMap, id: str):
+    content = json_loads_encoder(payload.content)
     item_model = jsonable_encoder(payload)
+    item_model['size'] = content.get('size') if content else ''
+    item_model['areas'] = content.get('areas') if content else ''
     query = {'_id': id}
     value = {'$set': item_model}
     if (await db.update_one(collection=collection, query=query, values=value)) == 0:
