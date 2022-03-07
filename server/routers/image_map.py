@@ -43,6 +43,7 @@ def json_loads_encoder(content):
 async def images_map(access_token: str):
     items = await db.find(collection=collection,
                           query={'access_token': access_token})
+    items = list(items)
     return items
 
 
