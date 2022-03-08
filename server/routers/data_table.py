@@ -30,7 +30,7 @@ async def add_a_column(payload: DataTable,
                        current_user: User = Depends(get_current_active)):
     item_model = jsonable_encoder(payload)
     item_model = item_user(item_model, current_user)
-    await db.indsert
+    await db.insert_one(collection=collection, data=item_model)
     item_store = TokenUser(**item_model)
     return item_store
 

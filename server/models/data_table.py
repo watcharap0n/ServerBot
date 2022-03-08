@@ -24,8 +24,8 @@ class DataTable(BaseModel):
         json_encoders = {ObjectId: str}
         schema_extra = {
             "example": {
-                "text": "e1",
-                "value": "v1",
+                "text": "Name",
+                "value": "name",
                 "align": "center",
                 "sortable": False,
                 "filterable": False,
@@ -64,7 +64,7 @@ class UpdateDataTable(BaseModel):
     divider: Optional[bool] = None
     _class: Optional[bool] = Field(None, alias="class")
     cellClass: Optional[str] = None
-    width: Optional[str] = None
+    width: Optional[int] = None
     filter: Optional[str] = None
     sort: Optional[int] = None
 
@@ -73,8 +73,8 @@ class UpdateDataTable(BaseModel):
         json_encoders = {ObjectId: str}
         schema_extra = {
             "example": {
-                "text": "e1",
-                "value": "v1",
+                "text": "First Name",
+                "value": "fname",
                 "align": "center",
                 "sortable": False,
                 "filterable": False,
