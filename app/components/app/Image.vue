@@ -12,12 +12,14 @@
         <v-row justify="center">
           <p>Width</p>
           <v-text-field
+              v-if="image.size"
               v-model="image.size.width"
               label="width"
               solo
           ></v-text-field>
           <p>Height</p>
           <v-text-field
+              v-if="image.size"
               v-model="image.size.height"
               label="height"
               solo
