@@ -10,8 +10,11 @@ import os
 import secrets
 import oauth2
 from functools import lru_cache
-from routers import (callback, intents, card, rule_based,
-                     quick_reply, notification, bot, image_map)
+from routers import (
+    callback, intents, card, rule_based,
+    quick_reply, notification, bot, image_map,
+    data_table
+)
 from models.oauth2 import User
 from oauth2 import get_current_active
 from fastapi import FastAPI, Depends, HTTPException, status
@@ -143,6 +146,14 @@ app.include_router(
     image_map.router,
     prefix='/mapping',
     tags=['Mapping'],
+    responses={418: {"description": "I'm teapot"}},
+    dependencies=[Depends(get_current_active)]
+)
+
+app.include_router(
+    data_table.router,
+    prefix='/data/table',
+    tags=['DataTable'],
     responses={418: {"description": "I'm teapot"}},
     dependencies=[Depends(get_current_active)]
 )
