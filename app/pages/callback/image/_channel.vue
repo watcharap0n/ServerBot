@@ -73,7 +73,8 @@
                 flat
             >
               <v-card-text>
-                <Image
+
+                <SetImage
                     :spin="!spinSave"
                     v-if="selected"
                     :delete-image="deleteImage"
@@ -109,10 +110,10 @@
 
 <script>
 import Dialog from "@/components/app/Dialog";
-import Image from "@/components/app/Image";
+import SetImage from "@/components/app/Image";
 
 export default {
-  components: {Dialog, Image},
+  components: {Dialog, SetImage},
   data() {
     return {
       mapping: [],
