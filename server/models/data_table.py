@@ -5,6 +5,10 @@ from pydantic import BaseModel, Field
 
 
 class DataTable(BaseModel):
+    pass
+
+
+class ColumnDataTable(BaseModel):
     id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
     access_token: Optional[str] = None
     text: Optional[str] = None
@@ -26,6 +30,7 @@ class DataTable(BaseModel):
             "example": {
                 "text": "Name",
                 "value": "name",
+                "access_token": "token long live",
                 "align": "center",
                 "sortable": False,
                 "filterable": False,
@@ -40,7 +45,7 @@ class DataTable(BaseModel):
         }
 
 
-class TokenUser(DataTable):
+class TokenUser(ColumnDataTable):
     uid: Optional[str] = None
     date: Optional[str] = None
     time: Optional[str] = None

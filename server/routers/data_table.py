@@ -5,7 +5,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
 from modules.item_static import item_user
-from models.data_table import DataTable, TokenUser, UpdateDataTable
+from models.data_table import ColumnDataTable, TokenUser, UpdateDataTable
 
 router = APIRouter()
 
@@ -26,7 +26,7 @@ async def get_data_table_one(id: str, access_token: str):
 
 
 @router.post('/', response_model=TokenUser)
-async def add_a_column(payload: DataTable,
+async def add_a_column(payload: ColumnDataTable,
                        current_user: User = Depends(get_current_active)):
     item_model = jsonable_encoder(payload)
     item_model = item_user(item_model, current_user)
