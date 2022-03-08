@@ -477,22 +477,44 @@ quick reply test success
 """
 
 PAYLOAD_IMAGE_MAP = {
-    "name": "test hello mapping",
-    "access_token": "access token long live",
-    "width": 240,
-    "height": 480,
-    "map": [
+    "name": "add mapping",
+    "access_token": os.environ.get('BOT_LINE'),
+    "content": """
+    {
+    "size": {
+        "width": 480,
+        "height": 480
+    },
+    "selected": true,
+    "name": "Rich Menu 1",
+    "chatBarText": "Bulletin",
+    "areas": [
         {
-            "area": {
-                "x": 0,
-                "y": 0,
-                "w": 0,
-                "h": 0
+            "bounds": {
+                "x": 898,
+                "y": 330,
+                "width": 550,
+                "height": 414
             },
-            "data": "test send data",
-            "type": "test message"
+            "action": {
+                "type": "message",
+                "data": "action"
+            }
+        },
+        {
+            "bounds": {
+                "x": 898,
+                "y": 330,
+                "width": 550,
+                "height": 414
+            },
+            "action": {
+                "type": "message",
+                "data": "action1"
+            }
         }
-    ],
+    ]
+}""",
     "description": "description mapping"
 }
 
