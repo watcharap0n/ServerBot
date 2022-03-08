@@ -250,7 +250,7 @@
       </v-navigation-drawer>
 
       <div
-          :style="`margin-left: ${$vuetify.application.left}px; margin-top: ${$vuetify.application.top}`"
+          :style="`margin-left: ${$vuetify.application.left - 40}px; margin-top: ${$vuetify.application.top}`"
           class="bg-gray-100 p-20 h-screen"
       >
         <Nuxt @routerHandle="handler"/>
@@ -303,12 +303,7 @@ export default {
     },
     handler(router) {
       this.itemsApp = [
-        {
-          id: 'p1',
-          title: 'Dashboard',
-          icon: 'mdi-view-dashboard-outline',
-          url: `/callback/dashboard/${router.channel}`
-        },
+        {id: 'p1', title: 'Dashboard', icon: 'mdi-view-dashboard-outline', url: `/callback/dashboard/${router.channel}`},
         {id: 'p2', title: 'Flex Message', icon: 'mdi-cards-outline', url: `/callback/card/${router.channel}`},
         {id: 'p3', title: 'Intent', icon: 'mdi-robot-happy-outline', url: `/callback/intent/${router.channel}`},
         {id: 'p4', title: 'Rule Based', icon: 'mdi-dice-5-outline', url: `/callback/rule/${router.channel}`},
