@@ -16,16 +16,11 @@ router = APIRouter()
 collection = 'images_map'
 
 
-async def check_access_token(image: ImageMap):
-    try:
-        line_bot_api = LineBotApi(image.access_token)
-        line_bot_api.get_bot_info()
-        return image
-    except LineBotApiError as ex:
-        raise HTTPException(status_code=ex.status_code, detail=ex.message)
 
 
-async def check_name_image(image: ImageMap = Depends(check_access_token)):
+
+
+async def check_name_image(image: ImageMap ):
     item = await db.find_one(collection=collection,
                              query={'access_token': image.access_token, 'name': image.name})
     if item:
@@ -59,8 +54,8 @@ async def add_image_map(image: ImageMap = Depends(check_name_image),
                         current_user: User = Depends(get_current_active)):
     content = json_loads_encoder(image.content)
     item_model = jsonable_encoder(image)
-    item_model['size'] = content.get('size') if content else ''
-    item_model['areas'] = content.get('areas') if content else ''
+    item_model['size'] = content.get('size') if content else None
+    item_model['areas'] = content.get('areas') if content else None
     item_model_mapping = Mapping(**item_model)
     item_model_mapping = jsonable_encoder(item_model_mapping)
     item_model_mapping = item_user(item_model_mapping, current_user)
@@ -73,8 +68,8 @@ async def add_image_map(image: ImageMap = Depends(check_name_image),
 async def update_image_map(payload: UpdateImageMap, id: str):
     content = json_loads_encoder(payload.content)
     item_model = jsonable_encoder(payload)
-    item_model['size'] = content.get('size') if content else ''
-    item_model['areas'] = content.get('areas') if content else ''
+    item_model['size'] = content.get('size') if content else None
+    item_model['areas'] = content.get('areas') if content else None
     query = {'_id': id}
     value = {'$set': item_model}
     if (await db.update_one(collection=collection, query=query, values=value)) == 0:
