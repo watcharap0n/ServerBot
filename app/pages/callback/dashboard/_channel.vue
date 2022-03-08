@@ -1,38 +1,67 @@
 <template>
   <div>
-    
+
     <v-row>
-      <v-col sm="12"
-             cols="12"
-      >
-        <Header/>
-      </v-col>
       <v-col sm="6"
              cols="12"
       >
-        <BodyLeft/>
+        <v-card flat>
+          <v-card-text>
+            <Bar/>
+          </v-card-text>
+        </v-card>
       </v-col>
 
       <v-col sm="6"
-             cols="12"
-      >
-        <BodyRight/>
+             cols="12">
+        <v-card flat>
+          <v-card-text>
+            <Donut/>
+          </v-card-text>
+        </v-card>
       </v-col>
+
+      <v-col sm="6"
+             cols="12">
+        <v-card flat>
+          <v-card-text>
+            <DataTable/>
+          </v-card-text>
+        </v-card>
+      </v-col>
+
+      <v-col sm="6"
+             cols="12">
+        <v-card flat>
+          <v-card-text>
+            <LineChar/>
+          </v-card-text>
+        </v-card>
+        <br>
+        <v-card flat>
+          <v-card-text>
+            <LineChar/>
+          </v-card-text>
+        </v-card>
+      </v-col>
+
     </v-row>
 
   </div>
 </template>
 
 <script>
-import Header from "@/components/charts/dashboard/Header";
-import BodyLeft from "@/components/charts/dashboard/BodyLeft";
-import BodyRight from "@/components/charts/dashboard/BodyRight";
+import LineChar from "@/components/charts/dashboard/LineChar";
+import Donut from "@/components/charts/dashboard/Donut";
+import Bar from "@/components/charts/dashboard/Bar";
+import DataTable from "@/components/charts/dashboard/DataTable";
 
 export default {
   components: {
-    Header,
-    BodyLeft,
-    BodyRight
+    LineChar,
+    Donut,
+    Bar,
+    DataTable,
   },
 
   data() {
