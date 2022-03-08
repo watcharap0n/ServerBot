@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="h-auto">
     <v-card flat>
       <v-toolbar
           dense
@@ -50,7 +50,7 @@
 
             <template v-slot:label="{item}">
               <div>{{ item.name }}</div>
-              <small v-if="selected">{{ item.message }}</small>
+              <small v-if="selected">{{ item.description }}</small>
             </template>
           </v-treeview>
         </v-col>
@@ -73,8 +73,13 @@
                 flat
             >
               <v-card-text>
-
-                Input your component Mapping
+                <Image
+                    :spin="!spinSave"
+                    v-if="selected"
+                    :delete-image="deleteImage"
+                    :update-image="todo"
+                    :set-object="selected" @input="selected = $event"
+                />
 
               </v-card-text>
             </v-card>
@@ -91,15 +96,23 @@
             :loading-dialog="!spinSave"
             :submit-dialog="save"
     />
+
+    <Dialog :dialog.sync="dialogDelete"
+            header="delete Image"
+            body="are you sure to delete ?"
+            max-width="350"
+            :loading-dialog="spinSave"
+            :submit-dialog="remove"
+    />
   </div>
 </template>
 
 <script>
 import Dialog from "@/components/app/Dialog";
-import Intent from "@/components/app/Intent"
+import Image from "@/components/app/Image";
 
 export default {
-  components: {Dialog, Intent},
+  components: {Dialog, Image},
   data() {
     return {
       mapping: [],
@@ -112,13 +125,13 @@ export default {
         name: '',
         access_token: '',
         content: '',
-        message: '',
+        description: '',
       },
       defaultForm: {
         name: '',
         access_token: '',
         content: '',
-        message: '',
+        description: '',
       },
       data: [],
       active: [],
@@ -227,6 +240,42 @@ export default {
       this.$store.commit('features/setDynamicPath', path)
       await this.$store.dispatch('features/fetchCard')
       this.mapping = this.$store.getters["features/getResponse"]
+    },
+    deleteImage() {
+      this.dialogDelete = true
+    },
+    async remove() {
+      this.spinSave = true
+      const path = `/mapping/query/delete/${this.selected._id}`
+      this.$store.commit('features/setDynamicPath', path)
+      await this.$store.dispatch('features/deleteItem')
+      this.users.splice(this.users.indexOf(this.selected), 1)
+      this.spinSave = false
+      this.dialogDelete = false
+      this.$notifier.showMessage({
+        content: `deleted!`,
+        color: 'success'
+      })
+    },
+    async todo() {
+      this.spinSave = true
+      this.form = Object.assign({}, this.selected)
+      const path = `/mapping/query/update/${this.selected._id}`;
+      await this.$axios.put(path, this.form)
+          .then(() => {
+            this.$notifier.showMessage({
+              content: `updated!`,
+              color: 'success'
+            })
+            this.form = Object.assign({}, this.defaultForm)
+          })
+          .catch((err) => {
+            this.$notifier.showMessage({
+              content: `something wrong status code ${err.response.status}`,
+              color: 'red'
+            })
+          })
+      this.spinSave = false
     }
   },
 
