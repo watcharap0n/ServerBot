@@ -1,5 +1,5 @@
 from db import PyObjectId
-from typing import Optional, Any, Dict
+from typing import Optional, Any
 from bson import ObjectId
 from pydantic import BaseModel, Field, HttpUrl
 from models.notification import DefaultCard
