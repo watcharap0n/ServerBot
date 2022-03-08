@@ -477,22 +477,44 @@ quick reply test success
 """
 
 PAYLOAD_IMAGE_MAP = {
-    "name": "test hello mapping",
-    "access_token": "wrMkegzd86hC66VHLi2p093mzNEIXR7RGh7H9ZQv7iElY5W6amsHqkeXhmqfxdYBi0fnSh5FifqHD0lS9D2SbCfxgZy6CJk3Y2e7iWA1BNPi/3BaN6llOk+ldGUCLwaCegax6tD/1dyLV9P5sVfwZAdB04t89/1O/w1cDnyilFU=",
-    "width": 240,
-    "height": 480,
-    "map": [
+    "name": "add mapping",
+    "access_token": "J8BtpEBu0bRLFsmBk67ZkoJY/a7WmEulj3M93h5j3+M3mGUnnXfcAURmVYI5nwFXD6y4HXvpnDWZgkBE7may4k19BnHEOFZTLEwPn24zp2Hlp8p49krr9i7PsDKKjLd6PT0s6whcrfsXZM67eXVgTwdB04t89/1O/w1cDnyilFU=",
+    "content": """
+    {
+    "size": {
+        "width": 480,
+        "height": 480
+    },
+    "selected": true,
+    "name": "Rich Menu 1",
+    "chatBarText": "Bulletin",
+    "areas": [
         {
-            "area": {
-                "x": 0,
-                "y": 0,
-                "w": 0,
-                "h": 0
+            "bounds": {
+                "x": 898,
+                "y": 330,
+                "width": 550,
+                "height": 414
             },
-            "data": "test send data",
-            "type": "test message"
+            "action": {
+                "type": "message",
+                "data": "action"
+            }
+        },
+        {
+            "bounds": {
+                "x": 898,
+                "y": 330,
+                "width": 550,
+                "height": 414
+            },
+            "action": {
+                "type": "message",
+                "data": "action1"
+            }
         }
-    ],
+    ]
+}""",
     "description": "description mapping"
 }
 
@@ -558,7 +580,6 @@ BOT_PUSH = {
         "url_btn": 'https://github.com/watcharap0n/mango-bot/actions'
     }
 }
-
 
 def test_push_unit_test_success_to_line():
     response = client.post(f'/bot/push/flex/default',
