@@ -1,7 +1,7 @@
 from db import PyObjectId
 from typing import Optional, List
 from bson import ObjectId
-from pydantic import BaseModel, Field, HttpUrl
+from pydantic import BaseModel, Field
 
 
 class Area(BaseModel):
@@ -25,7 +25,7 @@ class ImageMap(BaseModel):
     id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
     name: str
     access_token: str
-    base_url_image: Optional[HttpUrl] = None
+    base_url_image: Optional[str] = None
     content: Optional[str] = None
     description: Optional[str] = None
 
