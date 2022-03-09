@@ -75,11 +75,8 @@
               <v-card-text>
 
                 <SetImage
-                    :spin="!spinSave"
-                    v-if="selected"
-                    :delete-image="deleteImage"
-                    :update-image="todo"
-                    :set-object="selected" @input="selected = $event"
+                    :image="selected"
+                    :users.sync="users"
                 />
 
               </v-card-text>
@@ -98,13 +95,7 @@
             :submit-dialog="save"
     />
 
-    <Dialog :dialog.sync="dialogDelete"
-            header="delete Image"
-            body="are you sure to delete ?"
-            max-width="350"
-            :loading-dialog="spinSave"
-            :submit-dialog="remove"
-    />
+
   </div>
 </template>
 
@@ -203,7 +194,7 @@ export default {
           })
     },
     async save() {
-      this.spinSave = false
+      this.spinSave = true
       await this.fetchToken()
       this.form.name = this.elements[0].value
       const path = '/mapping/create'
@@ -242,42 +233,7 @@ export default {
       await this.$store.dispatch('features/fetchCard')
       this.mapping = this.$store.getters["features/getResponse"]
     },
-    deleteImage() {
-      this.dialogDelete = true
-    },
-    async remove() {
-      this.spinSave = true
-      const path = `/mapping/query/delete/${this.selected._id}`
-      this.$store.commit('features/setDynamicPath', path)
-      await this.$store.dispatch('features/deleteItem')
-      this.users.splice(this.users.indexOf(this.selected), 1)
-      this.spinSave = false
-      this.dialogDelete = false
-      this.$notifier.showMessage({
-        content: `deleted!`,
-        color: 'success'
-      })
-    },
-    async todo() {
-      this.spinSave = true
-      this.form = Object.assign({}, this.selected)
-      const path = `/mapping/query/update/${this.selected._id}`;
-      await this.$axios.put(path, this.form)
-          .then(() => {
-            this.$notifier.showMessage({
-              content: `updated!`,
-              color: 'success'
-            })
-            this.form = Object.assign({}, this.defaultForm)
-          })
-          .catch((err) => {
-            this.$notifier.showMessage({
-              content: `something wrong status code ${err.response.status}`,
-              color: 'red'
-            })
-          })
-      this.spinSave = false
-    }
+
   },
 
 }
