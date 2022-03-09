@@ -39,8 +39,8 @@ async def add_a_column(payload: ColumnDataTable,
 async def update_a_column(payload: UpdateDataTable, id: str,
                           current_user: User = Depends(get_current_active)):
     item_model = jsonable_encoder(payload)
-    value = {'value': item_model}
-    query = {'$set': id}
+    value = {'$set': item_model}
+    query = {'_id': id}
 
     if (await db.update_one(collection=collection, query=query, values=value)) == 0:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
