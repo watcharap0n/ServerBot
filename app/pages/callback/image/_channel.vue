@@ -118,12 +118,14 @@ export default {
         access_token: '',
         content: '',
         description: '',
+        base_url_image: ''
       },
       defaultForm: {
         name: '',
         access_token: '',
         content: '',
         description: '',
+        base_url_image: ''
       },
       data: [],
       active: [],
@@ -208,6 +210,7 @@ export default {
               content: 'create mapping successfully',
               color: 'success'
             })
+            console.log(res.data)
           })
           .catch((err) => {
             console.error(err)

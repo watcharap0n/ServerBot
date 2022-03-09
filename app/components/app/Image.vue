@@ -35,6 +35,22 @@
           </v-col>
         </v-row>
       </div>
+      <v-form
+          ref="formUri"
+          v-model="valid"
+      >
+        <v-text-field
+            v-model="image.base_url_image"
+            :rules="rules"
+            label="URI"
+            rounded
+            outlined
+        >uri
+
+        </v-text-field>
+      </v-form>
+
+
       <div v-if="image.content">
         <p class="text-xl font-normal font-extrabold ">Code</p>
         <v-textarea
@@ -48,10 +64,15 @@
         </v-textarea>
         <v-row justify="end">
           <v-btn
+              prepend-icon="mdi-format-list-bulleted-type"
               color="info"
               rounded
               @click="showDetail = !showDetail"
-          >Show detail
+          >
+            <v-icon left>
+              mdi-format-list-bulleted-square
+            </v-icon>
+            Show detail
           </v-btn>
         </v-row>
       </div>
@@ -67,15 +88,6 @@
             label="code"
         >
         </v-textarea>
-        <v-row justify="end">
-          <v-btn
-              color="success"
-              :loading="!spin"
-              rounded
-          >add content
-
-          </v-btn>
-        </v-row>
 
       </div>
 
@@ -186,6 +198,7 @@
             color="info"
             :loading="!spinSave"
             @click="todo"
+            :disabled="!valid"
         >
           <v-icon left>mdi-database-plus</v-icon>
           Save
@@ -235,14 +248,31 @@ export default {
       showDetail: false,
       content: '',
       dialog: false,
-      spin: true
+      spin: true,
+      rules: [
+        (value) => !!value || "Required.",
+        (value) => this.isURL(value) || "URL is not valid",
+      ],
+
 
     }
   },
 
   methods: {
+    isURL(str) {
+      let url;
+      try {
+        url = new URL(str);
+      } catch (_) {
+        return false;
+      }
+
+      return url.protocol === "http:" || url.protocol === "https:";
+    },
 
     async todo() {
+      let validation = this.$refs.formUri.validate()
+      if (validation === true){
       this.spinSave = false
       const path = `/mapping/query/update/${this.image.id}`;
       if (this.content)
@@ -254,6 +284,7 @@ export default {
               color: 'success'
             })
             console.log(res)
+
             this.image.areas = res.data.areas
             this.image.size = res.data.size
           })
@@ -264,6 +295,7 @@ export default {
             })
           })
       this.spinSave = true
+      }
     },
 
     async remove() {
