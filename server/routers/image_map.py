@@ -6,8 +6,6 @@ from oauth2 import get_current_active, User
 from fastapi import APIRouter, Depends, HTTPException, status, Body
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
-from linebot import LineBotApi
-from linebot.exceptions import LineBotApiError
 from models.image_map import ImageMap, TokenUser, Mapping, UpdateImageMap
 from modules.item_static import item_user
 
@@ -16,11 +14,7 @@ router = APIRouter()
 collection = 'images_map'
 
 
-
-
-
-
-async def check_name_image(image: ImageMap ):
+async def check_name_image(image: ImageMap):
     item = await db.find_one(collection=collection,
                              query={'access_token': image.access_token, 'name': image.name})
     if item:
@@ -82,3 +76,8 @@ async def delete_image_map(id: str):
     if (await db.delete_one(collection=collection, query={'_id': id})) == 0:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f'id item not found in {id}')
     return JSONResponse(status_code=status.HTTP_204_NO_CONTENT)
+
+
+@router.post('/json/encoder')
+async def api_json_encoder(payload: Optional[Any] = Body(None)):
+    return json.dumps(payload)

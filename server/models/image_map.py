@@ -1,4 +1,3 @@
-import json
 from db import PyObjectId
 from typing import Optional, List
 from bson import ObjectId
@@ -26,6 +25,7 @@ class ImageMap(BaseModel):
     id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
     name: str
     access_token: str
+    base_url_image: Optional[str] = None
     content: Optional[str] = None
     description: Optional[str] = None
 
