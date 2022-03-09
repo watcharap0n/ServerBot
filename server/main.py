@@ -13,7 +13,7 @@ from functools import lru_cache
 from routers import (
     callback, intents, card, rule_based,
     quick_reply, notification, bot, image_map,
-    data_table
+    data_table, retrieve_data
 )
 from models.oauth2 import User
 from oauth2 import get_current_active
@@ -154,6 +154,15 @@ app.include_router(
     data_table.router,
     prefix='/data/table',
     tags=['DataTable'],
+    responses={418: {"description": "I'm teapot"}},
+    dependencies=[Depends(get_current_active)]
+)
+
+
+app.include_router(
+    retrieve_data.router,
+    prefix='/retrieve',
+    tags=['Retrieve'],
     responses={418: {"description": "I'm teapot"}},
     dependencies=[Depends(get_current_active)]
 )
