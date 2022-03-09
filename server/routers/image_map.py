@@ -66,9 +66,10 @@ async def update_image_map(payload: UpdateImageMap, id: str):
     item_model['areas'] = content.get('areas') if content else None
     query = {'_id': id}
     value = {'$set': item_model}
+    item_store = UpdateImageMap(**item_model)
     if (await db.update_one(collection=collection, query=query, values=value)) == 0:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f'id item not found in {id}')
-    return payload
+    return item_store
 
 
 @router.delete('/query/delete/{id}')

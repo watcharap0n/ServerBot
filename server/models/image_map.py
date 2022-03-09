@@ -82,6 +82,8 @@ class UpdateImageMap(BaseModel):
     access_token: str
     content: Optional[str] = None
     description: Optional[str] = None
+    size: Optional[Size] = None
+    areas: Optional[List[Areas]] = None
 
     class Config:
         arbitrary_types_allowed = True
@@ -92,5 +94,19 @@ class UpdateImageMap(BaseModel):
                 "access_token": "update token long live",
                 "content": "",
                 "description": "update description mapping",
+                "size": {
+                    "width": 480,
+                    "height": 480
+                },
+                "areas": [
+                    {
+                        "bounds": {"x": 123, "y": 330, "width": 550, "height": 414},
+                        "action": {"type": "message", "data": "action"}
+                    },
+                    {
+                        "bounds": {"x": 898, "y": 330, "width": 550, "height": 414},
+                        "action": {"type": "message", "data": "action1"}
+                    }
+                ],
             }
         }
