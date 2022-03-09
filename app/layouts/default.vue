@@ -311,7 +311,7 @@ export default {
         {id: 'p6', title: 'Map Image', icon: 'mdi-image-outline', url: `/callback/image/${router.channel}`},
       ]
       this.itemsOther = [
-        {title: 'Settings', icon: 'mdi-account-box-outline', url: `/callback/setting/${router.channel}`},
+        {title: 'Settings', icon: 'mdi-account-box-outline', url: `/callback/setting/inbox/${router.channel}`},
       ]
       this.itemsHome = [
         {title: 'Home', icon: 'mdi-home-outline', url: `/`},

@@ -51,6 +51,9 @@ export default {
       selected: 0,
       itemsList: [
         {
+          icon: 'mdi-table-large', title: 'DataTable', router: `/callback/setting/datatable/${this.$route.params.channel}`
+        },
+        {
           icon: 'mdi-inbox', title: 'Inbox', router: `/callback/setting/inbox/${this.$route.params.channel}`
         },
         {
@@ -59,9 +62,6 @@ export default {
         {
           icon: 'mdi-account', title: 'Profile', router: `/callback/setting/profile/${this.$route.params.channel}`
         },
-        {
-          icon: 'mdi-table-large', title: 'DataTable', router: `/callback/setting/datatable/${this.$route.params.channel}`
-        }
       ]
     }
   }
