@@ -308,10 +308,10 @@ export default {
         {id: 'p3', title: 'Intent', icon: 'mdi-robot-happy-outline', url: `/callback/intent/${router.channel}`},
         {id: 'p4', title: 'Rule Based', icon: 'mdi-dice-5-outline', url: `/callback/rule/${router.channel}`},
         {id: 'p5', title: 'Quick Reply', icon: 'mdi-reply-outline', url: `/callback/button/${router.channel}`},
-        {id: 'p6', title: 'Map Image', icon: 'mdi-image-outline', url: `/callback/image/${router.channel}`},
+        {id: 'p6', title: 'Image Map', icon: 'mdi-image-outline', url: `/callback/image/${router.channel}`},
       ]
       this.itemsOther = [
-        {title: 'Settings', icon: 'mdi-account-box-outline', url: `/callback/setting/inbox/${router.channel}`},
+        {title: 'Settings', icon: 'mdi-account-box-outline', url: `/callback/setting/datatable/${router.channel}`},
       ]
       this.itemsHome = [
         {title: 'Home', icon: 'mdi-home-outline', url: `/`},
