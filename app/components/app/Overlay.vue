@@ -9,6 +9,10 @@
 
 <script>
 export default{
-  props: ['overlay']
+  props: {
+    overlay: {
+      required: true
+    }
+  }
 }
 </script>
