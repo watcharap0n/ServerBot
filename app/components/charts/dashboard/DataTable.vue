@@ -2,26 +2,24 @@
   <v-data-table
       :headers="headers"
       :items="desserts"
-      sort-by="calories"
-      items-per-page="5"
   >
     <template v-slot:top>
       <v-toolbar flat>
-        <v-toolbar-title>My CRUD</v-toolbar-title>
+        <v-toolbar-title>My Table</v-toolbar-title>
         <v-divider
             class="mx-4"
             inset
             vertical
         ></v-divider>
         <v-spacer></v-spacer>
-        <v-dialog v-model="dialog" max-width="500px">
+        <v-dialog v-model="dialog" max-width="800px">
           <template v-slot:activator="{ on, attrs }">
             <v-btn
                 color="primary"
                 dark
                 v-bind="attrs"
                 v-on="on"
-            >New Item
+            >New Data
             </v-btn>
           </template>
           <v-card>
@@ -32,20 +30,15 @@
             <v-card-text>
               <v-container>
                 <v-row>
-                  <v-col cols="12" sm="6" md="4">
-                    <v-text-field v-model="editedItem.name" label="Dessert name"></v-text-field>
-                  </v-col>
-                  <v-col cols="12" sm="6" md="4">
-                    <v-text-field v-model="editedItem.calories" label="Calories"></v-text-field>
-                  </v-col>
-                  <v-col cols="12" sm="6" md="4">
-                    <v-text-field v-model="editedItem.fat" label="Fat (g)"></v-text-field>
-                  </v-col>
-                  <v-col cols="12" sm="6" md="4">
-                    <v-text-field v-model="editedItem.carbs" label="Carbs (g)"></v-text-field>
-                  </v-col>
-                  <v-col cols="12" sm="6" md="4">
-                    <v-text-field v-model="editedItem.protein" label="Protein (g)"></v-text-field>
+                  <v-col
+                      cols="12"
+                      sm="4"
+                      v-for="(value, key) in Object.keys(editedItem)"
+                      :key="key"
+                  >
+                    <v-text-field v-model="editedItem[value]"
+                                  :label="labels[key]">
+                    </v-text-field>
                   </v-col>
                 </v-row>
               </v-container>
@@ -86,41 +79,47 @@
 <script>
 export default {
   data: () => ({
+    access_token: '',
     dialog: false,
     headers: [
-      {
-        text: 'Dessert (100g serving)',
-        align: 'start',
-        sortable: false,
-        value: 'name'
-      },
-      {text: 'Calories', value: 'calories'},
-      {text: 'Fat (g)', value: 'fat'},
-      {text: 'Carbs (g)', value: 'carbs'},
-      {text: 'Protein (g)', value: 'protein'},
       {text: 'Actions', value: 'actions', sortable: false}
     ],
-    desserts: [],
+    labels: [],
+    desserts: [
+      {
+        fname: 'watcharapon',
+        lname: 'weeraborirak',
+        email: 'wera.watcharapon@gmail.com'
+      },
+      {
+        fname: 'nook',
+        lname: 'ky',
+        email: 'nooky@gmail.com'
+      },
+      {
+        fname: 'example',
+        lname: 'data',
+        email: 'example@gmail.com'
+      },
+      {
+        fname: 'test',
+        lname: 'data',
+        email: 'test@gmail.com'
+      },
+      {
+        fname: 'mane',
+        lname: 'maney',
+        email: 'pattern@gmail.com'
+      }
+    ],
     editedIndex: -1,
-    editedItem: {
-      name: '',
-      calories: 0,
-      fat: 0,
-      carbs: 0,
-      protein: 0
-    },
-    defaultItem: {
-      name: '',
-      calories: 0,
-      fat: 0,
-      carbs: 0,
-      protein: 0
-    }
+    editedItem: {},
+    defaultItem: {}
   }),
 
   computed: {
     formTitle() {
-      return this.editedIndex === -1 ? 'New Item' : 'Edit Item'
+      return this.editedIndex === -1 ? 'New Data' : 'Edit Data'
     }
   },
 
@@ -130,84 +129,46 @@ export default {
     }
   },
 
-  created() {
-    this.initialize()
+  async created() {
+
+    const pathToken = `/callback/channel/info/${this.$route.params.channel}`;
+    this.$store.commit('features/setDynamicPath', pathToken);
+    await this.$store.dispatch('features/fetchToken');
+    this.access_token = this.$store.getters["features/getToken"]
+
+    await this.initialize();
+    await this.initializeValue();
   },
 
   methods: {
-    initialize() {
-      this.desserts = [
-        {
-          name: 'Frozen Yogurt',
-          calories: 159,
-          fat: 6.0,
-          carbs: 24,
-          protein: 4.0
-        },
-        {
-          name: 'Ice cream sandwich',
-          calories: 237,
-          fat: 9.0,
-          carbs: 37,
-          protein: 4.3
-        },
-        {
-          name: 'Eclair',
-          calories: 262,
-          fat: 16.0,
-          carbs: 23,
-          protein: 6.0
-        },
-        {
-          name: 'Cupcake',
-          calories: 305,
-          fat: 3.7,
-          carbs: 67,
-          protein: 4.3
-        },
-        {
-          name: 'Gingerbread',
-          calories: 356,
-          fat: 16.0,
-          carbs: 49,
-          protein: 3.9
-        },
-        {
-          name: 'Jelly bean',
-          calories: 375,
-          fat: 0.0,
-          carbs: 94,
-          protein: 0.0
-        },
-        {
-          name: 'Lollipop',
-          calories: 392,
-          fat: 0.2,
-          carbs: 98,
-          protein: 0
-        },
-        {
-          name: 'Honeycomb',
-          calories: 408,
-          fat: 3.2,
-          carbs: 87,
-          protein: 6.5
-        },
-        {
-          name: 'Donut',
-          calories: 452,
-          fat: 25.0,
-          carbs: 51,
-          protein: 4.9
-        },
-        {
-          name: 'KitKat',
-          calories: 518,
-          fat: 26.0,
-          carbs: 65,
-          protein: 7
-        }
-      ]
+    async initialize() {
+      let encoded = encodeURIComponent(this.access_token);
+      const path = `/data/table/?access_token=${encoded}`;
+      await this.$axios.get(path)
+          .then((res) => {
+            res.data.forEach((item) => {
+              this.headers.push(item)
+              this.labels.push(item.text)
+              this.editedItem[item.value] = null
+              this.defaultItem[item.value] = null
+            })
+            console.log(this.editedItem)
+          })
+          .catch((err) => {
+            console.error(err);
+          })
+    },
+
+    async initializeValue() {
+      let encoded = encodeURIComponent(this.access_token);
+      const path = `/retrieve/?access_token=${encoded}`
+      await this.$axios.get(path)
+          .then((res) => {
+            console.log(res.data)
+          })
+          .catch((err) => {
+            console.error(err)
+          })
     },
 
     editItem(item) {
@@ -237,6 +198,15 @@ export default {
         this.desserts.push(this.editedItem)
       }
       this.close()
+    },
+    async add() {
+      const path = `/retrieve/create`
+    },
+    async todo() {
+
+    },
+    async remove() {
+
     }
   }
 }
