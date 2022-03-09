@@ -25,6 +25,20 @@ async def get_data_table_one(id: str, access_token: str):
     return data
 
 
+async def check_duplicate_value(payload: UpdateDataTable):
+    item = await db.find_one(
+        collection=collection,
+        query={"access_token": payload.access_token, "value": payload.value}
+    )
+    if item:
+        if item.get('value') is None or not item.get('value'):
+            return payload
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid duplicate value."
+        )
+    return payload
+
+
 @router.post('/', response_model=TokenUser)
 async def add_a_column(payload: ColumnDataTable,
                        current_user: User = Depends(get_current_active)):
@@ -36,8 +50,7 @@ async def add_a_column(payload: ColumnDataTable,
 
 
 @router.put('/{id}', response_model=UpdateDataTable)
-async def update_a_column(payload: UpdateDataTable, id: str,
-                          current_user: User = Depends(get_current_active)):
+async def update_a_column(id: str, payload: UpdateDataTable = Depends(check_duplicate_value)):
     item_model = jsonable_encoder(payload)
     value = {'$set': item_model}
     query = {'_id': id}

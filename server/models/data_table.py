@@ -1,18 +1,14 @@
 from db import PyObjectId
 from typing import Optional
 from bson import ObjectId
-from pydantic import BaseModel, Field
-
-
-class DataTable(BaseModel):
-    pass
+from pydantic import BaseModel, Field, constr
 
 
 class ColumnDataTable(BaseModel):
     id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
     access_token: Optional[str] = None
     text: Optional[str] = None
-    value: Optional[str] = None
+    value: Optional[constr(to_lower=True)] = None
     align: Optional[str] = None
     sortable: Optional[bool] = None
     filterable: Optional[bool] = None
