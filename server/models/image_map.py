@@ -1,7 +1,7 @@
 from db import PyObjectId
 from typing import Optional, List
 from bson import ObjectId
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, HttpUrl
 
 
 class Area(BaseModel):
@@ -25,7 +25,7 @@ class ImageMap(BaseModel):
     id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
     name: str
     access_token: str
-    base_url_image: Optional[str] = None
+    base_url_image: Optional[HttpUrl] = None
     content: Optional[str] = None
     description: Optional[str] = None
 
@@ -34,6 +34,7 @@ class ImageMap(BaseModel):
         schema_extra = {
             "example": {
                 "name": "hello mapping",
+                "base_url_image": "https://github.com",
                 "access_token": "token long live",
                 "content": "",
                 "description": "description mapping",
@@ -80,6 +81,7 @@ class TokenUser(Mapping):
 class UpdateImageMap(BaseModel):
     name: str
     access_token: str
+    base_url_image: Optional[str] = None
     content: Optional[str] = None
     description: Optional[str] = None
     size: Optional[Size] = None
@@ -92,6 +94,7 @@ class UpdateImageMap(BaseModel):
             "example": {
                 "name": "update hello mapping",
                 "access_token": "update token long live",
+                "base_url_image": "https://github.com",
                 "content": "",
                 "description": "update description mapping",
                 "size": {
