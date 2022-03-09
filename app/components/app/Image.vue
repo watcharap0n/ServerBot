@@ -18,17 +18,19 @@
                 v-if="image.size"
                 v-model="image.size.width"
                 label="width"
-                solo
+                outlined
+                rounded
             ></v-text-field>
           </v-col>
           <v-col
               cols="12" sm="6">
             <p class="text-l font-normal font-bold ">Height</p>
             <v-text-field
+                outlined
+                rounded
                 v-if="image.size"
                 v-model="image.size.height"
                 label="height"
-                solo
             ></v-text-field>
           </v-col>
         </v-row>
@@ -46,11 +48,10 @@
         </v-textarea>
         <v-row justify="end">
           <v-btn
-              color="success"
+              color="info"
               rounded
-
               @click="showDetail = !showDetail"
-          >submit
+          >Show detail
           </v-btn>
         </v-row>
       </div>
@@ -70,7 +71,6 @@
           <v-btn
               color="success"
               :loading="!spin"
-              @click="sendContent"
               rounded
           >add content
 
@@ -85,10 +85,10 @@
           :hidden="!showDetail">
         <v-col
             v-if="image.areas"
-            v-for="n in image.areas.length"
-            :key="n"
+            v-for="(v, k) in image.areas"
+            :key="k"
 
-        >{{ n }}
+        ><span>Mapping</span> {{ k + 1 }}
 
           <v-card
               class="d-flex justify-space-around mb-4 "
@@ -98,60 +98,74 @@
             <v-card-text>
               <v-row>
 
-                <v-text-field
-                    v-model="image.areas[n-1].bounds.x"
-                    label="X"
-                    outlined
-                    readonly
-                ></v-text-field>
-                <v-text-field
-                    v-model="image.areas[n-1].bounds.y"
-                    label="Y"
-                    outlined
-                    readonly
-                ></v-text-field>
-                <v-text-field
-                    v-model="image.areas[n-1].bounds.width"
-                    label="WIDTH"
-                    outlined
-                    readonly
-                ></v-text-field>
-                <v-text-field
-                    v-model="image.areas[n-1].bounds.height"
-                    label="HEIGHT"
-                    outlined
-                    readonly
-                ></v-text-field>
+                <v-col sm="3">
+                  <v-text-field
+                      v-model="v.bounds.x"
+                      label="X"
+                      outlined
+                      readonly
+                  ></v-text-field>
+                </v-col>
+
+                <v-col sm="3">
+                  <v-text-field
+                      v-model="v.bounds.y"
+                      label="Y"
+                      outlined
+                      readonly
+                  ></v-text-field>
+                </v-col>
+
+                <v-col sm="3">
+                  <v-text-field
+                      v-model="v.bounds.width"
+                      label="WIDTH"
+                      outlined
+                      readonly
+                  ></v-text-field>
+                </v-col>
+
+                <v-col sm="3">
+                  <v-text-field
+                      v-model="v.bounds.height"
+                      label="HEIGHT"
+                      outlined
+                      readonly
+                  ></v-text-field>
+                </v-col>
+
               </v-row>
+
               <v-text-field
-                  v-model="image.areas[n-1].action.type"
+                  v-model="v.action.type"
                   label="type"
                   outlined
                   readonly
               ></v-text-field>
+
               <div
-                  v-if="image.areas[n-1].action.type === 'message'"
+                  v-if="v.action.type === 'message'"
               >
                 <v-text-field
-                    v-if="image.areas[n-1]"
-                    v-model="image.areas[n-1].action.text"
+                    v-model="v.action.text"
                     label="data"
                     outlined
                     readonly
                 ></v-text-field>
               </div>
+
               <div
-                  v-if="image.areas[n-1].action.type === 'uri'"
+                  v-if="v.action.type === 'uri'"
               >
                 <v-text-field
-                    v-if="image.areas[n-1]"
-                    v-model="image.areas[n-1].action.uri"
+                    v-model="v.action.uri"
                     label="data"
                     outlined
                     readonly
                 ></v-text-field>
               </div>
             </v-card-text>
+
           </v-card>
         </v-col>
       </div>
@@ -170,14 +184,14 @@
         <v-btn
             text
             color="info"
-            :loading="!spin"
+            :loading="!spinSave"
             @click="todo"
         >
           <v-icon left>mdi-database-plus</v-icon>
           Save
         </v-btn>
-        <v-btn
 
+        <v-btn
             color="grey"
             dark
             @click="dialog = true"
@@ -216,6 +230,7 @@ export default {
   },
   data() {
     return {
+      spinSave: true,
       valid: true,
       showDetail: false,
       content: '',
@@ -228,7 +243,7 @@ export default {
   methods: {
 
     async todo() {
-      this.spinSave = true
+      this.spinSave = false
       const path = `/mapping/query/update/${this.image.id}`;
       if (this.content)
         this.image.content = this.content
@@ -241,7 +256,6 @@ export default {
             console.log(res)
             this.image.areas = res.data.areas
             this.image.size = res.data.size
-            this.form = Object.assign({}, this.defaultForm)
           })
           .catch((err) => {
             this.$notifier.showMessage({
@@ -249,8 +263,9 @@ export default {
               color: 'red'
             })
           })
-      this.spinSave = false
+      this.spinSave = true
     },
+
     async remove() {
       this.spin = false
       const path = `/mapping/query/delete/${this.image._id}`
