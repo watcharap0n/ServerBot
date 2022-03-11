@@ -119,8 +119,6 @@ export default {
     this.defaultItem.access_token = this.$store.getters["features/getToken"];
 
     let encoded = encodeURIComponent(this.defaultItem.access_token);
-
-    this.$emit('update:loading', true)
     const path = `/data/table/?access_token=${encoded}`;
     await this.$axios.get(path)
         .then((res) => {
