@@ -6,7 +6,7 @@ from starlette.responses import JSONResponse
 from modules.item_static import item_user
 from modules.flex_message import flex_dynamic
 from models.callback import Webhook, LineToken, UpdateLineToken
-from models.data_table import ColumnDataTable
+from models.data_table import ColumnDataTable, TokenUser
 from random import randint
 from typing import Optional, List
 from fastapi import APIRouter, Depends, Body, Request, status, HTTPException, Path
@@ -117,20 +117,24 @@ async def create_channel(
     store_model = Webhook(**item_model)
     date_column_default = ColumnDataTable(
         text='Date',
-        value='date',
         access_token=item.access_token,
-        status=False
+        status=False,
+        default_field=True
     )
     time_column_default = ColumnDataTable(
         text='Time',
-        value='time',
         access_token=item.access_token,
-        status=False
+        status=False,
+        default_field=True
     )
     json_time = jsonable_encoder(time_column_default)
     json_date = jsonable_encoder(date_column_default)
-    await db.insert_one(collection='data_table', data=json_time)
-    await db.insert_one(collection='data_table', data=json_date)
+    json_time = item_user(data=json_time, current_user=current_user)
+    json_date = item_user(data=json_date, current_user=current_user)
+    user_time = TokenUser(**json_time)
+    user_date = TokenUser(**json_date)
+    await db.insert_one(collection='data_table', data=jsonable_encoder(user_time))
+    await db.insert_one(collection='data_table', data=jsonable_encoder(user_date))
     await db.insert_one(collection=collection, data=item_model)
     return store_model
 
