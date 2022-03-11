@@ -1,4 +1,5 @@
 from db import PyObjectId
+from uuid import UUID, uuid4
 from typing import Optional
 from bson import ObjectId
 from pydantic import BaseModel, Field, constr
@@ -8,7 +9,7 @@ class ColumnDataTable(BaseModel):
     id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
     access_token: Optional[str] = None
     text: Optional[str] = None
-    value: Optional[constr(to_lower=True)] = None
+    value: UUID = Field(default_factory=uuid4)
     align: Optional[str] = None
     sortable: Optional[bool] = None
     filterable: Optional[bool] = None
@@ -19,6 +20,10 @@ class ColumnDataTable(BaseModel):
     width: Optional[str] = None
     filter: Optional[str] = None
     sort: Optional[int] = None
+    items_select: Optional[list] = []
+    type_field: Optional[str] = None
+    status: Optional[bool] = True
+    default_field: Optional[bool] = False
 
     class Config:
         json_encoders = {ObjectId: str}
@@ -36,7 +41,11 @@ class ColumnDataTable(BaseModel):
                 "cellClass": "",
                 "width": 200,
                 "filter": "",
-                "sort": 10
+                "sort": 10,
+                "items_select": ['name'],
+                "type_field": "default",
+                "status": True,
+                "default_field": False
             }
         }
 
@@ -68,6 +77,10 @@ class UpdateDataTable(BaseModel):
     width: Optional[int] = None
     filter: Optional[str] = None
     sort: Optional[int] = None
+    items_select: Optional[list] = None
+    type_field: Optional[str] = None
+    status: Optional[bool] = True
+    default_field: Optional[bool] = False
 
     class Config:
         arbitrary_types_allowed = True
@@ -85,6 +98,10 @@ class UpdateDataTable(BaseModel):
                 "cellClass": "",
                 "width": 200,
                 "filter": "",
-                "sort": 10
+                "sort": 10,
+                "items_select": ['name'],
+                "type_field": "default",
+                "status": True,
+                "default_field": False
             }
         }

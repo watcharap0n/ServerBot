@@ -1,3 +1,4 @@
+from typing import Optional
 from db import db
 from typing import List
 from oauth2 import get_current_active, User
@@ -13,7 +14,12 @@ collection = 'data_table'
 
 
 @router.get('/', response_model=List[TokenUser])
-async def get_data_table(access_token: str):
+async def get_data_table(access_token: str, status: Optional[bool] = False):
+    if status:
+        data = await db.find(collection=collection, query={'access_token': access_token, 'status': status})
+        data = list(data)
+        return data
+
     data = await db.find(collection=collection, query={'access_token': access_token})
     data = list(data)
     return data
@@ -23,20 +29,6 @@ async def get_data_table(access_token: str):
 async def get_data_table_one(id: str, access_token: str):
     data = await db.find_one(collection=collection, query={'_id': id, 'access_token': access_token})
     return data
-
-
-async def check_duplicate_value(payload: UpdateDataTable):
-    item = await db.find_one(
-        collection=collection,
-        query={"access_token": payload.access_token, "value": payload.value}
-    )
-    if item:
-        if item.get('value') is None or not item.get('value'):
-            return payload
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid duplicate value."
-        )
-    return payload
 
 
 @router.post('/', response_model=TokenUser)
@@ -50,14 +42,13 @@ async def add_a_column(payload: ColumnDataTable,
 
 
 @router.put('/{id}', response_model=UpdateDataTable)
-async def update_a_column(id: str, payload: UpdateDataTable = Depends(check_duplicate_value)):
+async def update_a_column(id: str, payload: UpdateDataTable):
     item_model = jsonable_encoder(payload)
     value = {'$set': item_model}
     query = {'_id': id}
-
     if (await db.update_one(collection=collection, query=query, values=value)) == 0:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
-                            detail=f'column not found {id} or update already exist')
+                            detail=f'column not found or update already exist')
     return payload
 
 
