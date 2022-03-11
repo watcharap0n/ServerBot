@@ -10,7 +10,6 @@ class Transaction(BaseModel):
 
 class Retrieve(BaseModel):
     id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
-    access_token: str
     transaction: Optional[dict] = None
 
     class Config:
@@ -30,12 +29,14 @@ class Retrieve(BaseModel):
 
 
 class TokenUser(Retrieve):
+    access_token: Optional[str] = None
     uid: Optional[str] = None
     date: Optional[str] = None
     time: Optional[str] = None
 
     class Config:
         schema_extra = {
+            "access_token": "token long live",
             "uid": "generate token uid",
             "date": "12/01/2022",
             "time": "12:00:00",
