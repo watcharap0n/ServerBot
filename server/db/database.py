@@ -1,3 +1,4 @@
+from typing import Optional
 from pymongo import MongoClient
 import pymongo
 
@@ -22,8 +23,8 @@ class MongoDB:
             query, sort=[("_id", pymongo.DESCENDING)]
         )
 
-    async def find(self, collection: str, query: dict):
-        return self.database[collection].find(query)
+    async def find(self, collection: str, query: dict, select_field: Optional[dict] = None):
+        return self.database[collection].find(query, select_field)
 
     async def insert_one(self, collection: str, data: dict):
         ids = None

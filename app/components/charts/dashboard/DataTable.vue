@@ -85,33 +85,7 @@ export default {
       {text: 'Actions', value: 'actions', sortable: false}
     ],
     labels: [],
-    desserts: [
-      {
-        fname: 'watcharapon',
-        lname: 'weeraborirak',
-        email: 'wera.watcharapon@gmail.com'
-      },
-      {
-        fname: 'nook',
-        lname: 'ky',
-        email: 'nooky@gmail.com'
-      },
-      {
-        fname: 'example',
-        lname: 'data',
-        email: 'example@gmail.com'
-      },
-      {
-        fname: 'test',
-        lname: 'data',
-        email: 'test@gmail.com'
-      },
-      {
-        fname: 'mane',
-        lname: 'maney',
-        email: 'pattern@gmail.com'
-      }
-    ],
+    desserts: [],
     editedIndex: -1,
     editedItem: {},
     defaultItem: {}
@@ -137,22 +111,22 @@ export default {
     this.access_token = this.$store.getters["features/getToken"]
 
     await this.initialize();
-    await this.initializeValue();
   },
 
   methods: {
     async initialize() {
       let encoded = encodeURIComponent(this.access_token);
+      console.log(encoded)
       const path = `/data/table/?access_token=${encoded}`;
       await this.$axios.get(path)
           .then((res) => {
             res.data.forEach((item) => {
-              this.headers.push(item)
-              this.labels.push(item.text)
-              this.editedItem[item.value] = null
-              this.defaultItem[item.value] = null
+              this.headers.push(item);
+              this.labels.push(item.text);
+              this.editedItem[item.value] = null;
+              this.defaultItem[item.value] = null;
             })
-            console.log(this.editedItem)
+            this.initializeValue();
           })
           .catch((err) => {
             console.error(err);
@@ -160,47 +134,60 @@ export default {
     },
 
     async initializeValue() {
-      let encoded = encodeURIComponent(this.access_token);
-      const path = `/retrieve/?access_token=${encoded}`
+      const path = `/retrieve/?access_token=${this.access_token}`;
       await this.$axios.get(path)
           .then((res) => {
-            console.log(res.data)
+            this.desserts = res.data;
           })
           .catch((err) => {
-            console.error(err)
+            console.error(err);
           })
     },
 
     editItem(item) {
-      this.editedIndex = this.desserts.indexOf(item)
-      this.editedItem = Object.assign({}, item)
-      this.dialog = true
+      this.editedIndex = this.desserts.indexOf(item);
+      this.editedItem = Object.assign({}, item);
+      this.dialog = true;
     },
 
     deleteItem(item) {
-      const index = this.desserts.indexOf(item)
+      const index = this.desserts.indexOf(item);
 
-      confirm('Are you sure you want to delete this item?') && this.desserts.splice(index, 1)
+      confirm('Are you sure you want to delete this item?') && this.desserts.splice(index, 1);
     },
 
     close() {
       this.dialog = false
       this.$nextTick(() => {
-        this.editedItem = Object.assign({}, this.defaultItem)
-        this.editedIndex = -1
+        this.editedItem = Object.assign({}, this.defaultItem);
+        this.editedIndex = -1;
       })
     },
 
-    save() {
+    async save() {
       if (this.editedIndex > -1) {
-        Object.assign(this.desserts[this.editedIndex], this.editedItem)
+        Object.assign(this.desserts[this.editedIndex], this.editedItem);
       } else {
-        this.desserts.push(this.editedItem)
+        await this.add();
       }
       this.close()
     },
     async add() {
-      const path = `/retrieve/create`
+      const path = `/retrieve/create/?access_token=${this.access_token}`;
+      await this.$axios.post(path, this.editedItem)
+          .then((res) => {
+            this.desserts.push(this.editedItem);
+            this.$notifier.showMessage({
+              content: `add successfully | status code ${res.status}`,
+              color: 'success'
+            })
+          })
+          .catch((err) => {
+            this.$notifier.showMessage({
+              content: `something wrong | status code ${err.response.status}`,
+              color: 'red'
+            })
+          })
     },
     async todo() {
 
