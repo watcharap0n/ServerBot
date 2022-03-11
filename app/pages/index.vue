@@ -126,9 +126,11 @@
     </v-item-group>
 
     <Dialog :dialog.sync="dialogDelete"
-            header="ลบข้อมูล"
-            body="are you sure delete!"
-            :submit-dialog="saveD"
+            color-toolbar="red"
+            max-width="400px"
+            header="Are you sure delete this channel!"
+            body="Are you sure delete! ** All your information contained in the channel will be deleted! ** "
+            :submit-dialog="remove"
             :loading-dialog.sync="btnSpin"
     />
 
@@ -245,7 +247,7 @@ export default {
       this.dialogDelete = true
       this.editedIndex = this.channels.indexOf(item)
     },
-    async saveD() {
+    async remove() {
       this.btnSpin = true
       let token = this.channels[this.editedIndex].token
       const path = `/callback/channel/delete/${token}`

@@ -3,7 +3,7 @@
     <v-card>
       <v-toolbar
           flat
-          color="info"
+          :color="colorToolbar"
           dark
       >
         {{ header }}
@@ -65,6 +65,10 @@ export default {
     maxWidth: {
       type: String,
       default: '290'
+    },
+    colorToolbar: {
+      type: String,
+      default: 'info'
     }
   },
   data() {
