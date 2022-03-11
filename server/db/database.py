@@ -11,6 +11,9 @@ class MongoDB:
     def database_config(self):
         return self.database
 
+    def get_collection_names(self):
+        return self.database.list_collection_names()
+
     @staticmethod
     def find_dictionary(programming, query):
         return programming.find(query)
@@ -64,6 +67,6 @@ class MongoDB:
 
     async def delete_many(self, collection: str, query: dict):
         try:
-            self.database[collection].delete_many(query)
+            self.database[collection].delete_many(query).deleted_count
         except Exception as e:
             print(str(e))

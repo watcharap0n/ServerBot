@@ -6,6 +6,7 @@ from starlette.responses import JSONResponse
 from modules.item_static import item_user
 from modules.flex_message import flex_dynamic
 from models.callback import Webhook, LineToken, UpdateLineToken
+from models.data_table import ColumnDataTable
 from random import randint
 from typing import Optional, List
 from fastapi import APIRouter, Depends, Body, Request, status, HTTPException, Path
@@ -114,6 +115,22 @@ async def create_channel(
     item_model["bot_info"] = bot_info
     item_model = jsonable_encoder(item_model)
     store_model = Webhook(**item_model)
+    date_column_default = ColumnDataTable(
+        text='Date',
+        value='date',
+        access_token=item.access_token,
+        status=False
+    )
+    time_column_default = ColumnDataTable(
+        text='Time',
+        value='time',
+        access_token=item.access_token,
+        status=False
+    )
+    json_time = jsonable_encoder(time_column_default)
+    json_date = jsonable_encoder(date_column_default)
+    await db.insert_one(collection='data_table', data=json_time)
+    await db.insert_one(collection='data_table', data=json_date)
     await db.insert_one(collection=collection, data=item_model)
     return store_model
 
@@ -143,7 +160,8 @@ async def update_channel(
 
 @router.delete("/channel/delete/{token}")
 async def delete_channel(
-        token: Optional[str] = None, current_user: User = Depends(get_current_active)
+        token: Optional[str] = None,
+        current_user: User = Depends(get_current_active),
 ):
     """
 
@@ -151,11 +169,15 @@ async def delete_channel(
     :param current_user:
     :return:
     """
+    item = await get_webhook(token)
     if (await db.delete_one(collection=collection, query={"token": token})) == 0:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=f"Callback not found {token} or Delete Already exits",
         )
+    collections = db.get_collection_names()
+    for collect in collections:
+        await db.delete_many(collection=collect, query={"access_token": item.access_token})
     return JSONResponse(status_code=status.HTTP_204_NO_CONTENT)
 
 
