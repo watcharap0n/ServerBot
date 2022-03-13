@@ -2,50 +2,56 @@
   <v-data-table
       :headers="headers"
       :items="desserts"
-      sort-by="calories"
-      items-per-page="5"
+      :loading="loadingTable"
   >
     <template v-slot:top>
       <v-toolbar flat>
-        <v-toolbar-title>My CRUD</v-toolbar-title>
+        <v-toolbar-title>My Table</v-toolbar-title>
         <v-divider
             class="mx-4"
             inset
             vertical
         ></v-divider>
         <v-spacer></v-spacer>
-        <v-dialog v-model="dialog" max-width="500px">
+        <v-dialog v-model="dialog" max-width="800px">
           <template v-slot:activator="{ on, attrs }">
             <v-btn
-                color="primary"
+                color="info"
                 dark
                 v-bind="attrs"
                 v-on="on"
-            >New Item
+            >Add Data
             </v-btn>
           </template>
           <v-card>
             <v-card-title>
-              <span class="headline">{{ formTitle }}</span>
+              <span class="headline">{{ formTitle }} </span>
             </v-card-title>
-
             <v-card-text>
               <v-container>
                 <v-row>
-                  <v-col cols="12" sm="6" md="4">
-                    <v-text-field v-model="editedItem.name" label="Dessert name"></v-text-field>
-                  </v-col>
-                  <v-col cols="12" sm="6" md="4">
-                    <v-text-field v-model="editedItem.calories" label="Calories"></v-text-field>
-                  </v-col>
-                  <v-col cols="12" sm="6" md="4">
-                    <v-text-field v-model="editedItem.fat" label="Fat (g)"></v-text-field>
-                  </v-col>
-                  <v-col cols="12" sm="6" md="4">
-                    <v-text-field v-model="editedItem.carbs" label="Carbs (g)"></v-text-field>
-                  </v-col>
-                  <v-col cols="12" sm="6" md="4">
-                    <v-text-field v-model="editedItem.protein" label="Protein (g)"></v-text-field>
+                  <v-col
+                      v-if="editedItem"
+                      cols="12"
+                      sm="4"
+                      v-for="(value, key) in Object.keys(editedItem)"
+                      :key="key"
+                      :hidden="!status[key]"
+                  >
+
+                    <v-text-field v-if="type_field[key] === 'default'"
+                                  v-model="editedItem[value]"
+                                  :label="labels[key]">
+                    </v-text-field>
+
+
+                    <v-select
+                        v-else-if="type_field[key] === 'select'"
+                        v-model="editedItem[value]"
+                        :items="itemsSelect[key]"
+                        :label="labels[key]">
+                    </v-select>
+
                   </v-col>
                 </v-row>
               </v-container>
@@ -53,8 +59,18 @@
 
             <v-card-actions>
               <v-spacer></v-spacer>
-              <v-btn color="blue darken-1" text @click="close">Cancel</v-btn>
-              <v-btn color="blue darken-1" text @click="save">Save</v-btn>
+              <v-btn color="grey"
+                     text
+                     @click="close"
+                     :loading="loading"
+              >
+                Cancel
+              </v-btn>
+              <v-btn color="success"
+                     text @click="save"
+                     :loading="loading">
+                Save
+              </v-btn>
             </v-card-actions>
           </v-card>
         </v-dialog>
@@ -71,14 +87,12 @@
         mdi-pencil
       </v-icon>
       <v-icon
+          :loading="loading"
           small
           @click="deleteItem(item)"
       >
         mdi-delete
       </v-icon>
-    </template>
-    <template v-slot:no-data>
-      <v-btn color="primary" @click="initialize">Reset</v-btn>
     </template>
   </v-data-table>
 </template>
@@ -86,41 +100,26 @@
 <script>
 export default {
   data: () => ({
+    loading: false,
+    loadingTable: false,
+    access_token: '',
     dialog: false,
     headers: [
-      {
-        text: 'Dessert (100g serving)',
-        align: 'start',
-        sortable: false,
-        value: 'name'
-      },
-      {text: 'Calories', value: 'calories'},
-      {text: 'Fat (g)', value: 'fat'},
-      {text: 'Carbs (g)', value: 'carbs'},
-      {text: 'Protein (g)', value: 'protein'},
       {text: 'Actions', value: 'actions', sortable: false}
     ],
+    itemsSelect: [],
+    type_field: [],
+    status: [],
+    labels: [],
     desserts: [],
     editedIndex: -1,
-    editedItem: {
-      name: '',
-      calories: 0,
-      fat: 0,
-      carbs: 0,
-      protein: 0
-    },
-    defaultItem: {
-      name: '',
-      calories: 0,
-      fat: 0,
-      carbs: 0,
-      protein: 0
-    }
+    editedItem: {},
+    defaultItem: {}
   }),
 
   computed: {
     formTitle() {
-      return this.editedIndex === -1 ? 'New Item' : 'Edit Item'
+      return this.editedIndex === -1 ? 'New Data' : 'Edit Data'
     }
   },
 
@@ -130,113 +129,134 @@ export default {
     }
   },
 
-  created() {
-    this.initialize()
+  async created() {
+    const pathToken = `/callback/channel/info/${this.$route.params.channel}`;
+    this.$store.commit('features/setDynamicPath', pathToken);
+    await this.$store.dispatch('features/fetchToken');
+    this.access_token = this.$store.getters["features/getToken"]
+
+    await this.initializeHeader();
   },
 
   methods: {
-    initialize() {
-      this.desserts = [
-        {
-          name: 'Frozen Yogurt',
-          calories: 159,
-          fat: 6.0,
-          carbs: 24,
-          protein: 4.0
-        },
-        {
-          name: 'Ice cream sandwich',
-          calories: 237,
-          fat: 9.0,
-          carbs: 37,
-          protein: 4.3
-        },
-        {
-          name: 'Eclair',
-          calories: 262,
-          fat: 16.0,
-          carbs: 23,
-          protein: 6.0
-        },
-        {
-          name: 'Cupcake',
-          calories: 305,
-          fat: 3.7,
-          carbs: 67,
-          protein: 4.3
-        },
-        {
-          name: 'Gingerbread',
-          calories: 356,
-          fat: 16.0,
-          carbs: 49,
-          protein: 3.9
-        },
-        {
-          name: 'Jelly bean',
-          calories: 375,
-          fat: 0.0,
-          carbs: 94,
-          protein: 0.0
-        },
-        {
-          name: 'Lollipop',
-          calories: 392,
-          fat: 0.2,
-          carbs: 98,
-          protein: 0
-        },
-        {
-          name: 'Honeycomb',
-          calories: 408,
-          fat: 3.2,
-          carbs: 87,
-          protein: 6.5
-        },
-        {
-          name: 'Donut',
-          calories: 452,
-          fat: 25.0,
-          carbs: 51,
-          protein: 4.9
-        },
-        {
-          name: 'KitKat',
-          calories: 518,
-          fat: 26.0,
-          carbs: 65,
-          protein: 7
-        }
-      ]
+    async initializeHeader() {
+      this.loadingTable = true;
+      let encoded = encodeURIComponent(this.access_token);
+      const path = `/data/table/?access_token=${encoded}&status=${true}`;
+      await this.$axios.get(path)
+          .then((res) => {
+            res.data.forEach((item) => {
+              this.headers.push(item);
+              this.type_field.push(item.type_field)
+              this.labels.push(item.text);
+              this.itemsSelect.push(item.items_select)
+              this.status.push(item.status);
+              this.editedItem[item.value] = null;
+              this.defaultItem[item.value] = null;
+            })
+            this.initializeValue();
+          })
+          .catch((err) => {
+            console.error(err);
+          })
+      this.loadingTable = false;
+    },
+
+    async initializeValue() {
+      const path = `/retrieve/?access_token=${this.access_token}`;
+      await this.$axios.get(path)
+          .then((res) => {
+            this.desserts = res.data;
+          })
+          .catch((err) => {
+            console.error(err);
+          })
     },
 
     editItem(item) {
-      this.editedIndex = this.desserts.indexOf(item)
-      this.editedItem = Object.assign({}, item)
-      this.dialog = true
+      this.editedIndex = this.desserts.indexOf(item);
+
+      this.editedItem = Object.assign({}, item);
+      this.dialog = true;
     },
 
-    deleteItem(item) {
-      const index = this.desserts.indexOf(item)
-
-      confirm('Are you sure you want to delete this item?') && this.desserts.splice(index, 1)
+    async deleteItem(item) {
+      confirm('Are you sure you want to delete this item?') && await this.remove(item);
     },
 
     close() {
       this.dialog = false
       this.$nextTick(() => {
-        this.editedItem = Object.assign({}, this.defaultItem)
-        this.editedIndex = -1
+        this.editedItem = Object.assign({}, this.defaultItem);
+        this.editedIndex = -1;
       })
     },
 
-    save() {
+    async save() {
       if (this.editedIndex > -1) {
-        Object.assign(this.desserts[this.editedIndex], this.editedItem)
+        this.loading = true;
+        await this.todo();
+        this.loading = false;
       } else {
-        this.desserts.push(this.editedItem)
+        this.loading = true;
+        await this.add();
+        this.loading = false;
       }
       this.close()
+    },
+    async add() {
+      const path = `/retrieve/create/?access_token=${this.access_token}`;
+      await this.$axios.post(path, this.editedItem)
+          .then((res) => {
+            this.desserts.push(res.data);
+            this.$notifier.showMessage({
+              content: `add successfully | status code ${res.status}`,
+              color: 'success'
+            })
+          })
+          .catch((err) => {
+            this.$notifier.showMessage({
+              content: `something wrong | status code ${err.response.status}`,
+              color: 'red'
+            })
+          })
+    },
+    async todo() {
+      const path = `/retrieve/query/update/${this.editedItem.id}`
+      await this.$axios.put(path, this.editedItem)
+          .then((res) => {
+            Object.assign(this.desserts[this.editedIndex], this.editedItem);
+            this.$notifier.showMessage({
+              content: `updated successfully | status code ${res.status}`,
+              color: 'success'
+            })
+          })
+          .catch((err) => {
+            this.$notifier.showMessage({
+              content: `something wrong | status code ${err.response.status}`,
+              color: 'red'
+            })
+          })
+    },
+    async remove(item) {
+      this.loading = true;
+      const path = `/retrieve/query/delete/${item.id}`
+      await this.$axios.delete(path)
+          .then((res) => {
+            let index = this.desserts.indexOf(item)
+            this.desserts.splice(index, 1);
+            this.$notifier.showMessage({
+              content: `deleted successfully | status code ${res.status}`,
+              color: 'success'
+            })
+          })
+          .catch((err) => {
+            this.$notifier.showMessage({
+              content: `something wrong | status code ${err.response.status}`,
+              color: 'red'
+            })
+          })
+      this.loading = false;
     }
   }
 }
