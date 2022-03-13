@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="h-auto">
     <v-card flat>
       <v-toolbar
           dense
@@ -50,7 +50,7 @@
 
             <template v-slot:label="{item}">
               <div>{{ item.name }}</div>
-              <small v-if="selected">{{ item.message }}</small>
+              <small v-if="selected">{{ item.description }}</small>
             </template>
           </v-treeview>
         </v-col>
@@ -74,7 +74,10 @@
             >
               <v-card-text>
 
-                Input your component Mapping
+                <SetImage
+                    :image="selected"
+                    :users.sync="users"
+                />
 
               </v-card-text>
             </v-card>
@@ -91,15 +94,17 @@
             :loading-dialog="!spinSave"
             :submit-dialog="save"
     />
+
+
   </div>
 </template>
 
 <script>
 import Dialog from "@/components/app/Dialog";
-import Intent from "@/components/app/Intent"
+import SetImage from "@/components/app/Image";
 
 export default {
-  components: {Dialog, Intent},
+  components: {Dialog, SetImage},
   data() {
     return {
       mapping: [],
@@ -112,13 +117,15 @@ export default {
         name: '',
         access_token: '',
         content: '',
-        message: '',
+        description: '',
+        base_url_image: ''
       },
       defaultForm: {
         name: '',
         access_token: '',
         content: '',
-        message: '',
+        description: '',
+        base_url_image: ''
       },
       data: [],
       active: [],
@@ -203,6 +210,7 @@ export default {
               content: 'create mapping successfully',
               color: 'success'
             })
+            console.log(res.data)
           })
           .catch((err) => {
             console.error(err)
@@ -227,7 +235,8 @@ export default {
       this.$store.commit('features/setDynamicPath', path)
       await this.$store.dispatch('features/fetchCard')
       this.mapping = this.$store.getters["features/getResponse"]
-    }
+    },
+
   },
 
 }
