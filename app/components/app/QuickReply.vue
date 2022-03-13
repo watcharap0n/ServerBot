@@ -2,7 +2,7 @@
 
   <v-card class="text-center p-2" flat>
     <v-card-text>
-      <p class="text-xl font-normal font-extrabold">Quick Reply</p>
+      <p class="text-l font-normal ">Quick Reply</p>
       <v-select
           rounded
           filled
@@ -75,7 +75,7 @@
         </template>
       </v-combobox>
 
-      <p class="text-xl font-normal font-extrabold ">Label</p>
+      <p class="text-l font-normal  ">Label</p>
       <v-text-field
           rounded
           filled
@@ -139,8 +139,7 @@
           </div>
         </template>
       </v-combobox>
-
-      <p class="text-xl font-normal font-extrabold ">label</p>
+      <p class="text-l font-normal  ">label</p>
       <v-text-field
           rounded
           filled
