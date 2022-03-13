@@ -25,6 +25,8 @@ class ImageMap(BaseModel):
     id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
     name: str
     access_token: str
+    type_url: Optional[str] = 'URL'
+    local_file: Optional[str] = None
     base_url_image: Optional[str] = None
     content: Optional[str] = None
     description: Optional[str] = None
