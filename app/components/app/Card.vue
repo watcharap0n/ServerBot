@@ -3,7 +3,7 @@
     <v-card-text>
       <v-form ref="formCard"
               v-model="valid">
-        <p class="text-xl font-normal font-extrabold ">Name</p>
+        <p class="text-l font-normal  ">Name</p>
         <v-text-field
             rounded
             color="red"
@@ -12,7 +12,7 @@
             label="input name"
             filled
         ></v-text-field>
-        <p class="text-xl font-normal font-extrabold ">Code</p>
+        <p class="text-l font-normal  ">Code</p>
         <v-textarea
             rounded
             filled
@@ -23,7 +23,7 @@
         >
         </v-textarea>
 
-        <p class="text-xl font-normal font-extrabold ">Description</p>
+        <p class="text-l font-normal  ">Description</p>
         <v-text-field
             rounded
             filled
@@ -33,7 +33,7 @@
             label="input description"
         ></v-text-field>
         <v-row justify="center">
-          <p class="text-center font-extrabold text-red-400">*You can go to design a flex message at:</p> &nbsp;&nbsp;&nbsp;
+          <p class="text-center  text-red-400">*You can go to design a flex message at:</p> &nbsp;&nbsp;&nbsp;
           <a class="text-center text-base" href="https://developers.line.biz/flex-simulator/" target="_blank">
             Flex Message
           </a>
@@ -90,10 +90,10 @@ export default {
   },
   computed: {
     card: {
-      get(){
+      get() {
         return this.setObject;
       },
-      set(val){
+      set(val) {
         return this.$emit('input', val)
       }
     }
