@@ -301,9 +301,9 @@ def test_callback_delete():
 def test_callback_delete_not_found():
     fake_token = "fake_id_callback"
     response = client.delete(f"/callback/channel/delete/{fake_token}", headers=headers)
-    assert response.status_code == status.HTTP_400_BAD_REQUEST
+    assert response.status_code == status.HTTP_404_NOT_FOUND
     assert response.json() == {
-        "detail": f"Callback not found {fake_token} or Delete Already exits"
+        "detail": f"Not found token {fake_token}"
     }
 
 
