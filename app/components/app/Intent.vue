@@ -4,7 +4,7 @@
 
     <v-card-text>
       <div :hidden="!intent.ready">
-        <p class="text-xl font-normal font-extrabold">Intent</p>
+        <p class="text-l font-normal ">Intent</p>
         <v-text-field
             rounded
             color="red"
@@ -73,7 +73,7 @@
         </v-combobox>
 
 
-        <p class="text-xl font-normal font-extrabold">Answer</p>
+        <p class="text-l font-normal ">Answer</p>
         <v-switch
             v-model="intent.status_flex"
             label="Enable Flex Message"
