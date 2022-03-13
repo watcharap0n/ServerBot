@@ -4,7 +4,7 @@
 
     <v-card-text>
       <div :hidden="!ruleBased.ready">
-        <p class="text-xl font-normal font-extrabold "
+        <p class="text-l font-normal  "
            v-text="`${ruleBased.postback ? 'Postback': 'Keyword'}`"
         ></p>
         <v-switch
@@ -21,8 +21,7 @@
             filled
             clearable
         ></v-text-field>
-
-        <p class="text-xl font-normal font-extrabold ">Answer</p>
+        <p class="text-l font-normal  ">Answer</p>
         <v-switch
             dense
             color="info"
