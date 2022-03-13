@@ -1,3 +1,4 @@
+from typing import Optional
 from pymongo import MongoClient
 import pymongo
 
@@ -9,6 +10,9 @@ class MongoDB:
 
     def database_config(self):
         return self.database
+
+    def get_collection_names(self):
+        return self.database.list_collection_names()
 
     @staticmethod
     def find_dictionary(programming, query):
@@ -22,8 +26,8 @@ class MongoDB:
             query, sort=[("_id", pymongo.DESCENDING)]
         )
 
-    async def find(self, collection: str, query: dict):
-        return self.database[collection].find(query)
+    async def find(self, collection: str, query: dict, select_field: Optional[dict] = None):
+        return self.database[collection].find(query, select_field)
 
     async def insert_one(self, collection: str, data: dict):
         ids = None
@@ -63,6 +67,6 @@ class MongoDB:
 
     async def delete_many(self, collection: str, query: dict):
         try:
-            self.database[collection].delete_many(query)
+            self.database[collection].delete_many(query).deleted_count
         except Exception as e:
             print(str(e))
