@@ -1,14 +1,15 @@
 from db import PyObjectId
+from uuid import UUID, uuid4
 from typing import Optional
 from bson import ObjectId
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, constr
 
 
-class DataTable(BaseModel):
+class ColumnDataTable(BaseModel):
     id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
     access_token: Optional[str] = None
     text: Optional[str] = None
-    value: Optional[str] = None
+    value: UUID = Field(default_factory=uuid4)
     align: Optional[str] = None
     sortable: Optional[bool] = None
     filterable: Optional[bool] = None
@@ -19,13 +20,18 @@ class DataTable(BaseModel):
     width: Optional[str] = None
     filter: Optional[str] = None
     sort: Optional[int] = None
+    items_select: Optional[list] = []
+    type_field: Optional[str] = None
+    status: Optional[bool] = True
+    default_field: Optional[bool] = False
 
     class Config:
         json_encoders = {ObjectId: str}
         schema_extra = {
             "example": {
-                "text": "e1",
-                "value": "v1",
+                "text": "Name",
+                "value": "name",
+                "access_token": "token long live",
                 "align": "center",
                 "sortable": False,
                 "filterable": False,
@@ -35,12 +41,16 @@ class DataTable(BaseModel):
                 "cellClass": "",
                 "width": 200,
                 "filter": "",
-                "sort": 10
+                "sort": 10,
+                "items_select": ['name'],
+                "type_field": "default",
+                "status": True,
+                "default_field": False
             }
         }
 
 
-class TokenUser(DataTable):
+class TokenUser(ColumnDataTable):
     uid: Optional[str] = None
     date: Optional[str] = None
     time: Optional[str] = None
@@ -64,17 +74,21 @@ class UpdateDataTable(BaseModel):
     divider: Optional[bool] = None
     _class: Optional[bool] = Field(None, alias="class")
     cellClass: Optional[str] = None
-    width: Optional[str] = None
+    width: Optional[int] = None
     filter: Optional[str] = None
     sort: Optional[int] = None
+    items_select: Optional[list] = None
+    type_field: Optional[str] = None
+    status: Optional[bool] = True
+    default_field: Optional[bool] = False
 
     class Config:
         arbitrary_types_allowed = True
         json_encoders = {ObjectId: str}
         schema_extra = {
             "example": {
-                "text": "e1",
-                "value": "v1",
+                "text": "First Name",
+                "value": "fname",
                 "align": "center",
                 "sortable": False,
                 "filterable": False,
@@ -84,6 +98,10 @@ class UpdateDataTable(BaseModel):
                 "cellClass": "",
                 "width": 200,
                 "filter": "",
-                "sort": 10
+                "sort": 10,
+                "items_select": ['name'],
+                "type_field": "default",
+                "status": True,
+                "default_field": False
             }
         }
