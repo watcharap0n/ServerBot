@@ -196,7 +196,7 @@ export default {
           })
     },
     async save() {
-      this.spinSave = true
+      this.spinSave = false
       await this.fetchToken()
       this.form.name = this.elements[0].value
       const path = '/mapping/create'
