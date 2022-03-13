@@ -301,9 +301,9 @@ def test_callback_delete():
 def test_callback_delete_not_found():
     token = "fake_id_callback"
     response = client.delete(f"/callback/channel/delete/{token}", headers=headers)
-    assert response.status_code == status.HTTP_400_BAD_REQUEST
+    assert response.status_code == status.HTTP_404_NOT_FOUND
     assert response.json() == {
-        "detail": f"Callback not found {token} or Delete Already exits"
+        "detail": f"Not found token {token}"
     }
 
 
@@ -580,6 +580,7 @@ BOT_PUSH = {
         "url_btn": 'https://github.com/watcharap0n/mango-bot/actions'
     }
 }
+
 
 def test_push_unit_test_success_to_line():
     response = client.post(f'/bot/push/flex/default',
