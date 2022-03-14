@@ -42,6 +42,7 @@ jobs:
       - name: Unit Test
         env:
           channel_access_token: ${{ secrets.CHANNEL_ACCESS_TOKEN }}
+          channel_access_token_callback: ${{ secrets.CHANNEL_ACCESS_TOKEN_CALLBACK }}
           PYTHONPATH: ${{ secrets.PYTHONPATH }}
           user_testing: ${{ secrets.USER_TESTING }}
           pwd_testing: ${{ secrets.PWD_TESTING }}
