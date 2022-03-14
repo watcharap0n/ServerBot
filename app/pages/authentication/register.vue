@@ -161,7 +161,7 @@ export default {
               showConfirmButton: false,
               timer: 1500
             }).then(() => {
-              this.$emit('update:tabParent', 0)
+              this.$router.push('/authentication')
             })
           })
           .catch((err) => {
