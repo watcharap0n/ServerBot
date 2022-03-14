@@ -205,7 +205,7 @@ export default {
     this.defaultItem.access_token = this.$store.getters["features/getToken"];
 
     let encoded = encodeURIComponent(this.defaultItem.access_token);
-    const path = `/data/table/find/?access_token=${encoded}`;
+    const path = `/data/table/find?access_token=${encoded}`;
     await this.$axios.get(path)
         .then((res) => {
           this.transactions = res.data;

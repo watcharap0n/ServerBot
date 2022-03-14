@@ -142,7 +142,7 @@ export default {
     async initializeHeader() {
       this.loadingTable = true;
       let encoded = encodeURIComponent(this.access_token);
-      const path = `/data/table/?access_token=${encoded}&status=${true}`;
+      const path = `/data/table/find?access_token=${encoded}&status=${true}`;
       await this.$axios.get(path)
           .then((res) => {
             res.data.forEach((item) => {
