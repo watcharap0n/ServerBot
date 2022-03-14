@@ -11,7 +11,7 @@ router = APIRouter()
 collection = 'retrieve'
 
 
-@router.get('/')
+@router.get('/find')
 async def get_retrieve_data(access_token: str):
     items = await db.find(collection=collection,
                           query={"access_token": access_token},
