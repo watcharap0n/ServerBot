@@ -34,7 +34,7 @@
                     rounded
                     hint="Set your name column, example Name"
                     persistent-hint
-                    label="Text"
+                    label="Name Column"
                     v-model="v.text"
                     color="info"
                 ></v-text-field>
@@ -68,7 +68,7 @@
                     dense
                     outlined
                     rounded
-                    hint="Set your type_field for save data, example name"
+                    hint="Set your type field for save data, example name"
                     persistent-hint
                     label="Type"
                     v-model="v.type_field"
@@ -109,22 +109,6 @@
 
               </v-col>
 
-              <v-col cols="12"
-                     sm="12"
-              >
-                <v-text-field
-                    filled
-                    readonly
-                    dense
-                    outlined
-                    rounded
-                    hint="Set your value for save data, example name"
-                    persistent-hint
-                    label="Token"
-                    v-model="v.value"
-                    color="info"
-                ></v-text-field>
-              </v-col>
             </v-row>
           </v-card-text>
 
