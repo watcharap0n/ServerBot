@@ -85,7 +85,8 @@ async def push_flex_default(payload: PushFlexDefault,
 
 
 @router.post('/push/image', response_model=PushImage)
-async def push_image(payload: PushImage):
+async def push_image(payload: PushImage,
+                     current_user: User = Depends(get_current_active)):
     line_bot_api = LineBotApi(payload.access_token)
     image = ImageSendMessage(
         original_content_url=payload.image_original,
@@ -102,7 +103,8 @@ async def push_image(payload: PushImage):
 
 
 @router.post('/push/sticker', response_model=PushSticker)
-async def push_sticker(payload: PushSticker):
+async def push_sticker(payload: PushSticker,
+                       current_user: User = Depends(get_current_active)):
     line_bot_api = LineBotApi(payload.access_token)
     sticker = StickerSendMessage(
         sticker_id=payload.sticker_id,
