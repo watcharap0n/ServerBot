@@ -138,7 +138,7 @@
               Remove
             </v-btn>
             <v-btn
-                @click="save(v)"
+                @click="todo(v)"
                 small
                 :loading="spin"
                 :disabled="!valid"
@@ -205,7 +205,7 @@ export default {
     this.defaultItem.access_token = this.$store.getters["features/getToken"];
 
     let encoded = encodeURIComponent(this.defaultItem.access_token);
-    const path = `/data/table/?access_token=${encoded}`;
+    const path = `/data/table/find/?access_token=${encoded}`;
     await this.$axios.get(path)
         .then((res) => {
           this.transactions = res.data;
@@ -229,7 +229,7 @@ export default {
 
     async addTransaction() {
       this.loading = true;
-      await this.$axios.post('/data/table', this.defaultItem)
+      await this.$axios.post('/data/table/create', this.defaultItem)
           .then((res) => {
             this.transactions.push(res.data);
             this.$notifier.showMessage({
@@ -243,9 +243,9 @@ export default {
       this.loading = false;
     },
 
-    async save(item) {
+    async todo(item) {
       this.spin = true;
-      const path = `/data/table/${item._id}`;
+      const path = `/data/table/query/update/${item._id}`;
       await this.$axios.put(path, item)
           .then(() => {
             this.$notifier.showMessage({
@@ -265,7 +265,7 @@ export default {
 
     async remove(item) {
       this.loading = true;
-      const path = `/data/table/${item._id}`;
+      const path = `/data/table/query/delete/${item._id}`;
       await this.$axios.delete(path)
           .then((res) => {
             this.transactions.splice(this.transactions.indexOf(item), 1);

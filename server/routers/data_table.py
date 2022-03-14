@@ -13,7 +13,7 @@ router = APIRouter()
 collection = 'data_table'
 
 
-@router.get('/', response_model=List[TokenUser])
+@router.get('/find', response_model=List[TokenUser])
 async def get_data_table(access_token: str, status: Optional[bool] = False):
     if status:
         data = await db.find(collection=collection, query={'access_token': access_token, 'status': status})
@@ -25,13 +25,13 @@ async def get_data_table(access_token: str, status: Optional[bool] = False):
     return data
 
 
-@router.get('/{id}', response_model=TokenUser)
+@router.get('/find_one/{id}', response_model=TokenUser)
 async def get_data_table_one(id: str, access_token: str):
     data = await db.find_one(collection=collection, query={'_id': id, 'access_token': access_token})
     return data
 
 
-@router.post('/', response_model=TokenUser)
+@router.post('/create', response_model=TokenUser, status_code=status.HTTP_201_CREATED)
 async def add_a_column(payload: ColumnDataTable,
                        current_user: User = Depends(get_current_active)):
     item_model = jsonable_encoder(payload)
@@ -41,7 +41,7 @@ async def add_a_column(payload: ColumnDataTable,
     return item_store
 
 
-@router.put('/{id}', response_model=UpdateDataTable)
+@router.put('/query/update/{id}', response_model=UpdateDataTable)
 async def update_a_column(id: str, payload: UpdateDataTable):
     item_model = jsonable_encoder(payload)
     value = {'$set': item_model}
@@ -52,7 +52,7 @@ async def update_a_column(id: str, payload: UpdateDataTable):
     return payload
 
 
-@router.delete('/{id}', status_code=status.HTTP_204_NO_CONTENT)
+@router.delete('/query/delete/{id}', status_code=status.HTTP_204_NO_CONTENT)
 async def delete_a_column(id: str):
     if (await db.delete_one(collection=collection, query={'_id': id})) == 0:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
