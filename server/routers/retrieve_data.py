@@ -12,7 +12,8 @@ collection = 'retrieve'
 
 
 @router.get('/find')
-async def get_retrieve_data(access_token: str):
+async def get_retrieve_data(access_token: str,
+                            current_user: User = Depends(get_current_active)):
     items = await db.find(collection=collection,
                           query={"access_token": access_token},
                           select_field={"_id": 0})
@@ -39,6 +40,7 @@ async def create_retrieve(
 async def update_query_intent(
         id: str,
         payload: Optional[Any] = Body(None),
+        current_user: User = Depends(get_current_active)
 ):
     query = {"id": id}
     values = {"$set": payload}
@@ -51,7 +53,8 @@ async def update_query_intent(
 
 
 @router.delete("/query/delete/{id}", status_code=status.HTTP_204_NO_CONTENT)
-async def delete_query_intent(id: str):
+async def delete_query_intent(id: str,
+                              current_user: User = Depends(get_current_active)):
     if (await db.delete_one(collection=collection, query={"id": id})) == 0:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST, detail=f"Retrieved not found {id}"
