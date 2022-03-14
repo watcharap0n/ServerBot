@@ -25,12 +25,6 @@ async def get_data_table(access_token: str, status: Optional[bool] = False):
     return data
 
 
-@router.get('/find_one/{id}', response_model=TokenUser)
-async def get_data_table_one(id: str, access_token: str):
-    data = await db.find_one(collection=collection, query={'_id': id, 'access_token': access_token})
-    return data
-
-
 @router.post('/create', response_model=TokenUser, status_code=status.HTTP_201_CREATED)
 async def add_a_column(payload: ColumnDataTable,
                        current_user: User = Depends(get_current_active)):

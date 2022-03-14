@@ -163,7 +163,7 @@ export default {
     },
 
     async initializeValue() {
-      const path = `/retrieve/?access_token=${this.access_token}`;
+      const path = `/retrieve?access_token=${this.access_token}`;
       await this.$axios.get(path)
           .then((res) => {
             this.desserts = res.data;
@@ -205,7 +205,7 @@ export default {
       this.close()
     },
     async add() {
-      const path = `/retrieve/create/?access_token=${this.access_token}`;
+      const path = `/retrieve/create?access_token=${this.access_token}`;
       await this.$axios.post(path, this.editedItem)
           .then((res) => {
             this.desserts.push(res.data);
