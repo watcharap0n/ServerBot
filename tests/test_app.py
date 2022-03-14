@@ -221,8 +221,8 @@ Testing RuleBased success
 
 PAYLOAD_CALLBACK = {
     "name": "test unit name",
-    "access_token": os.environ['channel_access_token'],
-    "secret_token": "test unit secret token",
+    "access_token": os.environ['channel_access_token_callback'],
+    "secret_token": "test unit secret token_callback",
 }
 
 
