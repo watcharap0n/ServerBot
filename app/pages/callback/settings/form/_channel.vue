@@ -16,13 +16,13 @@
 
           <v-card-title>
             Custom Form
+
           </v-card-title>
           <v-divider></v-divider>
 
           <v-card-text>
             <v-container>
-
-              Here
+              <Form/>
 
             </v-container>
           </v-card-text>
@@ -35,10 +35,12 @@
 
 <script>
 import Settings from "@/components/app/Settings";
+import Form from "@/components/settings/Form";
 
 export default {
   components: {
     Settings,
+    Form
   },
   data() {
     return {
