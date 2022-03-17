@@ -9,8 +9,9 @@ class Intent(BaseModel):
     name: str
     access_token: str
     ready: Optional[bool] = True
-    status_flex: Optional[bool] = False
+    type_reply: Optional[str] = None
     card: Optional[Any] = None
+    image: Optional[Any] = None
     question: Optional[list] = []
     answer: Optional[list] = []
 
@@ -21,11 +22,14 @@ class Intent(BaseModel):
                 "name": "hello world",
                 "access_token": "access token long live",
                 "ready": True,
-                "status_flex": False,
+                "type_reply": "Text",
                 "card": {
                     "_id": "1234",
                     "name": "name flex message",
                     "content": "content flex message"
+                },
+                "image": {
+                    "_id": "1234",
                 },
                 "question": ["hello"],
                 "answer": ["hello there"],
@@ -50,8 +54,9 @@ class UpdateIntent(BaseModel):
     name: str
     access_token: str
     ready: Optional[bool] = True
-    status_flex: Optional[bool] = False
+    type_reply: Optional[str] = None
     card: Optional[Any] = None
+    image: Optional[Any] = None
     question: Optional[list] = []
     answer: Optional[list] = []
 
@@ -63,11 +68,14 @@ class UpdateIntent(BaseModel):
                 "name": "update hello world",
                 "access_token": "update access token long live",
                 "ready": True,
-                "status_flex": False,
+                "type_reply": "Text",
                 "card": {
                     "_id": "1234",
                     "name": "name flex message",
                     "content": "content flex message"
+                },
+                "image": {
+                    "_id": "1234",
                 },
                 "question": ["hello", "update"],
                 "answer": ["hello there", "update"],
