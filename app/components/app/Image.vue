@@ -16,13 +16,13 @@
           v-model="valid"
       >
         <p class="text-l font-normal">Image</p>
-        <v-select :items="typeImage"
-                  filled
-                  label="type"
-                  rounded
-                  v-model="image.type_url"
-        >
-        </v-select>
+        <!--        <v-select :items="typeImage"-->
+        <!--                  filled-->
+        <!--                  label="type"-->
+        <!--                  rounded-->
+        <!--                  v-model="image.type_url"-->
+        <!--        >-->
+        <!--        </v-select>-->
         <v-text-field
             v-if="image.type_url === 'URL'"
             filled
@@ -42,6 +42,12 @@
             rounded
         ></v-file-input>
 
+        <v-row justify="center">
+          <p class="text-center  text-red-400">*You can upload pictures at :</p> &nbsp;&nbsp;&nbsp;
+          <a class="text-center text-sm" href="https://www.picz.in.th/" target="_blank">
+            Upload Image
+          </a>
+        </v-row>
       </v-form>
 
 
@@ -132,7 +138,7 @@
 
                 <v-col sm="3">
                   <v-text-field
-                      v-model="v.bounds.x"
+                      v-model="v.area.x"
                       label="X"
                       outlined
                       readonly
@@ -141,7 +147,7 @@
 
                 <v-col sm="3">
                   <v-text-field
-                      v-model="v.bounds.y"
+                      v-model="v.area.y"
                       label="Y"
                       outlined
                       readonly
@@ -150,7 +156,7 @@
 
                 <v-col sm="3">
                   <v-text-field
-                      v-model="v.bounds.width"
+                      v-model="v.area.width"
                       label="Width"
                       outlined
                       readonly
@@ -159,7 +165,7 @@
 
                 <v-col sm="3">
                   <v-text-field
-                      v-model="v.bounds.height"
+                      v-model="v.area.height"
                       label="Height"
                       outlined
                       readonly
@@ -169,17 +175,17 @@
               </v-row>
 
               <v-text-field
-                  v-model="v.action.type"
+                  v-model="v.type"
                   label="Type"
                   outlined
                   readonly
               ></v-text-field>
 
               <div
-                  v-if="v.action.type === 'message'"
+                  v-if="v.type === 'message'"
               >
                 <v-text-field
-                    v-model="v.action.text"
+                    v-model="v.text"
                     label="Text"
                     outlined
                     readonly
@@ -187,11 +193,11 @@
               </div>
 
               <div
-                  v-if="v.action.type === 'uri'"
+                  v-if="v.type === 'uri'"
               >
                 <v-text-field
                     dense
-                    v-model="v.action.uri"
+                    v-model="v.linkUri"
                     label="URL"
                     outlined
                     readonly
@@ -276,8 +282,6 @@ export default {
         (value) => !!value || "Required.",
         (value) => this.isURL(value) || "URL is not valid",
       ],
-
-
     }
   },
 
