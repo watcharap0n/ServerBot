@@ -36,12 +36,12 @@ async def check_duplicate_id_form(form: CustomForm):
 
 
 @router.post("/create", response_model=TokenUser, status_code=status.HTTP_201_CREATED)
-async def create_form(request: Request,
-                      form: CustomForm = Depends(check_duplicate_id_form),
-                      current_user: User = Depends(get_current_active),
-                      ):
+async def create_form(
+        form: CustomForm = Depends(check_duplicate_id_form),
+        current_user: User = Depends(get_current_active),
+):
     item_model = jsonable_encoder(form)
-    item_model['endpoint'] = request.base_url._url + "form/custom/" + item_model['_id']
+    item_model['endpoint'] = "/form/custom/" + item_model['_id']
     item_model = item_user(item_model, current_user)
     await db.insert_one(collection=collection, data=item_model)
     item_store = TokenUser(**item_model)

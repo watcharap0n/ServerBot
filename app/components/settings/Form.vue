@@ -141,6 +141,7 @@ export default {
     async addTransaction() {
       this.spinDialog = true
       this.defaultForm.name = this.elements[0].value
+      this.defaultForm.endpoint = process.env.baseClient
       await this.$axios.post('/form/create', this.defaultForm)
           .then((res) => {
             this.transactions.push(res.data);
