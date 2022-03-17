@@ -259,6 +259,7 @@ def test_callback_update_not_found():
     assert response.status_code == status.HTTP_400_BAD_REQUEST
     assert response.json() == {
         "detail": f"Callback not found {fake_token} or Update Already exits"
+    }
 
 
 def test_callback_create_invalid_data():
