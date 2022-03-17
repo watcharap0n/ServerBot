@@ -2,7 +2,8 @@ module.exports = {
     ssr: false,
     env: {
         baseUrl: process.env.BASE_URL || 'https://mangoserverbot.herokuapp.com',
-        branch: process.env.BRANCH || 'master'
+        branch: process.env.BRANCH || 'master',
+        client: process.env.Client || 'https://platformchatbot.herokuapp.com'
     },
     head: {
         titleTemplate: '%s Platform CHATBOT',
