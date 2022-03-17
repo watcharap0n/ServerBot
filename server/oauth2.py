@@ -22,7 +22,7 @@ from fastapi import (
     Response,
 )
 
-EXPIRES_TOKEN = 60 * 60 * 1
+EXPIRES_TOKEN = 60 * 60 * 6
 collection = "secure"
 
 router = APIRouter()
@@ -131,7 +131,7 @@ async def authentication_cookie(
             },
         )
     session_cookie = auth.create_session_cookie(
-        id_token=sign_user.get("idToken"), expires_in=timedelta(hours=1)
+        id_token=sign_user.get("idToken"), expires_in=timedelta(hours=6)
     )
     response.set_cookie(key="session", value=str(session_cookie), expires=EXPIRES_TOKEN)
     return {"access_token": session_cookie, "token_type": "bearer"}
