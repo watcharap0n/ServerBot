@@ -20,7 +20,7 @@ PAYLOAD_INTENT = {
     "name": "test unit",
     "access_token": "test unit access token",
     "ready": True,
-    "status_flex": False,
+    "type_reply": "Text",
     "card": "content test unit",
     "question": ["a", "b", "c", "d"],
     "answer": ["1", "2", "3", "4", "5"],
@@ -79,11 +79,11 @@ def test_intent_update():
 
 
 def test_intent_update_flex_status_not_found_card():
-    PAYLOAD_INTENT['status_flex'] = True
+    PAYLOAD_INTENT['type_reply'] = 'Flex Message'
     response = client.put(
         f'/intents/query/update/{ids_intent}', json=PAYLOAD_INTENT, headers=headers
     )
-    PAYLOAD_INTENT['status_flex'] = False
+    PAYLOAD_INTENT['type_reply'] = 'Text'
     assert response.status_code == status.HTTP_400_BAD_REQUEST
     assert response.json() == {f"detail": f"id card not found {PAYLOAD_INTENT['card']}"}
 
@@ -119,7 +119,7 @@ Testing Intent success
 PAYLOAD_RuleBased = {
     "name": "rule based",
     "access_token": "access token long live",
-    "status_flex": False,
+    "type_reply": 'Text',
     "ready": True,
     "card": "put query card in collection card",
     "keyword": 'test',
@@ -180,11 +180,11 @@ def test_rule_based_update():
 
 
 def test_rule_Based_update_flex_status_not_found_card():
-    PAYLOAD_RuleBased['status_flex'] = True
+    PAYLOAD_RuleBased['type_reply'] = 'Flex Message'
     response = client.put(
         f'/rule_based/query/update/{ids_rule_based}', json=PAYLOAD_RuleBased, headers=headers
     )
-    PAYLOAD_RuleBased['status_flex'] = False
+    PAYLOAD_RuleBased['type_reply'] = 'Text'
     assert response.status_code == status.HTTP_400_BAD_REQUEST
     assert response.json() == {f"detail": f"id card not found {PAYLOAD_RuleBased['card']}"}
 
@@ -548,7 +548,6 @@ def test_mapping_delete():
 """
 progress ...100%
 """
-
 BOT_PUSH = {
     "access_token": os.environ.get('BOT_LINE'),
     "broadcast": True,
@@ -562,7 +561,7 @@ BOT_PUSH = {
         "GITHUB_SERVER_URL": os.getenv("GITHUB_SERVER_URL", "https://github.com/watcharap0n"),
         "OWNER": "https://github.com/watcharap0n",
         "COMPANY": "Mango Consultant",
-        "status": "success"
+        "status": "Unit Test Success"
     },
     "config_default_card": {
         "header": "Unit Test Report",
