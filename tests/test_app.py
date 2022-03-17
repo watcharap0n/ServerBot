@@ -536,8 +536,6 @@ def test_mapping_invalid_access_token():
     PAYLOAD_IMAGE_MAP['access_token'] = 'fake access token'
     response = client.post("/mapping/create", json=PAYLOAD_IMAGE_MAP, headers=headers)
     assert response.status_code == status.HTTP_400_BAD_REQUEST
-    assert response.json() == {"detail": "Authentication failed. "
-                                         "Confirm that the access token in the authorization header is valid."}
 
 
 def test_mapping_update():
