@@ -15,6 +15,7 @@ from fastapi.encoders import jsonable_encoder
 from linebot import LineBotApi, WebhookHandler
 from linebot.models import StickerSendMessage, TextSendMessage, QuickReply, QuickReplyButton, MessageAction
 from modules.mg_chatbot import chatbot_standard, intent_model
+from modules.mapping import image_map
 from linebot.exceptions import InvalidSignatureError, LineBotApiError
 
 router = APIRouter()
@@ -246,13 +247,13 @@ async def event_postback(events, model):
     item = await db.find_one(collection='rule_based',
                              query={'access_token': model.access_token, 'keyword': postback})
     card = item.get('card')
-    status_flex = item.get('status_flex')
+    type_reply = item.get('type_reply')
     answer = item.get('answer')
 
-    if status_flex:
+    if type_reply == 'Flex Message':
         flex_msg = await get_card_content(card)
         line_bot_api.reply_message(reply_token, flex_msg)
-    else:
+    elif type_reply == 'Text':
         reply = random.choice(answer)
         line_bot_api.reply_message(reply_token, reply)
 
@@ -284,6 +285,10 @@ async def get_card_content(card):
     content = json.loads(content_card.get('content'))
     flex_msg = flex_dynamic(alt_text=content_card.get('name'), contents=content)
     return flex_msg
+
+
+async def get_image_content(image):
+    return await db.find_one(collection='images_map', query={'_id': image})
 
 
 class Word(BaseModel):
@@ -327,7 +332,7 @@ async def handle_message(events, model):
             line_bot_api.reply_message(reply_token, TextSendMessage(text=result_intent.require))
 
         confidence = result_intent.confidence[0] * 100
-        status_flex = result_intent.status_flex
+        type_reply = result_intent.type_reply
         predicted = result_intent.predicted[0]
         answers = result_intent.answers
         card = result_intent.card
@@ -349,7 +354,7 @@ async def handle_message(events, model):
         elif not buttons:
             if ready:
                 if confidence > 69:
-                    if status_flex:
+                    if type_reply == 'Flex Message':
                         flex_msg = await get_card_content(card)
                         line_bot_api.reply_message(reply_token, flex_msg)
                         profile = await get_profile(userId, model.access_token)
@@ -357,7 +362,7 @@ async def handle_message(events, model):
                         profile['answer'] = card
                         await db.insert_one(collection="messages_user", data=profile)
 
-                    elif not status_flex:
+                    elif type_reply == 'Text':
                         reply = random.choice(answers[predicted])
                         line_bot_api.reply_message(reply_token, TextSendMessage(text=reply))
                         profile = await get_profile(userId, model.access_token)
@@ -374,8 +379,10 @@ async def handle_message(events, model):
     elif keyword:
         answer_keyword = keyword.get('answer')
         card_keyword = keyword.get('card')
+        image_keyword = keyword.get('image')
         if keyword.get('ready'):
-            if keyword.get('status_flex'):
+            type_reply = keyword.get('type_reply')
+            if type_reply == 'Flex Message':
                 flex_msg = await get_card_content(card_keyword)
                 line_bot_api.reply_message(reply_token, flex_msg)
                 profile = await get_profile(userId, model.access_token)
@@ -383,7 +390,28 @@ async def handle_message(events, model):
                 profile['answer'] = card_keyword
                 await db.insert_one(collection="messages_user", data=profile)
 
-            elif not keyword.get('status_flex'):
+            elif type_reply == 'Image Map':
+                content = await get_image_content(image_keyword)
+                reply_image = image_map(
+                    base_url_image=content.get('base_url_image'),
+                    size=content.get('size'),
+                    areas=content.get('areas')
+                )
+                if reply_image:
+                    line_bot_api.reply_message(reply_token, reply_image)
+                    profile = await get_profile(userId, model.access_token)
+                    profile["question"] = message
+                    profile['answer'] = card_keyword
+                    await db.insert_one(collection="messages_user", data=profile)
+
+                else:
+                    line_bot_api.reply_message(reply_token, TextSendMessage(text='.'))
+                    profile = await get_profile(userId, model.access_token)
+                    profile["question"] = message
+                    profile['answer'] = f'Invalid Data Image {card_keyword}'
+                    await db.insert_one(collection="messages_user", data=profile)
+
+            elif type_reply == 'Text':
                 reply = random.choice(answer_keyword)
                 line_bot_api.reply_message(reply_token, TextSendMessage(text=reply))
                 profile = await get_profile(userId, model.access_token)
