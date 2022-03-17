@@ -102,7 +102,7 @@
 
 <script>
 import Dialog from "@/components/app/Dialog";
-import QuickReply from "@/components/app/QuickReply";
+import QuickReply from "@/components/callback/QuickReply";
 
 
 export default {
