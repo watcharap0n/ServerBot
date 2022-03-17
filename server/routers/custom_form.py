@@ -35,6 +35,12 @@ async def check_duplicate_id_form(form: CustomForm):
     return form
 
 
+@router.get('/find/{id}', response_model=TokenUser)
+async def get_form_one(id: str):
+    item = await db.find_one(collection=collection, query={'_id': id})
+    return item
+
+
 @router.post("/create", response_model=TokenUser, status_code=status.HTTP_201_CREATED)
 async def create_form(
         form: CustomForm = Depends(check_duplicate_id_form),
