@@ -51,16 +51,19 @@ export default {
       selected: 0,
       itemsList: [
         {
-          icon: 'mdi-table-large', title: 'DataTable', router: `/callback/setting/datatable/${this.$route.params.channel}`
+          icon: 'mdi-table-large', title: 'DataTable', router: `/callback/settings/datatable/${this.$route.params.channel}`
         },
         {
-          icon: 'mdi-inbox', title: 'Inbox', router: `/callback/setting/inbox/${this.$route.params.channel}`
+          icon: 'mdi-format-list-text', title: 'Custom form', router: `/callback/settings/form/${this.$route.params.channel}`
         },
         {
-          icon: 'mdi-send-outline', title: 'Send', router: `/callback/setting/send/${this.$route.params.channel}`
+          icon: 'mdi-inbox', title: 'Inbox', router: `/callback/settings/inbox/${this.$route.params.channel}`
         },
         {
-          icon: 'mdi-account', title: 'Profile', router: `/callback/setting/profile/${this.$route.params.channel}`
+          icon: 'mdi-send-outline', title: 'Send', router: `/callback/settings/send/${this.$route.params.channel}`
+        },
+        {
+          icon: 'mdi-account', title: 'Profile', router: `/callback/settings/profile/${this.$route.params.channel}`
         },
       ]
     }
