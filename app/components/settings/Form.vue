@@ -31,6 +31,7 @@
             @click="remove(v)"
             color="red"
             rounded
+            :loading="spinDelete"
         >
           <v-icon left>
             mdi-eraser
@@ -42,7 +43,7 @@
             color="success"
             rounded
             @click="todo(v)"
-            :loading="spin"
+            :loading="spinSave"
         >
           <v-icon left>
             mdi-pencil
@@ -74,16 +75,24 @@
             max-width="450"
             body="Please set your id form"
             :submit-dialog="addTransaction"
+            :loading-dialog="spinDialog"
 
     />
+
+    <Overlay :overlay="overlay"></Overlay>
+
   </div>
 </template>
 
 <script>
 import Dialog from "@/components/app/Dialog";
+import Overlay from "@/components/app/Overlay"
 
 export default {
-  components: {Dialog},
+  components: {
+    Dialog,
+    Overlay,
+  },
 
   data() {
     return {
@@ -95,8 +104,10 @@ export default {
         endpoint: '',
         access_token: '',
       },
-      spin: false,
-      loading: false,
+      overlay: false,
+      spinSave: false,
+      spinDelete: false,
+      spinDialog: false,
       elements: [
         {
           color: 'info',
@@ -108,7 +119,7 @@ export default {
   },
 
   async created() {
-    this.loading = true;
+    this.overlay = true;
     const pathToken = `/callback/channel/info/${this.$route.params.channel}`;
     this.$store.commit('features/setDynamicPath', pathToken);
     await this.$store.dispatch('features/fetchToken');
@@ -123,12 +134,12 @@ export default {
         .catch((err) => {
           console.error(err);
         })
-    this.loading = false;
+    this.overlay = false;
   },
 
   methods: {
     async addTransaction() {
-      this.loading = true;
+      this.spinDialog = true
       this.defaultForm.name = this.elements[0].value
       await this.$axios.post('/form/create', this.defaultForm)
           .then((res) => {
@@ -152,17 +163,17 @@ export default {
               })
             }
           })
+      this.spinDialog = false
       this.dialog = false;
-      this.loading = false
       this.elements[0].value = ''
     },
 
     async remove(item) {
-      this.loading = true
+      this.spinDelete = true;
       const path = `/form/query/delete/${item._id}`
       await this.$axios.delete(path)
           .then((res) => {
-            this.transactions.splice(this.transactions.indexOf(item), 1)
+            this.transactions.splice(this.transactions.indexOf(item), 1);
             this.$notifier.showMessage({
               content: `deleted ${item.value} | status code ${res.status}!`,
               color: 'success'
@@ -174,11 +185,11 @@ export default {
               color: 'red'
             })
           })
-      this.loading = false;
+      this.spinDelete = false;
     },
 
     async todo(item) {
-      this.spin = true
+      this.spinSave = true;
       const path = `/form/query/update/${item._id}`
       await this.$axios.put(path, item)
           .then((res) => {
@@ -186,7 +197,7 @@ export default {
               content: `updated form`,
               color: 'success'
             })
-            console.log(res.data)
+            console.log(res.data);
           })
           .catch((err) => {
             this.$notifier.showMessage({
@@ -195,7 +206,7 @@ export default {
             })
             console.error(err);
           })
-      this.spin = false
+      this.spinSave = false;
 
     }
   }
