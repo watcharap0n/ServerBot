@@ -27,6 +27,8 @@ async def check_duplicate_id_form(form: CustomForm):
                              query={"access_token": form.access_token, "id_form": form.id_form}
                              )
     if item:
+        if item.get('id_form') is None or not item.get('id_form'):
+            return form
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid duplicate id_form."
         )

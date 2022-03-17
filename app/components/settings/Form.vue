@@ -84,22 +84,14 @@ import Dialog from "@/components/app/Dialog";
 
 export default {
   components: {Dialog},
+
   data() {
     return {
       dialog: false,
       valid: false,
       transactions: [],
-      form: {
-        name: '',
-        id_form: '',
-        models: [],
-        endpoint: '',
-        access_token: '',
-      },
       defaultForm: {
         name: '',
-        id_form: '',
-        models: [],
         endpoint: '',
         access_token: '',
       },
@@ -107,17 +99,14 @@ export default {
       loading: false,
       elements: [
         {
-          color: 'primary',
-          label: 'id form',
-          value: this.setId
+          color: 'info',
+          label: 'Name',
+          value: ''
         }
       ],
-      setId: '',
-
-
-
     }
   },
+
   async created() {
     this.loading = true;
     const pathToken = `/callback/channel/info/${this.$route.params.channel}`;
@@ -126,7 +115,7 @@ export default {
     this.defaultForm.access_token = this.$store.getters["features/getToken"];
 
     let encoded = encodeURIComponent(this.defaultForm.access_token);
-    const path = `/form/?access_token=${encoded}`;
+    const path = `/form?access_token=${encoded}`;
     await this.$axios.get(path)
         .then((res) => {
           this.transactions = res.data;
@@ -136,10 +125,11 @@ export default {
         })
     this.loading = false;
   },
+
   methods: {
     async addTransaction() {
       this.loading = true;
-      this.defaultForm.id_form = this.elements[0].value
+      this.defaultForm.name = this.elements[0].value
       await this.$axios.post('/form/create', this.defaultForm)
           .then((res) => {
             this.transactions.push(res.data);
@@ -152,7 +142,7 @@ export default {
             console.error(err)
             if (err.response.status === 400) {
               this.$notifier.showMessage({
-                content: `id form duplicate!`,
+                content: `duplicate form id!`,
                 color: 'red'
               })
             } else {
@@ -166,6 +156,7 @@ export default {
       this.loading = false
       this.elements[0].value = ''
     },
+
     async remove(item) {
       this.loading = true
       const path = `/form/query/delete/${item._id}`
@@ -185,6 +176,7 @@ export default {
           })
       this.loading = false;
     },
+
     async todo(item) {
       this.spin = true
       const path = `/form/query/update/${item._id}`
@@ -206,7 +198,6 @@ export default {
       this.spin = false
 
     }
-
   }
 }
 </script>

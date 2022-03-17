@@ -8,7 +8,7 @@ class CustomForm(BaseModel):
     id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
     name: Optional[str] = None
     id_form: Optional[str] = None
-    endpoint: Optional[str]
+    endpoint: Optional[str] = None
     models: Optional[list] = []
     access_token: str
 
