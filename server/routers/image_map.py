@@ -28,7 +28,7 @@ def json_loads_encoder(content):
     pass
 
 
-@router.get('/', response_model=List[TokenUser])
+@router.get('/find', response_model=List[TokenUser])
 async def images_map(access_token: str):
     items = await db.find(collection=collection,
                           query={'access_token': access_token})
