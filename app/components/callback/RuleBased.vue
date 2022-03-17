@@ -229,6 +229,15 @@ export default {
 
     }
   },
+
+  created() {
+    if (this.ruleBased) {
+      this.$nextTick(() => {
+        this.getType(this.ruleBased.type_reply)
+      })
+    }
+  },
+
   methods: {
     sendAns() {
       this.ruleBased.answer.push(this.answer)
