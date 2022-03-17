@@ -12,8 +12,10 @@ class Area(BaseModel):
 
 
 class Areas(BaseModel):
-    bounds: Optional[Area] = None
-    action: Optional[dict] = None
+    type: Optional[str] = None
+    area: Optional[Area] = None
+    text: Optional[str] = None
+    linkUri: Optional[str] = None
 
 
 class Size(BaseModel):
