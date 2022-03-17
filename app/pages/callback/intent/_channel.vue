@@ -77,6 +77,9 @@
                 <Intent
                     :intent="selected"
                     :cards="cards"
+                    :images="images"
+                    :spin-get-type.sync="spinGetType"
+                    :get-type.sync="getType"
                     :users.sync="users"
 
                 />
@@ -100,13 +103,16 @@
 
 <script>
 import Dialog from "@/components/app/Dialog";
-import Intent from "@/components/app/Intent"
+import Intent from "@/components/callback/Intent"
 
 export default {
   components: {Dialog, Intent},
+
   data() {
     return {
+      spinGetType: false,
       cards: [],
+      images: [],
       dialog: false,
       dialogDelete: false,
       spinSave: true,
@@ -124,6 +130,7 @@ export default {
         content: '',
         message: '',
       },
+      encoded: '',
       data: [],
       active: [],
       avatar: null,
@@ -140,6 +147,7 @@ export default {
       ]
     }
   },
+
   computed: {
     items() {
       return [
@@ -155,9 +163,11 @@ export default {
       return this.users.find(user => user.id === id)
     },
   },
+
   async created() {
     await this.$parent.$emit('routerHandle', this.$route.params);
   },
+
   methods: {
     async fetchItems(item) {
       if (this.item) return
@@ -165,19 +175,20 @@ export default {
       await this.fetchToken()
       let encoded = encodeURIComponent(this.form.access_token);
       const path = `/intents/?access_token=${encoded}`;
+      this.encoded = encoded;
       await this.$axios.get(path)
           .then((res) => {
             res.data.forEach((v) => {
               v.id = v._id
             })
             item.children.push(...res.data);
-            this.getCards(encoded);
           })
           .catch((err) => {
             console.error(err);
           })
       this.btnShow = true;
     },
+
     async fetchToken() {
       const path = `/callback/channel/info/${this.$route.params.channel}`;
       await this.$axios.get(path)
@@ -226,11 +237,31 @@ export default {
       this.spinSave = true
       this.elements[0].value = ''
     },
-    async getCards(accessToken) {
-      const path = `/card/?access_token=${accessToken}`
+
+    async getCards() {
+      const path = `/card?access_token=${this.encoded}`
       this.$store.commit('features/setDynamicPath', path)
       await this.$store.dispatch('features/fetchCard')
       this.cards = this.$store.getters["features/getResponse"]
+    },
+
+    async getImageMap() {
+      const path = `/mapping?access_token=${this.encoded}`
+      this.$store.commit('features/setDynamicPath', path)
+      await this.$store.dispatch('features/fetchCard')
+      this.images = this.$store.getters["features/getResponse"]
+    },
+
+    async getType(type) {
+      if (type === 'Flex Message') {
+        this.spinGetType = true;
+        await this.getCards();
+        this.spinGetType = false;
+      } else if (type === 'Image Map') {
+        this.spinGetType = true
+        await this.getImageMap();
+        this.spinGetType = false;
+      }
     }
   },
 
