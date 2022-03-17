@@ -33,12 +33,12 @@ from sklearn.feature_extraction.text import TfidfVectorizer, CountVectorizer, Tf
 class Engine(BaseModel):
     predicted: Optional[Any] = None
     confidence: Optional[Any] = None
-    answers: Optional[list]
+    answers: Optional[list] = []
     name: Optional[str] = None
     card: Optional[str] = None
-    ready: Optional[bool]
-    id: Optional[str]
-    status_flex: Optional[bool]
+    ready: Optional[bool] = None
+    id: Optional[str] = None
+    type_reply: Optional[str] = None
     require: Optional[str] = None
 
 
@@ -81,7 +81,7 @@ async def chatbot_pipeline(
         card=intent.get('card'),
         ready=intent.get('ready'),
         id=intent.get('_id'),
-        status_flex=intent.get('status_flex')
+        type_reply=intent.get('type_reply')
     )
 
 
@@ -127,7 +127,7 @@ async def chatbot_standard(
         card=intent.get('card'),
         ready=intent.get('ready'),
         id=intent.get('_id'),
-        status_flex=intent.get('status_flex')
+        type_reply=intent.get('type_reply')
     )
 
 
@@ -161,5 +161,5 @@ async def intent_model(
         card=intent.get('card'),
         ready=intent.get('ready'),
         id=intent.get('_id'),
-        status_flex=intent.get('status_flex')
+        type_reply=intent.get('type_reply')
     )
