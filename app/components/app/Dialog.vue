@@ -30,7 +30,7 @@
       <v-card-actions>
         <v-spacer></v-spacer>
         <v-btn color="red darken-1" text @click="close">cancel</v-btn>
-        <v-btn v-if="submitDialog" color="green" :loading="loadingDialog" text @click="submitDialog">save</v-btn>
+        <v-btn v-if="submitDialog" color="green" :loading="loadingDialog" text @click="submitDialog">Submit</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
