@@ -110,7 +110,7 @@
 <script>
 
 import Dialog from "@/components/app/Dialog";
-import Card from "@/components/app/Card";
+import Card from "@/components/callback/Card";
 
 export default {
   components: {Dialog, Card},
