@@ -1,7 +1,8 @@
 module.exports = {
     env: {
         branch: process.env.BRANCH || 'review',
-        baseUrl: process.env.BASE_URL || 'http://localhost:8500'
+        baseUrl: process.env.BASE_URL || 'http://localhost:8500',
+        baseClient: process.env.Client || 'http://localhost:3000'
     },
     ssr: false,
     head: {
