@@ -9,9 +9,10 @@ class RuleBased(BaseModel):
     name: str
     access_token: str
     postback: Optional[bool] = False
-    status_flex: Optional[bool] = False
+    type_reply: Optional[str] = None
     ready: Optional[bool] = True
     card: Optional[Any] = None
+    image: Optional[Any] = None
     keyword: Optional[str] = None
     answer: Optional[list] = []
 
@@ -22,13 +23,14 @@ class RuleBased(BaseModel):
                 "name": "rule based",
                 "access_token": "access token long live",
                 "postback": False,
-                "status_flex": False,
+                "type_reply": "Text",
                 "ready": True,
                 "card": {
                     "_id": "1234",
                     "name": "name flex message",
                     "content": "content flex message"
                 },
+                "image": {"_id": "1234"},
                 "keyword": 'erp',
                 "answer": ["answer bot"],
             }
@@ -52,9 +54,10 @@ class UpdateRuleBased(BaseModel):
     name: str
     access_token: str
     postback: Optional[bool] = False
-    status_flex: Optional[bool] = False
+    type_reply: Optional[str] = None
     ready: Optional[bool] = True
     card: Optional[Any] = None
+    image: Optional[Any] = None
     keyword: Optional[str] = None
     answer: Optional[list] = []
 
@@ -66,13 +69,14 @@ class UpdateRuleBased(BaseModel):
                 "name": "update rule based",
                 "access_token": "access token long live",
                 "postback": False,
-                "status_flex": False,
+                "type_reply": "Text",
                 "ready": True,
                 "card": {
                     "_id": "1234",
                     "name": "name flex message",
                     "content": "content flex message"
                 },
+                "image": {"_id": "1234"},
                 "keyword": 'erp',
                 "answer": ["answer bot"],
             }
