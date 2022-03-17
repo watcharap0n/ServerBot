@@ -239,14 +239,14 @@ export default {
     },
 
     async getCards() {
-      const path = `/card?access_token=${this.encoded}`
+      const path = `/card/find?access_token=${this.encoded}`
       this.$store.commit('features/setDynamicPath', path)
       await this.$store.dispatch('features/fetchCard')
       this.cards = this.$store.getters["features/getResponse"]
     },
 
     async getImageMap() {
-      const path = `/mapping?access_token=${this.encoded}`
+      const path = `/mapping/find?access_token=${this.encoded}`
       this.$store.commit('features/setDynamicPath', path)
       await this.$store.dispatch('features/fetchCard')
       this.images = this.$store.getters["features/getResponse"]
