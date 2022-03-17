@@ -55,10 +55,14 @@ async def update_query_intent(
     query = {"_id": id}
     values = {"$set": data}
 
-    if payload.status_flex:
+    if payload.type_reply == 'Flex Message':
         if (await db.find_one(collection='card', query={'_id': payload.card})) is None:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
                                 detail=f'id card not found {payload.card}')
+    elif payload.type_reply == 'Image Map':
+        if (await db.find_one(collection='images_map', query={'_id': payload.image})) is None:
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
+                                detail=f'id image map not found {payload.image}')
 
     if (await db.update_one(collection=collection, query=query, values=values)) == 0:
         raise HTTPException(
