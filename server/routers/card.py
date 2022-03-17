@@ -12,7 +12,7 @@ router = APIRouter()
 collection = "card"
 
 
-@router.get("/", response_model=List[TokenUser])
+@router.get("/find", response_model=List[TokenUser])
 async def get_card(
         access_token: Optional[str] = None, current_user: User = Depends(get_current_active)
 ):
