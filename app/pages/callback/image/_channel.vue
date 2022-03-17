@@ -167,14 +167,13 @@ export default {
 
       await this.fetchToken()
       let encoded = encodeURIComponent(this.form.access_token);
-      const path = `/mapping/?access_token=${encoded}`;
+      const path = `/mapping/find?access_token=${encoded}`;
       await this.$axios.get(path)
           .then((res) => {
             res.data.forEach((v) => {
               v.id = v._id
             })
             item.children.push(...res.data);
-            this.getMapping(encoded);
           })
           .catch((err) => {
             console.error(err);
@@ -230,13 +229,6 @@ export default {
       this.spinSave = true
       this.elements[0].value = ''
     },
-    async getMapping(accessToken) {
-      const path = `/mapping/?access_token=${accessToken}`
-      this.$store.commit('features/setDynamicPath', path)
-      await this.$store.dispatch('features/fetchCard')
-      this.mapping = this.$store.getters["features/getResponse"]
-    },
-
   },
 
 }

@@ -173,7 +173,7 @@ export default {
 
       await this.fetchToken()
       let encoded = encodeURIComponent(this.form.access_token);
-      const path = `/card/?access_token=${encoded}`;
+      const path = `/card/find?access_token=${encoded}`;
       await this.$axios.get(path)
           .then((res) => {
             res.data.forEach((v) => {
