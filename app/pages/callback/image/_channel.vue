@@ -101,7 +101,7 @@
 
 <script>
 import Dialog from "@/components/app/Dialog";
-import SetImage from "@/components/app/Image";
+import SetImage from "@/components/callback/Image";
 
 export default {
   components: {Dialog, SetImage},
