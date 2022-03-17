@@ -7,6 +7,7 @@
         <p class="text-l font-normal  "
            v-text="`${ruleBased.postback ? 'Postback': 'Keyword'}`"
         ></p>
+
         <v-switch
             dense
             color="info"
@@ -14,6 +15,7 @@
             :label="`${ruleBased.postback ? 'Postback': 'Keyword'}`"
         >
         </v-switch>
+
         <v-text-field
             rounded
             v-model="ruleBased.keyword"
@@ -21,16 +23,21 @@
             filled
             clearable
         ></v-text-field>
-        <p class="text-l font-normal  ">Answer</p>
-        <v-switch
-            dense
-            color="info"
-            v-model="ruleBased.status_flex"
-            :label="`${ruleBased.status_flex ? 'Enable Flex Message': 'Disabled Flex Message'}`"
-        >
-        </v-switch>
 
-        <div v-if="!ruleBased.status_flex">
+        <p class="text-l font-normal  ">Answer</p>
+
+        <v-select
+            filled
+            rounded
+            v-model="ruleBased.type_reply"
+            label="Type Reply"
+            color="info"
+            :items="typeReply"
+            @change="getType(ruleBased.type_reply)"
+        >
+        </v-select>
+
+        <div v-if="ruleBased.type_reply === 'Text'">
           <v-text-field
               rounded
               v-model="answer"
@@ -39,6 +46,7 @@
               @keyup.enter="sendAns"
               clearable
           ></v-text-field>
+
           <v-combobox
               v-model="ruleBased.answer"
               label="Answers"
@@ -58,6 +66,7 @@
                 ></v-icon>
               </v-btn>
             </template>
+
             <template v-slot:selection="{ attrs, item, select, selected, index }">
               <div v-if="!show">
                 <v-chip
@@ -95,18 +104,40 @@
           </v-combobox>
         </div>
 
-        <div v-else>
+        <div v-else-if="ruleBased.type_reply === 'Flex Message'">
           <v-select
               rounded
+              :loading="spinGetType"
               filled
               v-model="ruleBased.card"
               :items="cards"
               item-text="name"
+              color="info"
               item-value="_id"
-              append-outer-icon="mdi-dice-5-outline"
+              append-outer-icon="mdi-card-bulleted-outline"
               menu-props="auto"
+              item-color="info"
               hide-details
-              label="select your flex messages"
+              label="select your flex message"
+              single-line
+          ></v-select>
+        </div>
+
+        <div v-else-if="ruleBased.type_reply === 'Image Map'">
+          <v-select
+              rounded
+              :loading="spinGetType"
+              filled
+              v-model="ruleBased.image"
+              :items="images"
+              item-text="name"
+              color="info"
+              item-value="_id"
+              append-outer-icon="mdi-card-bulleted-outline"
+              menu-props="auto"
+              item-color="info"
+              hide-details
+              label="select your image map"
               single-line
           ></v-select>
         </div>
@@ -163,6 +194,7 @@ import Dialog from "@/components/app/Dialog";
 
 export default {
   components: {Dialog},
+
   props: {
     ruleBased: {
       required: false,
@@ -174,9 +206,21 @@ export default {
     users: {
       required: false
     },
+    images: {
+      required: true,
+    },
+    spinGetType: {
+      required: false,
+      type: Boolean
+    },
+    getType: {
+      required: true,
+    },
   },
+
   data() {
     return {
+      typeReply: ['Text', 'Flex Message', 'Image Map'],
       show: false,
       answer: "",
       items: [],
@@ -190,15 +234,18 @@ export default {
       this.ruleBased.answer.push(this.answer)
       this.answer = ''
     },
+
     removeKeyword(item) {
       this.ruleBased.keyword.splice(this.ruleBased.keyword.indexOf(item), 1)
       this.ruleBased.keyword = [...this.ruleBased.keyword]
 
     },
+
     removeAns(item) {
       this.ruleBased.answer.splice(this.ruleBased.answer.indexOf(item), 1)
       this.ruleBased.answer = [...this.ruleBased.answer]
     },
+
     async remove() {
       this.spin = false
       this.spinSave = false
@@ -214,6 +261,7 @@ export default {
       })
       this.spin = true
     },
+
     async todo() {
       this.spin = false
       const path = `/rule_based/query/update/${this.ruleBased.id}`

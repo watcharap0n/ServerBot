@@ -72,15 +72,20 @@
           </template>
         </v-combobox>
 
-
         <p class="text-l font-normal ">Answer</p>
-        <v-switch
-            v-model="intent.status_flex"
-            label="Enable Flex Message"
+
+        <v-select
+            filled
+            rounded
+            v-model="intent.type_reply"
+            label="Type Reply"
             color="info"
+            :items="typeReply"
+            @change="getType(intent.type_reply)"
         >
-        </v-switch>
-        <div v-if="!intent.status_flex">
+        </v-select>
+
+        <div v-if="intent.type_reply === 'Text'">
           <v-text-field
               rounded
               color="red"
@@ -148,23 +153,44 @@
           </v-combobox>
         </div>
 
-        <div v-else>
+        <div v-else-if="intent.type_reply === 'Flex Message'">
           <v-select
               rounded
+              :loading="spinGetType"
               filled
               v-model="intent.card"
               :items="cards"
               item-text="name"
-              color="red"
+              color="info"
               item-value="_id"
               append-outer-icon="mdi-card-bulleted-outline"
               menu-props="auto"
-              item-color="red"
+              item-color="info"
               hide-details
-              label="select your flex messages"
+              label="select your flex message"
               single-line
           ></v-select>
         </div>
+
+        <div v-else-if="intent.type_reply === 'Image Map'">
+          <v-select
+              rounded
+              :loading="spinGetType"
+              filled
+              v-model="intent.image"
+              :items="images"
+              item-text="name"
+              color="info"
+              item-value="_id"
+              append-outer-icon="mdi-card-bulleted-outline"
+              menu-props="auto"
+              item-color="info"
+              hide-details
+              label="select your image map"
+              single-line
+          ></v-select>
+        </div>
+
       </div>
     </v-card-text>
     <v-card-actions>
@@ -214,21 +240,36 @@
 import Dialog from "@/components/app/Dialog";
 
 export default {
-  components: {Dialog},
+  components: {
+    Dialog,
+  },
+
   props: {
+    getType: {
+      required: true,
+    },
     intent: {
-      required: false,
+      required: true,
       type: Object
     },
     cards: {
-      required: false
+      required: true
+    },
+    images: {
+      required: true,
     },
     users: {
-      required: false
+      required: true
+    },
+    spinGetType: {
+      required: false,
+      type: Boolean
     }
   },
+
   data() {
     return {
+      typeReply: ['Text', 'Flex Message', 'Image Map'],
       show: false,
       showAnswer: false,
       items: [],
@@ -240,25 +281,38 @@ export default {
       answer: "",
     }
   },
+
+  created() {
+    if (this.intent) {
+      this.$nextTick(() => {
+        this.getType(this.intent.type_reply)
+      })
+    }
+  },
+
   methods: {
     sendQues() {
       if (this.question)
         this.intent.question.push(this.question)
       this.question = ''
     },
+
     sendAns() {
       if (this.answer)
         this.intent.answer.push(this.answer)
       this.answer = ''
     },
+
     removeQuestion(item) {
       this.intent.question.splice(this.intent.question.indexOf(item), 1)
       this.intent.question = [...this.intent.question]
     },
+
     removeAns(item) {
       this.intent.answer.splice(this.intent.answer.indexOf(item), 1)
       this.intent.answer = [...this.intent.answer]
     },
+
     async todo() {
       this.spin = false
       const path = `/intents/query/update/${this.intent.id}`
