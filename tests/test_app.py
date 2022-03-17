@@ -350,7 +350,7 @@ def test_card_create_invalid():
 
 def test_card_get():
     access_token = PAYLOAD_CARD["access_token"]
-    response = client.get(f"/card?access_token={access_token}", headers=headers)
+    response = client.get(f"/card/find?access_token={access_token}", headers=headers)
     assert response.status_code == status.HTTP_200_OK
     assert isinstance(response.json(), list)
 
