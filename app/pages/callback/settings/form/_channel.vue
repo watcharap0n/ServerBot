@@ -11,8 +11,7 @@
       <v-col
           sm="9"
           cols="12">
-        <v-card
-            flat>
+        <v-card flat>
 
           <v-card-title>
             Custom Form

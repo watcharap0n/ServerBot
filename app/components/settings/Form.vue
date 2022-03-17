@@ -8,28 +8,48 @@
           sm="6"
       >
         <v-text-field
+            dense
             v-model="v.name"
             outlined
             rounded
             label="Name"
         >
         </v-text-field>
+
         <v-spacer></v-spacer>
+
         <v-btn
-            :to="v.endpoint"
-            color="orange"
+            class="text-decoration-none"
+            dark
+            small
+            :to="`/callback/custom/form/${$route.params.channel}?q=${v._id}`"
+            color="info"
             rounded
         >
           <v-icon left>
             mdi-rocket-launch
           </v-icon>
-          go to form
-
+          form
         </v-btn>
 
         <v-btn
+            color="success"
+            rounded
+            @click="todo(v)"
+            :loading="spinSave"
+            small
+        >
+          <v-icon left>
+            mdi-pencil
+          </v-icon>
+          save
+        </v-btn>
+
+        <v-btn
+            dark
+            small
             @click="remove(v)"
-            color="red"
+            color="grey"
             rounded
             :loading="spinDelete"
         >
@@ -38,37 +58,25 @@
           </v-icon>
           remove
         </v-btn>
-
-        <v-btn
-            color="success"
-            rounded
-            @click="todo(v)"
-            :loading="spinSave"
-        >
-          <v-icon left>
-            mdi-pencil
-          </v-icon>
-          save
-
-        </v-btn>
-
-
       </v-col>
+
       <v-col>
         <v-btn
             @click="dialog = true"
             class="mx-2"
             fab
             dark
-            color="indigo"
+            small
+            color="success"
         >
           <v-icon dark>
             mdi-plus
           </v-icon>
-
         </v-btn>
       </v-col>
+
     </v-row>
+
     <Dialog :dialog.sync="dialog"
             header="Form"
             :element-forms="elements"
@@ -76,7 +84,6 @@
             body="Please set your id form"
             :submit-dialog="addTransaction"
             :loading-dialog="spinDialog"
-
     />
 
     <Overlay :overlay="overlay"></Overlay>
@@ -115,6 +122,7 @@ export default {
           value: ''
         }
       ],
+      encoded: '',
     }
   },
 
@@ -126,6 +134,7 @@ export default {
     this.defaultForm.access_token = this.$store.getters["features/getToken"];
 
     let encoded = encodeURIComponent(this.defaultForm.access_token);
+    this.encoded = encoded;
     const path = `/form?access_token=${encoded}`;
     await this.$axios.get(path)
         .then((res) => {
