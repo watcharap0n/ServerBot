@@ -23,8 +23,20 @@
 
       <v-btn
           text
+          dark
+          @click="copyEndpoint(`http://localhost:3000/form/line/${$route.query.q}`)"
+      >
+        <v-icon>
+          mdi-content-copy
+        </v-icon>
+        Copy URI
+      </v-btn>
+
+      <v-btn
+          text
           class="text-decoration-none"
-          :to="`/form/LINE/${this.$route.query.q}`"
+          :href="`http://localhost:3000/form/line/${$route.query.q}`"
+          target="_blank"
       >
         <v-icon>
           mdi-arrow-u-right-top
@@ -81,7 +93,6 @@
                 <v-row
                     align="center"
                     v-for="(item, index) in transaction.models"
-                    v-if="!item.default_field"
                     :key="index"
                 >
                   <v-col
@@ -307,6 +318,15 @@ export default {
             })
           })
       this.spinSave = false
+    },
+    copyEndpoint(url) {
+      this.$copyText(url)
+          .then(() => {
+            this.$notifier.showMessage({
+              content: 'URL is copied',
+              color: 'info'
+            })
+          })
     },
   }
 }
