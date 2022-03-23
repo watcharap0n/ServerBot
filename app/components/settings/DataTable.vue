@@ -43,6 +43,7 @@
                   <v-row>
                     <v-col sm="12">
                       <v-text-field
+                          color="success"
                           dense
                           rounded
                           outlined
@@ -86,10 +87,16 @@
                             prepend-icon="mdi-dns-outline"
                         >
                           <template v-slot:activator>
-                            <v-list-item-title>Users</v-list-item-title>
+                            <v-list-item-content>
+                              <v-list-item-title>Items</v-list-item-title>
+                            </v-list-item-content>
                           </template>
 
-                          <v-list-item link v-for="item in v.items_select">
+                          <v-list-item
+                              v-for="(item, index) in v.items_select"
+                              :key="index"
+                              link
+                          >
                             <v-list-item-title v-text="item"></v-list-item-title>
                             <v-list-item-icon>
                               <v-btn color="red"
