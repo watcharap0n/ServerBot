@@ -17,10 +17,16 @@ collection = 'data_table'
 async def get_data_table(
         access_token: str,
         status: Optional[bool] = False,
+        default_field: Optional[bool] = True,
         current_user: User = Depends(get_current_active)
 ):
     if status:
         data = await db.find(collection=collection, query={'access_token': access_token, 'status': status})
+        data = list(data)
+        return data
+
+    if not default_field:
+        data = await db.find(collection=collection, query={'access_token': access_token, 'default_field': False})
         data = list(data)
         return data
 
