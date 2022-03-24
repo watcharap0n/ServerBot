@@ -9,7 +9,7 @@ class ColumnDataTable(BaseModel):
     id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
     access_token: Optional[str] = None
     text: Optional[str] = None
-    value: UUID = Field(default_factory=uuid4)
+    value: str = Field(default_factory=uuid4)
     align: Optional[str] = None
     sortable: Optional[bool] = None
     filterable: Optional[bool] = None
