@@ -135,7 +135,7 @@ export default {
 
     let encoded = encodeURIComponent(this.defaultForm.access_token);
     this.encoded = encoded;
-    const path = `/form?access_token=${encoded}`;
+    const path = `/form/find?access_token=${encoded}`;
     await this.$axios.get(path)
         .then((res) => {
           this.transactions = res.data;

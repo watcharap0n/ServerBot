@@ -12,7 +12,7 @@ router = APIRouter()
 collection = 'form'
 
 
-@router.get('/', response_model=List[TokenUser])
+@router.get('/find', response_model=List[TokenUser])
 async def get_form(
         access_token: Optional[str] = None,
         current_user: User = Depends(get_current_active)
