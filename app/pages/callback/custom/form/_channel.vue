@@ -293,7 +293,6 @@ export default {
       const path = `/data/table/find?access_token=${encoded}&default_field=false`
       await this.$axios.get(path)
           .then((res) => {
-            console.log(res.data)
             this.dataTable = res.data;
           })
           .catch((err) => {
