@@ -155,6 +155,7 @@ app.include_router(
     prefix='/data/table',
     tags=['DataTable'],
     responses={418: {"description": "I'm teapot"}},
+    dependencies=[Depends(get_current_active)]
 )
 
 app.include_router(
