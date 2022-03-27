@@ -1,7 +1,6 @@
 <template>
 
   <v-row>
-
     <v-col
         v-if="transactions.length > 0"
         v-for="(v, k) in transactions"
@@ -17,11 +16,11 @@
 
           <v-card-text>
 
-            <v-switch
-                dense
-                v-model="v.status"
-                :label="v.status ? 'Enabled': 'Disabled'"
-            ></v-switch>
+<!--            <v-switch-->
+<!--                dense-->
+<!--                v-model="v.status"-->
+<!--                :label="v.status ? 'Enabled': 'Disabled'"-->
+<!--            ></v-switch>-->
 
             <v-row>
               <v-col cols="12"
@@ -140,8 +139,8 @@
 
         </v-form>
       </v-card>
-
     </v-col>
+
     <v-col sm="2">
       <v-btn
           @click="addTransaction"
@@ -161,7 +160,9 @@
 import Overlay from "@/components/app/Overlay";
 
 export default {
-  components: {Overlay},
+  components: {
+    Overlay,
+  },
 
   data() {
     return {
