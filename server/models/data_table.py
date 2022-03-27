@@ -1,8 +1,8 @@
 from db import PyObjectId
-from uuid import UUID, uuid4
-from typing import Optional
+from uuid import uuid4
+from typing import Optional, List
 from bson import ObjectId
-from pydantic import BaseModel, Field, constr
+from pydantic import BaseModel, Field
 
 
 class ColumnDataTable(BaseModel):
@@ -103,5 +103,46 @@ class UpdateDataTable(BaseModel):
                 "type_field": "default",
                 "status": True,
                 "default_field": False
+            }
+        }
+
+
+class SelectColumn(BaseModel):
+    id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
+    access_token: str
+    headers: Optional[List] = []
+
+    class Config:
+        json_encoders = {ObjectId: str}
+        schema_extra = {
+            "example": {
+                "access_token": "token long live",
+                "headers": []
+            }
+        }
+
+
+class ColumnsToken(SelectColumn):
+    uid: Optional[str] = None
+    date: Optional[str] = None
+    time: Optional[str] = None
+
+    class Config:
+        schema_extra = {
+            "uid": "generate token uid",
+            "date": "12/01/2022",
+            "time": "12:00:00",
+        }
+
+
+class UpdateSelectColumn(BaseModel):
+    headers: Optional[List] = []
+
+    class Config:
+        arbitrary_types_allowed = True
+        json_encoders = {ObjectId: str}
+        schema_extra = {
+            "example": {
+                "headers": []
             }
         }
