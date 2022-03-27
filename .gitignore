@@ -19,3 +19,4 @@ node_modules
 .nuxt
 venv
 package-lock.json
+dataTable.ipynb
