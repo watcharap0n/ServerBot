@@ -116,41 +116,21 @@ async def create_channel(
     item_model["bot_info"] = bot_info
     item_model = jsonable_encoder(item_model)
     store_model = Webhook(**item_model)
-    date_column_default = ColumnDataTable(
-        value='date',
-        text='Date',
-        type_field='None',
-        access_token=item.access_token,
-        status=False,
-        default_field=True
-    )
-    time_column_default = ColumnDataTable(
-        value='time',
-        text='Time',
-        access_token=item.access_token,
-        status=False,
-        default_field=True
-    )
-    actions_column_default = ColumnDataTable(
-        value='action',
-        text='Actions',
-        sortable=False,
-        access_token=item.access_token,
-        status=True,
-        default_field=True
-    )
-    json_time = jsonable_encoder(time_column_default)
-    json_date = jsonable_encoder(date_column_default)
-    json_actions = jsonable_encoder(actions_column_default)
-    json_time = item_user(data=json_time, current_user=current_user)
-    json_date = item_user(data=json_date, current_user=current_user)
-    json_actions = item_user(data=json_actions, current_user=current_user)
-    user_time = TokenUser(**json_time)
-    user_date = TokenUser(**json_date)
-    user_actions = TokenUser(**json_actions)
-    await db.insert_one(collection='data_table', data=jsonable_encoder(user_time))
-    await db.insert_one(collection='data_table', data=jsonable_encoder(user_date))
-    await db.insert_one(collection='data_table', data=jsonable_encoder(user_actions))
+    models = await db.find(collection='default_tables_model', query={})
+    models = list(models)
+
+    for model in models:
+        structure_table_model = ColumnDataTable(
+            value=model['value'],
+            text=model['text'],
+            access_token=item.access_token,
+            status=model['status'],
+            default_field=model['default_field']
+        )
+        obj_store_model = jsonable_encoder(structure_table_model)
+        obj_model = item_user(data=obj_store_model, current_user=current_user)
+        await db.insert_one(collection='data_table', data=obj_model)
+
     await db.insert_one(collection=collection, data=item_model)
     return store_model
 
