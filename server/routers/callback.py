@@ -6,7 +6,7 @@ from starlette.responses import JSONResponse
 from modules.item_static import item_user
 from modules.flex_message import flex_dynamic
 from models.callback import Webhook, LineToken, UpdateLineToken
-from models.data_table import ColumnDataTable, TokenUser
+from models.data_table import ColumnDataTable, TokenUser, SelectColumn
 from random import randint
 from typing import Optional, List
 from fastapi import APIRouter, Depends, Body, Request, status, HTTPException, Path
@@ -119,18 +119,24 @@ async def create_channel(
     models = await db.find(collection='default_tables_model', query={})
     models = list(models)
 
+    selected_table_model = SelectColumn(access_token=item.access_token)
+    selected_obj = jsonable_encoder(selected_table_model)
+    selected_obj = item_user(selected_obj, current_user)
+
     for model in models:
         structure_table_model = ColumnDataTable(
             value=model['value'],
             text=model['text'],
             access_token=item.access_token,
             status=model['status'],
-            default_field=model['default_field']
+            default_field=model['default_field'],
+            used=model['used']
         )
         obj_store_model = jsonable_encoder(structure_table_model)
         obj_model = item_user(data=obj_store_model, current_user=current_user)
         await db.insert_one(collection='data_table', data=obj_model)
 
+    await db.insert_one(collection='columns', data=selected_obj)
     await db.insert_one(collection=collection, data=item_model)
     return store_model
 
