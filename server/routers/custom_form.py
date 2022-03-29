@@ -12,7 +12,7 @@ router = APIRouter()
 collection = 'form'
 
 
-@router.get('/', response_model=List[TokenUser])
+@router.get('/find', response_model=List[TokenUser])
 async def get_form(
         access_token: Optional[str] = None,
         current_user: User = Depends(get_current_active)
@@ -33,6 +33,12 @@ async def check_duplicate_id_form(form: CustomForm):
             status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid duplicate id_form."
         )
     return form
+
+
+@router.get('/find/{id}', response_model=TokenUser)
+async def get_form_one(id: str):
+    item = await db.find_one(collection=collection, query={'_id': id})
+    return item
 
 
 @router.post("/create", response_model=TokenUser, status_code=status.HTTP_201_CREATED)
