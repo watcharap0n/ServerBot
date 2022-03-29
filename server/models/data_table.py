@@ -24,6 +24,8 @@ class ColumnDataTable(BaseModel):
     type_field: Optional[str] = None
     status: Optional[bool] = True
     default_field: Optional[bool] = False
+    hint: Optional[str] = None
+    used: Optional[bool] = True
 
     class Config:
         json_encoders = {ObjectId: str}
@@ -45,7 +47,9 @@ class ColumnDataTable(BaseModel):
                 "items_select": ['name'],
                 "type_field": "default",
                 "status": True,
-                "default_field": False
+                "default_field": False,
+                "hint": "description",
+                "used": True
             }
         }
 
@@ -81,6 +85,8 @@ class UpdateDataTable(BaseModel):
     type_field: Optional[str] = None
     status: Optional[bool] = True
     default_field: Optional[bool] = False
+    hint: Optional[str] = None
+    used: Optional[bool] = True
 
     class Config:
         arbitrary_types_allowed = True
@@ -102,7 +108,9 @@ class UpdateDataTable(BaseModel):
                 "items_select": ['name'],
                 "type_field": "default",
                 "status": True,
-                "default_field": False
+                "default_field": False,
+                "hint": "description",
+                "used": True
             }
         }
 
