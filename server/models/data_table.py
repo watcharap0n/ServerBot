@@ -1,15 +1,15 @@
 from db import PyObjectId
-from uuid import UUID, uuid4
-from typing import Optional
+from uuid import uuid4
+from typing import Optional, List
 from bson import ObjectId
-from pydantic import BaseModel, Field, constr
+from pydantic import BaseModel, Field
 
 
 class ColumnDataTable(BaseModel):
     id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
     access_token: Optional[str] = None
     text: Optional[str] = None
-    value: UUID = Field(default_factory=uuid4)
+    value: str = Field(default_factory=uuid4)
     align: Optional[str] = None
     sortable: Optional[bool] = None
     filterable: Optional[bool] = None
@@ -24,6 +24,8 @@ class ColumnDataTable(BaseModel):
     type_field: Optional[str] = None
     status: Optional[bool] = True
     default_field: Optional[bool] = False
+    hint: Optional[str] = None
+    used: Optional[bool] = True
 
     class Config:
         json_encoders = {ObjectId: str}
@@ -45,7 +47,9 @@ class ColumnDataTable(BaseModel):
                 "items_select": ['name'],
                 "type_field": "default",
                 "status": True,
-                "default_field": False
+                "default_field": False,
+                "hint": "description",
+                "used": True
             }
         }
 
@@ -81,6 +85,8 @@ class UpdateDataTable(BaseModel):
     type_field: Optional[str] = None
     status: Optional[bool] = True
     default_field: Optional[bool] = False
+    hint: Optional[str] = None
+    used: Optional[bool] = True
 
     class Config:
         arbitrary_types_allowed = True
@@ -102,6 +108,49 @@ class UpdateDataTable(BaseModel):
                 "items_select": ['name'],
                 "type_field": "default",
                 "status": True,
-                "default_field": False
+                "default_field": False,
+                "hint": "description",
+                "used": True
+            }
+        }
+
+
+class SelectColumn(BaseModel):
+    id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
+    access_token: str
+    headers: Optional[List] = []
+
+    class Config:
+        json_encoders = {ObjectId: str}
+        schema_extra = {
+            "example": {
+                "access_token": "token long live",
+                "headers": []
+            }
+        }
+
+
+class ColumnsToken(SelectColumn):
+    uid: Optional[str] = None
+    date: Optional[str] = None
+    time: Optional[str] = None
+
+    class Config:
+        schema_extra = {
+            "uid": "generate token uid",
+            "date": "12/01/2022",
+            "time": "12:00:00",
+        }
+
+
+class UpdateSelectColumn(BaseModel):
+    headers: Optional[List] = []
+
+    class Config:
+        arbitrary_types_allowed = True
+        json_encoders = {ObjectId: str}
+        schema_extra = {
+            "example": {
+                "headers": []
             }
         }
