@@ -1,12 +1,11 @@
 <template>
 
   <v-row>
-
     <v-col
-        v-if="transactions.length > 0"
         v-for="(v, k) in transactions"
         :key="k"
-        sm="10">
+        sm="6"
+    >
 
       <v-card>
         <v-form
@@ -17,11 +16,11 @@
 
           <v-card-text>
 
-            <v-switch
-                dense
-                v-model="v.status"
-                :label="v.status ? 'Enabled': 'Disabled'"
-            ></v-switch>
+            <!--            <v-switch-->
+            <!--                dense-->
+            <!--                v-model="v.status"-->
+            <!--                :label="v.status ? 'Enabled': 'Disabled'"-->
+            <!--            ></v-switch>-->
 
             <v-row>
               <v-col cols="12"
@@ -32,7 +31,7 @@
                     dense
                     outlined
                     rounded
-                    hint="Set your name column, example Name"
+                    :hint="!!v.default_field ? 'Set your name default field' : 'Set your name column, example Name'"
                     persistent-hint
                     label="Name Column"
                     v-model="v.text"
@@ -43,6 +42,7 @@
                   <v-row>
                     <v-col sm="12">
                       <v-text-field
+                          color="success"
                           dense
                           rounded
                           outlined
@@ -56,7 +56,6 @@
                   </v-row>
                 </div>
               </v-col>
-
 
               <v-col cols="12"
                      sm="6"
@@ -86,10 +85,16 @@
                             prepend-icon="mdi-dns-outline"
                         >
                           <template v-slot:activator>
-                            <v-list-item-title>Users</v-list-item-title>
+                            <v-list-item-content>
+                              <v-list-item-title>Items</v-list-item-title>
+                            </v-list-item-content>
                           </template>
 
-                          <v-list-item link v-for="item in v.items_select">
+                          <v-list-item
+                              v-for="(item, index) in v.items_select"
+                              :key="index"
+                              link
+                          >
                             <v-list-item-title v-text="item"></v-list-item-title>
                             <v-list-item-icon>
                               <v-btn color="red"
@@ -133,8 +138,8 @@
 
         </v-form>
       </v-card>
-
     </v-col>
+
     <v-col sm="2">
       <v-btn
           @click="addTransaction"
@@ -154,7 +159,9 @@
 import Overlay from "@/components/app/Overlay";
 
 export default {
-  components: {Overlay},
+  components: {
+    Overlay,
+  },
 
   data() {
     return {
