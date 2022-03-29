@@ -121,8 +121,9 @@
                 <v-row
                     v-for="(field, index) in Object.keys(editedItem)"
                     :key="index"
-                    v-if="headers"
+                    v-if="headers && headers[index]"
                 >
+
                   <v-col v-if="!headers[index].default_field">
                     <v-text-field
                         v-if="headers[index].type_field === 'default'"
@@ -134,7 +135,6 @@
                         :label="headers[index].text"
                         v-model="editedItem[field]"
                     ></v-text-field>
-
 
                     <v-select
                         rounded
@@ -148,6 +148,7 @@
                         item-color="info"
                     ></v-select>
                   </v-col>
+
                 </v-row>
 
               </v-container>
