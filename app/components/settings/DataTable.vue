@@ -2,10 +2,10 @@
 
   <v-row>
     <v-col
-        v-if="transactions.length > 0"
         v-for="(v, k) in transactions"
         :key="k"
-        sm="10">
+        sm="6"
+    >
 
       <v-card>
         <v-form
@@ -16,11 +16,11 @@
 
           <v-card-text>
 
-<!--            <v-switch-->
-<!--                dense-->
-<!--                v-model="v.status"-->
-<!--                :label="v.status ? 'Enabled': 'Disabled'"-->
-<!--            ></v-switch>-->
+            <!--            <v-switch-->
+            <!--                dense-->
+            <!--                v-model="v.status"-->
+            <!--                :label="v.status ? 'Enabled': 'Disabled'"-->
+            <!--            ></v-switch>-->
 
             <v-row>
               <v-col cols="12"
@@ -31,7 +31,7 @@
                     dense
                     outlined
                     rounded
-                    hint="Set your name column, example Name"
+                    :hint="!!v.default_field ? 'Set your name default field' : 'Set your name column, example Name'"
                     persistent-hint
                     label="Name Column"
                     v-model="v.text"
@@ -56,7 +56,6 @@
                   </v-row>
                 </div>
               </v-col>
-
 
               <v-col cols="12"
                      sm="6"
