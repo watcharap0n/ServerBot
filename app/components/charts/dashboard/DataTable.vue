@@ -121,7 +121,7 @@
                 <v-row
                     v-for="(field, index) in Object.keys(editedItem)"
                     :key="index"
-                    v-if="headers"
+                    v-if="headers && headers[index]"
                 >
 
                   <v-col v-if="!headers[index].default_field">
