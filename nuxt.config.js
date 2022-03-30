@@ -1,10 +1,10 @@
 module.exports = {
-    ssr: false,
     env: {
         baseUrl: process.env.BASE_URL || 'https://mangoserverbot.herokuapp.com',
         branch: process.env.BRANCH || 'master',
         client: process.env.Client || 'https://platformchatbot.herokuapp.com'
     },
+    ssr: false,
     head: {
         titleTemplate: '%s Platform CHATBOT',
         meta: [
@@ -74,9 +74,11 @@ module.exports = {
     axios: {
         baseURL: 'https://mangoserverbot.herokuapp.com'
     },
+
     clipboard: {
         autoSetContainer: true
     },
+
     auth: {
         strategies: {
             local: {
