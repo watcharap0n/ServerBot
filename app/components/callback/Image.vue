@@ -219,6 +219,13 @@
           label="Description"
       ></v-text-field>
 
+       <v-row justify="center">
+          <p class="text-center  text-red-400">*You can go to design LINE BOT DESIGNER at:</p> &nbsp;&nbsp;&nbsp;
+          <a class="text-center text-base" href="https://developers.line.biz/en/services/bot-designer" target="_blank">
+            LINE BOT DESIGNER
+          </a>
+        </v-row>
+
       <v-row justify="end">
         <v-btn
             text
