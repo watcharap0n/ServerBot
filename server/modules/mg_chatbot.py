@@ -33,6 +33,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer, CountVectorizer, Tf
 class Engine(BaseModel):
     predicted: Optional[Any] = None
     confidence: Optional[Any] = None
+    image: Optional[str] = None
     answers: Optional[list] = []
     name: Optional[str] = None
     card: Optional[str] = None
@@ -161,5 +162,6 @@ async def intent_model(
         card=intent.get('card'),
         ready=intent.get('ready'),
         id=intent.get('_id'),
+        image=intent.get('image'),
         type_reply=intent.get('type_reply')
     )

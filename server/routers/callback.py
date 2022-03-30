@@ -339,6 +339,7 @@ async def handle_message(events, model):
         card = result_intent.card
         ready = result_intent.ready
         id_intent = result_intent.id
+        image = result_intent.image
 
         buttons = await db.find_one(collection='quick_reply', query={'intent': id_intent})
         if buttons:
@@ -370,6 +371,28 @@ async def handle_message(events, model):
                         profile["question"] = message
                         profile['answer'] = reply
                         await db.insert_one(collection="messages_user", data=profile)
+
+                    elif type_reply == 'Image Map':
+                        content = await get_image_content(image)
+                        reply_image = image_map(
+                            base_url_image=content.get('base_url_image'),
+                            size=content.get('size'),
+                            areas=content.get('areas')
+                        )
+                        if reply_image:
+                            line_bot_api.reply_message(reply_token, reply_image)
+                            profile = await get_profile(userId, model.access_token)
+                            profile["question"] = message
+                            profile['answer'] = 'Image map'
+                            await db.insert_one(collection="messages_user", data=profile)
+
+                        else:
+                            line_bot_api.reply_message(reply_token, TextSendMessage(text='.'))
+                            profile = await get_profile(userId, model.access_token)
+                            profile["question"] = message
+                            profile['answer'] = f'Invalid Data Image'
+                            await db.insert_one(collection="messages_user", data=profile)
+
                 else:
                     line_bot_api.reply_message(reply_token, TextSendMessage(text='.'))
                     profile = await get_profile(userId, model.access_token)
@@ -402,14 +425,14 @@ async def handle_message(events, model):
                     line_bot_api.reply_message(reply_token, reply_image)
                     profile = await get_profile(userId, model.access_token)
                     profile["question"] = message
-                    profile['answer'] = card_keyword
+                    profile['answer'] = 'Image map'
                     await db.insert_one(collection="messages_user", data=profile)
 
                 else:
                     line_bot_api.reply_message(reply_token, TextSendMessage(text='.'))
                     profile = await get_profile(userId, model.access_token)
                     profile["question"] = message
-                    profile['answer'] = f'Invalid Data Image {card_keyword}'
+                    profile['answer'] = f'Invalid Data Image'
                     await db.insert_one(collection="messages_user", data=profile)
 
             elif type_reply == 'Text':
