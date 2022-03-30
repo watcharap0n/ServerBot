@@ -24,7 +24,7 @@
       <v-btn
           text
           dark
-          @click="copyEndpoint(`http://localhost:3000/form/line/${$route.query.q}`)"
+          @click="copyEndpoint(`https://platformchatbot.herokuapp.com/form/line/${$route.query.q}`)"
       >
         <v-icon>
           mdi-content-copy
@@ -35,7 +35,7 @@
       <v-btn
           text
           class="text-decoration-none"
-          :href="`http://localhost:3000/form/line/${$route.query.q}`"
+          :href="`https://platformchatbot.herokuapp.com/form/line/${$route.query.q}`"
           target="_blank"
       >
         <v-icon>
