@@ -64,26 +64,26 @@
       </v-card>
 
     </div>
-    <overlay :overlay="overlay"/>
+    <Overlay :overlay="overlay"/>
   </v-container>
 
 </template>
 
 <script>
-import overlay from "@/components/app/overlay";
+import Overlay from "@/components/app/Overlay"
 
 export default {
   layout: 'public',
 
   components: {
-    overlay
+    Overlay
   },
 
   data() {
     return {
       overlay: false,
       models: [],
-      accesstoken: '',
+      accessToken: '',
       transaction: {},
       retrieves: {},
     }
@@ -91,26 +91,26 @@ export default {
 
   async created() {
     this.overlay = true;
-    await this.getform();
-    await this.getdatatable();
+    await this.getForm();
+    await this.getDataTable();
     this.overlay = false;
   },
 
   methods: {
-    async getform() {
+    async getForm() {
       const path = `/form/find/${this.$route.params.channel}`
       await this.$axios.get(path)
           .then((res) => {
             this.transaction = res.data;
-            this.accesstoken = res.data.access_token;
+            this.accessToken = res.data.access_token;
           })
           .catch((err) => {
             console.error(err);
           })
     },
 
-    async getdatatable() {
-      let encoded = encodeuricomponent(this.accesstoken);
+    async getDataTable() {
+      let encoded = encodeURIComponent(this.accessToken);
       const path = `/data/table/find?access_token=${encoded}&default_field=false`
       await this.$axios.get(path)
           .then((res) => {
@@ -121,17 +121,16 @@ export default {
           })
     },
     async save() {
-      const path = `/retrieve/create?access_token=${this.accesstoken}`;
+      const path = `/retrieve/create?access_token=${this.accessToken}`;
       await this.$axios.post(path, this.retrieves)
           .then(() => {
             this.$swal.fire(
                 'saved',
-                'you clicked the button!',
                 'success'
             )
           })
           .catch((err) => {
-            this.$notifier.showmessage({
+            this.$notifier.showMessage({
               content: `something wrong | status code ${err.response.status}`,
               color: 'red'
             })
