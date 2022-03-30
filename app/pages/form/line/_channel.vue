@@ -30,7 +30,7 @@
               <v-select
                   v-if="transaction.models[k].type_field === 'select'"
                   :items="transaction.models[k].items_select"
-                  v-model="retrieves[v.value].value"
+                  v-model="retrieves[v.value]"
                   color="success"
                   item-color="success"
                   :outlined="transaction.models[k].outlined"
