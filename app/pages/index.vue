@@ -251,7 +251,7 @@ export default {
       this.btnSpin = true
       let token = this.channels[this.editedIndex].token
       const path = `/callback/channel/delete/${token}`
-      this.$axios.delete(path)
+      await this.$axios.delete(path)
           .then((res) => {
             console.log(res.data)
             this.channels.splice(this.editedIndex, 1)
