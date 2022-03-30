@@ -125,7 +125,8 @@ export default {
       await this.$axios.post(path, this.retrieves)
           .then(() => {
             this.$swal.fire(
-                'saved',
+                'Thank you for submitting information.',
+                'We will contact you back soon.',
                 'success'
             )
           })
