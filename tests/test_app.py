@@ -10,7 +10,6 @@ client = TestClient(app)
 def get_settings_override():
     return Settings(admin_email="wera.watcharapon@gmail.com")
 
-
 app.dependency_overrides[get_settings] = get_settings_override
 
 headers = {}
