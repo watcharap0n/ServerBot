@@ -11,7 +11,7 @@ from typing import Optional
 from datetime import datetime
 
 
-def item_user(data: dict, current_user, url: Optional[bool] = False):
+def item_user(data: dict, current_user=None, url: Optional[bool] = False):
     """
 
     :param url:
@@ -24,9 +24,10 @@ def item_user(data: dict, current_user, url: Optional[bool] = False):
     try:
         tz = pytz.timezone('Asia/Bangkok')
         _d = datetime.now(tz)
-        data["uid"] = current_user.data.uid
         data["date"] = _d.strftime("%d/%m/%y")
         data["time"] = _d.strftime("%H:%M:%S")
+        if current_user:
+            data["uid"] = current_user.data.uid
         if url:
             data[
                 "url"
