@@ -50,7 +50,10 @@ async def add_a_column(payload: ColumnDataTable,
 
 
 @router.put('/query/update/{id}', response_model=UpdateDataTable)
-async def update_a_column(id: str, payload: UpdateDataTable):
+async def update_a_column(
+        id: str, payload: UpdateDataTable,
+        current_user: User = Depends(get_current_active)
+):
     item_model = jsonable_encoder(payload)
     value = {'$set': item_model}
     query = {'_id': id}
@@ -65,7 +68,10 @@ async def update_a_column(id: str, payload: UpdateDataTable):
 
 
 @router.delete('/query/delete/{id}', status_code=status.HTTP_204_NO_CONTENT)
-async def delete_a_column(id: str):
+async def delete_a_column(
+        id: str,
+        current_user: User = Depends(get_current_active)
+):
     item = await db.find_one(collection=collection, query={'_id': id})
     query = {'access_token': {'$lte': item.get('access_token')}}
     values = {'$unset': {item.get('value'): ''}}
@@ -101,7 +107,8 @@ async def create_column(column: SelectColumn,
 
 
 @router.put('/columns/query/update/{id}')
-async def update_column(id: str, payload: UpdateSelectColumn):
+async def update_column(id: str, payload: UpdateSelectColumn,
+                        current_user: User = Depends(get_current_active)):
     item_store = jsonable_encoder(payload)
     query = {'_id': id}
     value = {'$set': item_store}
