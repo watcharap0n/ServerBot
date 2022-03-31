@@ -36,6 +36,20 @@ async def create_retrieve(
     return item_model
 
 
+@router.post("/create/public", status_code=status.HTTP_201_CREATED)
+async def create_retrieve(
+        access_token: str,
+        payload: Optional[Any] = Body(None),
+):
+    ids = generate_token(engine=ObjectId())
+    payload['id'] = ids
+    payload['access_token'] = access_token
+    item_model = item_user(data=payload)
+    await db.insert_one(collection=collection, data=item_model)
+    del item_model["_id"]
+    return item_model
+
+
 @router.put("/query/update/{id}")
 async def update_query_intent(
         id: str,
