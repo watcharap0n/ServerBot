@@ -15,7 +15,6 @@ collection = 'form'
 @router.get('/find', response_model=List[TokenUser])
 async def get_form(
         access_token: Optional[str] = None,
-        current_user: User = Depends(get_current_active)
 ):
     items = await db.find(collection=collection, query={"access_token": access_token})
     items = list(items)
