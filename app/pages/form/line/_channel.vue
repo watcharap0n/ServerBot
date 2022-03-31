@@ -70,6 +70,7 @@
 </template>
 
 <script>
+import liff from '@line/liff';
 import Overlay from '@/components/app/Overlay'
 
 export default {
@@ -93,10 +94,27 @@ export default {
     this.overlay = true;
     await this.getForm();
     await this.getDataTable();
+    await this.initialized();
     this.overlay = false;
   },
 
   methods: {
+    async initialized() {
+      if (this.transaction.id_form) {
+        await liff.init({liffId: this.transaction.id_form},
+            () => {
+              if (liff.isLoggedIn()) {
+                liff.getProfile()
+                    .then((profile) => {
+                      console.log(profile)
+                    })
+              } else {
+                liff.login();
+              }
+            });
+      }
+    },
+
     async getForm() {
       const path = `/form/find/${this.$route.params.channel}`
       await this.$axios.get(path)
