@@ -121,7 +121,7 @@ export default {
           })
     },
     async save() {
-      const path = `/retrieve/create?access_token=${this.accessToken}`;
+      const path = `/retrieve/create/public?access_token=${this.accessToken}`;
       await this.$axios.post(path, this.retrieves)
           .then(() => {
             this.$swal.fire(
