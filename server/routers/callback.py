@@ -247,16 +247,16 @@ async def event_postback(events, model):
     postback = events['postback']['data']
     item = await db.find_one(collection='rule_based',
                              query={'access_token': model.access_token, 'keyword': postback})
-    card = item.get('card')
     type_reply = item.get('type_reply')
-    answer = item.get('answer')
 
     if type_reply == 'Flex Message':
+        card = item.get('card')
         flex_msg = await get_card_content(card)
         line_bot_api.reply_message(reply_token, flex_msg)
     elif type_reply == 'Text':
+        answer = item.get('answer')
         reply = random.choice(answer)
-        line_bot_api.reply_message(reply_token, reply)
+        line_bot_api.reply_message(reply_token, TextSendMessage(text=reply))
 
 
 def event_handler(events, model):
