@@ -106,6 +106,7 @@
               </v-icon>
               Add
             </v-btn>
+
           </template>
 
           <v-card>
@@ -176,6 +177,42 @@
       </v-toolbar>
     </template>
 
+    <template v-slot:footer.prepend>
+
+      <v-tooltip bottom>
+        <template v-slot:activator="{ on, attrs }">
+          <v-btn
+              @click="dialogFullScreen = true"
+              small
+              icon
+              v-on="on"
+              v-bind="attrs"
+              color="info"
+          >
+            <v-icon>
+              mdi-alert-circle-outline
+            </v-icon>
+          </v-btn>
+        </template>
+        <span>full screen</span>
+      </v-tooltip>
+
+      <v-dialog
+          v-model="dialogFullScreen"
+          fullscreen
+          hide-overlay
+          transition="dialog-bottom-transition"
+      >
+
+        <FullDataTable :dialog-full-screen.sync="dialogFullScreen"
+                       :headers="payloadSelectedHeaders.headers"
+                       :transactions="desserts"
+        />
+
+      </v-dialog>
+
+    </template>
+
     <!--    <template v-for="(val, index) in headers"-->
     <!--              v-slot:[`item.${val.value}`]="{ item }"-->
     <!--    >-->
@@ -202,10 +239,15 @@
 </template>
 
 <script>
+import FullDataTable from "@/components/charts/dashboard/FullDataTable";
 
 export default {
+  components: {
+    FullDataTable
+  },
 
   data: () => ({
+    dialogFullScreen: false,
     loadingColumn: false,
     loading: false,
     loadingTable: false,
