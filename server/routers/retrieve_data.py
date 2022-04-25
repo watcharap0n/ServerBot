@@ -13,7 +13,15 @@ collection = 'retrieve'
 
 @router.get('/find')
 async def get_retrieve_data(access_token: str,
+                            tag: Optional[str] = None,
                             current_user: User = Depends(get_current_active)):
+    if tag:
+        items = await db.find(collection=collection,
+                              query={"access_token": access_token, 'tag': tag},
+                              select_field={"_id": 0})
+        items = list(items)
+        return items
+
     items = await db.find(collection=collection,
                           query={"access_token": access_token},
                           select_field={"_id": 0})

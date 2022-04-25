@@ -187,12 +187,26 @@
             >
               Save
             </v-btn>
-
           </v-card-actions>
-
         </v-card>
+
       </v-dialog>
+
+      <v-spacer></v-spacer>
+
+      <v-btn
+          x-small
+          icon
+          color="info"
+          @click="initializeValue"
+      >
+        <v-icon>
+          mdi-refresh
+        </v-icon>
+      </v-btn>
+
     </template>
+
 
     <!--    <template v-for="(val, index) in headers"-->
     <!--              v-slot:[`item.${val.value}`]="{ item }"-->
@@ -205,9 +219,10 @@
           small
           color="warning"
           dark
-      >
-        {{ item.tag }}
-      </v-chip>
+          v-if="item.tag"
+          v-text="item.tag"
+          @click="getByTag(item.tag)"
+      ></v-chip>
     </template>
 
 
@@ -299,6 +314,7 @@ export default {
     },
 
     async initializeValue() {
+      this.loadingTable = true;
       const path = `/retrieve/find?access_token=${this.accessToken}`;
       await this.$axios.get(path)
           .then((res) => {
@@ -307,6 +323,7 @@ export default {
           .catch((err) => {
             console.error(err);
           })
+      this.loadingTable = false;
     },
 
     editItem(item) {
@@ -420,6 +437,19 @@ export default {
           })
       this.dialogColumn = false;
       this.loadingColumn = false;
+    },
+
+    async getByTag(tag) {
+      this.loadingTable = true
+      const path = `/retrieve/find?access_token=${this.accessToken}&tag=${tag}`;
+      await this.$axios.get(path)
+          .then((res) => {
+            this.desserts = res.data;
+          })
+          .catch((err) => {
+            console.error(err);
+          })
+      this.loadingTable = false
     }
 
   }
