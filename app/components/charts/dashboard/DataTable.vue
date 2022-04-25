@@ -1,9 +1,12 @@
 <template>
   <v-data-table
+      v-model="selected"
+      :search="search"
       :headers="payloadSelectedHeaders.headers"
       :items="desserts"
       :items-per-page="5"
       :loading="loadingTable"
+      show-select
   >
     <template v-slot:top>
       <v-toolbar flat>
@@ -15,82 +18,6 @@
             inset
             vertical
         ></v-divider>
-
-
-        <v-dialog
-            v-model="dialogColumn"
-            max-width="500px"
-            persistent
-        >
-          <template v-slot:activator="{ on, attrs }">
-            <v-btn
-                small
-                color="info"
-                dark
-                depressed
-                v-bind="attrs"
-                v-on="on"
-            >
-
-              <v-icon>
-                mdi-view-column-outline
-              </v-icon>
-
-            </v-btn>
-          </template>
-
-          <v-card>
-            <v-toolbar>
-              Select Your Columns
-            </v-toolbar>
-
-            <br>
-
-            <v-card-text>
-              <v-select
-                  v-if="payloadSelectedHeaders"
-                  v-model="payloadSelectedHeaders.headers"
-                  :items="headers"
-                  label="Select Columns" multiple outlined
-                  return-object
-              >
-                <template v-slot:selection="{ item, index }">
-                  <v-chip v-if="index < 2">
-                    <span>{{ item.text }}</span>
-                  </v-chip>
-                  <span v-if="index === 2" class="grey--text caption">(+{{
-                      payloadSelectedHeaders.headers.length - 2
-                    }} others)</span>
-                </template>
-              </v-select>
-            </v-card-text>
-
-            <v-card-actions>
-              <v-spacer></v-spacer>
-
-              <v-btn
-                  @click="dialogColumn = false"
-                  text
-                  color="grey"
-              >
-                Cancel
-              </v-btn>
-
-              <v-btn
-                  @click="saveColumns"
-                  :loading="loadingColumn"
-                  text
-                  color="success"
-              >
-                Save
-              </v-btn>
-
-            </v-card-actions>
-
-          </v-card>
-        </v-dialog>
-
-        <v-spacer></v-spacer>
 
         <v-dialog v-model="dialog" max-width="800px">
           <template v-slot:activator="{ on, attrs }">
@@ -107,7 +34,6 @@
               </v-icon>
               Add
             </v-btn>
-
           </template>
 
           <v-card>
@@ -173,11 +99,100 @@
             </v-card-actions>
 
           </v-card>
-       </v-dialog>
+        </v-dialog>
+
+        <v-spacer></v-spacer>
+
+        <v-text-field
+            v-model="search"
+            append-icon="mdi-magnify"
+            label="Search"
+            single-line
+            hide-details
+        ></v-text-field>
 
       </v-toolbar>
     </template>
 
+    <template v-slot:footer.prepend>
+      <v-tooltip bottom>
+        <template v-slot:activator="{ on, attrs }">
+          <v-btn
+              @click="dialogColumn = true"
+              v-on="on"
+              v-bind="attrs"
+              icon
+              text
+              small
+              color="info"
+              dark
+              depressed
+          >
+            <v-icon>
+              mdi-information-outline
+            </v-icon>
+          </v-btn>
+        </template>
+        <span>Columns</span>
+      </v-tooltip>
+
+      <v-dialog
+          v-model="dialogColumn"
+          max-width="500px"
+          persistent
+      >
+
+        <v-card>
+          <v-toolbar>
+            Select Your Columns
+          </v-toolbar>
+
+          <br>
+
+          <v-card-text>
+            <v-select
+                v-if="payloadSelectedHeaders"
+                v-model="payloadSelectedHeaders.headers"
+                :items="headers"
+                label="Select Columns" multiple outlined
+                return-object
+            >
+              <template v-slot:selection="{ item, index }">
+                <v-chip v-if="index < 2">
+                  <span>{{ item.text }}</span>
+                </v-chip>
+                <span v-if="index === 2" class="grey--text caption">(+{{
+                    payloadSelectedHeaders.headers.length - 2
+                  }} others)</span>
+              </template>
+            </v-select>
+          </v-card-text>
+
+          <v-card-actions>
+            <v-spacer></v-spacer>
+
+            <v-btn
+                @click="dialogColumn = false"
+                text
+                color="grey"
+            >
+              Cancel
+            </v-btn>
+
+            <v-btn
+                @click="saveColumns"
+                :loading="loadingColumn"
+                text
+                color="success"
+            >
+              Save
+            </v-btn>
+
+          </v-card-actions>
+
+        </v-card>
+      </v-dialog>
+    </template>
     <!--    <template v-for="(val, index) in headers"-->
     <!--              v-slot:[`item.${val.value}`]="{ item }"-->
     <!--    >-->
@@ -208,7 +223,8 @@
 export default {
 
   data: () => ({
-    dialogFullScreen: false,
+    selected: [],
+    search: '',
     loadingColumn: false,
     loading: false,
     loadingTable: false,
