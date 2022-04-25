@@ -95,6 +95,7 @@
         <v-dialog v-model="dialog" max-width="800px">
           <template v-slot:activator="{ on, attrs }">
             <v-btn
+                small
                 color="info"
                 dark
                 depressed
@@ -102,7 +103,7 @@
                 v-on="on"
             >
               <v-icon left>
-                mdi-account-plus-outline
+                mdi-plus
               </v-icon>
               Add
             </v-btn>
@@ -172,45 +173,9 @@
             </v-card-actions>
 
           </v-card>
-        </v-dialog>
+       </v-dialog>
 
       </v-toolbar>
-    </template>
-
-    <template v-slot:footer.prepend>
-
-      <v-tooltip bottom>
-        <template v-slot:activator="{ on, attrs }">
-          <v-btn
-              @click="dialogFullScreen = true"
-              small
-              icon
-              v-on="on"
-              v-bind="attrs"
-              color="info"
-          >
-            <v-icon>
-              mdi-alert-circle-outline
-            </v-icon>
-          </v-btn>
-        </template>
-        <span>full screen</span>
-      </v-tooltip>
-
-      <v-dialog
-          v-model="dialogFullScreen"
-          fullscreen
-          hide-overlay
-          transition="dialog-bottom-transition"
-      >
-
-        <FullDataTable :dialog-full-screen.sync="dialogFullScreen"
-                       :headers="payloadSelectedHeaders.headers"
-                       :transactions="desserts"
-        />
-
-      </v-dialog>
-
     </template>
 
     <!--    <template v-for="(val, index) in headers"-->
@@ -239,12 +204,8 @@
 </template>
 
 <script>
-import FullDataTable from "@/components/charts/dashboard/FullDataTable";
 
 export default {
-  components: {
-    FullDataTable
-  },
 
   data: () => ({
     dialogFullScreen: false,
@@ -269,7 +230,6 @@ export default {
     formTitle() {
       return this.editedIndex === -1 ? 'New Data' : 'Edit Data'
     },
-
   },
 
   watch: {
