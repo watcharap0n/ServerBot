@@ -278,6 +278,10 @@ export default {
     Overlay
   },
 
+  created() {
+    this.drawer = !this.drawer;
+  },
+
   data() {
     return {
       onLine: navigator.onLine,
