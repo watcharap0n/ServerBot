@@ -254,6 +254,13 @@
           class="bg-gray-100 p-20 h-screen"
       >
         <Nuxt @routerHandle="handler"/>
+
+        <Overlay :overlay="!onLine"
+                 show-text="Please check your network!"
+                 :show-refresh="true"
+        >
+        </Overlay>
+
         <Snackbar></Snackbar>
       </div>
     </v-app>
@@ -261,13 +268,19 @@
 </template>
 
 <script>
+import Overlay from "@/components/app/Overlay";
 import Snackbar from "@/components/Snackbar";
 
 export default {
   middleware: ['auth-admin'],
-  components: {Snackbar},
+  components: {
+    Snackbar,
+    Overlay
+  },
+
   data() {
     return {
+      onLine: navigator.onLine,
       isLoading: false,
       items: [],
       model: null,
@@ -276,12 +289,13 @@ export default {
 
       nameBar: 'PLATFORM CHATBOT',
       selectedItem: 0,
-      drawer: true,
+      drawer: false,
       itemsApp: [],
       itemsOther: [],
       itemsHome: []
     }
   },
+
   watch: {
     model(val) {
       if (val != null) this.tab = 0
@@ -289,21 +303,24 @@ export default {
     },
     search(val) {
       if (this.items.length > 0) return
-
       this.isLoading = true
-
-      // Lazily load input items
       this.items = this.itemsApp
       this.isLoading = false
     },
   },
+
   methods: {
     setFallbackImageUrl(event) {
       event.target.src = require(`~/assets/images/mango-profile.jpg`)
     },
     handler(router) {
       this.itemsApp = [
-        {id: 'p1', title: 'Dashboard', icon: 'mdi-view-dashboard-outline', url: `/callback/dashboard/${router.channel}`},
+        {
+          id: 'p1',
+          title: 'Dashboard',
+          icon: 'mdi-view-dashboard-outline',
+          url: `/callback/dashboard/${router.channel}`
+        },
         {id: 'p2', title: 'Flex Message', icon: 'mdi-cards-outline', url: `/callback/card/${router.channel}`},
         {id: 'p6', title: 'Image Map', icon: 'mdi-image-outline', url: `/callback/image/${router.channel}`},
         {id: 'p3', title: 'Intent', icon: 'mdi-robot-happy-outline', url: `/callback/intent/${router.channel}`},
