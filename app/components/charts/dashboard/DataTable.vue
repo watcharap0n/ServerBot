@@ -187,12 +187,26 @@
             >
               Save
             </v-btn>
-
           </v-card-actions>
-
         </v-card>
+
       </v-dialog>
+
+      <v-spacer></v-spacer>
+
+      <v-btn
+          x-small
+          icon
+          color="info"
+          @click="initializeHeader"
+      >
+        <v-icon>
+          mdi-refresh
+        </v-icon>
+      </v-btn>
+
     </template>
+
 
     <!--    <template v-for="(val, index) in headers"-->
     <!--              v-slot:[`item.${val.value}`]="{ item }"-->
@@ -205,9 +219,9 @@
           small
           color="warning"
           dark
-      >
-        {{ item.tag }}
-      </v-chip>
+          v-if="item.tag"
+          v-text="item.tag"
+      ></v-chip>
     </template>
 
 
@@ -280,6 +294,7 @@ export default {
 
   methods: {
     async initializeHeader() {
+      this.loadingTable = true;
       let encoded = encodeURIComponent(this.accessToken);
       const path = `/data/table/find?access_token=${encoded}&status=${true}`;
       await this.$axios.get(path)
@@ -296,6 +311,7 @@ export default {
           .catch((err) => {
             console.error(err);
           })
+      this.loadingTable = false;
     },
 
     async initializeValue() {
