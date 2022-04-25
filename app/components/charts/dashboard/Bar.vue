@@ -1,7 +1,6 @@
 <template>
   <div>
     <apexchart
-        width="700px"
         height="350px"
         type="bar"
         :options="options"
