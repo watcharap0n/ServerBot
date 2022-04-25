@@ -141,7 +141,9 @@
             :submit-dialog="save"
             :loading-dialog.sync="btnSpin"
     />
-    <Skeleton :condition="overlay"/>
+    <Skeleton :loading="overlay"
+              :numbers="9"
+    />
   </div>
 </template>
 
