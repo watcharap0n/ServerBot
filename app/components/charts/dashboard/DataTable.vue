@@ -95,6 +95,7 @@
         <v-dialog v-model="dialog" max-width="800px">
           <template v-slot:activator="{ on, attrs }">
             <v-btn
+                small
                 color="info"
                 dark
                 depressed
@@ -102,10 +103,11 @@
                 v-on="on"
             >
               <v-icon left>
-                mdi-account-plus-outline
+                mdi-plus
               </v-icon>
               Add
             </v-btn>
+
           </template>
 
           <v-card>
@@ -171,7 +173,7 @@
             </v-card-actions>
 
           </v-card>
-        </v-dialog>
+       </v-dialog>
 
       </v-toolbar>
     </template>
@@ -206,6 +208,7 @@
 export default {
 
   data: () => ({
+    dialogFullScreen: false,
     loadingColumn: false,
     loading: false,
     loadingTable: false,
@@ -227,7 +230,6 @@ export default {
     formTitle() {
       return this.editedIndex === -1 ? 'New Data' : 'Edit Data'
     },
-
   },
 
   watch: {
