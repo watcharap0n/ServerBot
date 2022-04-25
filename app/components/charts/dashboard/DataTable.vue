@@ -1,12 +1,12 @@
 <template>
   <v-data-table
       v-model="selected"
+      :search="search"
       :headers="payloadSelectedHeaders.headers"
       :items="desserts"
       :items-per-page="5"
       :loading="loadingTable"
       show-select
-      :search="search"
   >
     <template v-slot:top>
       <v-toolbar flat>
@@ -18,7 +18,6 @@
             inset
             vertical
         ></v-divider>
-
 
         <v-dialog v-model="dialog" max-width="800px">
           <template v-slot:activator="{ on, attrs }">
