@@ -130,7 +130,8 @@ async def create_channel(
             access_token=item.access_token,
             status=model['status'],
             default_field=model['default_field'],
-            used=model['used']
+            used=model['used'],
+            type_field=model.get('type_field')
         )
         obj_store_model = jsonable_encoder(structure_table_model)
         obj_model = item_user(data=obj_store_model, current_user=current_user)
