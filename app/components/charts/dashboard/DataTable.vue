@@ -198,7 +198,7 @@
           x-small
           icon
           color="info"
-          @click="initializeHeader"
+          @click="initializeValue"
       >
         <v-icon>
           mdi-refresh
@@ -221,6 +221,7 @@
           dark
           v-if="item.tag"
           v-text="item.tag"
+          @click="getByTag(item.tag)"
       ></v-chip>
     </template>
 
@@ -294,7 +295,6 @@ export default {
 
   methods: {
     async initializeHeader() {
-      this.loadingTable = true;
       let encoded = encodeURIComponent(this.accessToken);
       const path = `/data/table/find?access_token=${encoded}&status=${true}`;
       await this.$axios.get(path)
@@ -311,10 +311,10 @@ export default {
           .catch((err) => {
             console.error(err);
           })
-      this.loadingTable = false;
     },
 
     async initializeValue() {
+      this.loadingTable = true;
       const path = `/retrieve/find?access_token=${this.accessToken}`;
       await this.$axios.get(path)
           .then((res) => {
@@ -323,6 +323,7 @@ export default {
           .catch((err) => {
             console.error(err);
           })
+      this.loadingTable = false;
     },
 
     editItem(item) {
@@ -436,6 +437,19 @@ export default {
           })
       this.dialogColumn = false;
       this.loadingColumn = false;
+    },
+
+    async getByTag(tag) {
+      this.loadingTable = true
+      const path = `/retrieve/find?access_token=${this.accessToken}&tag=${tag}`;
+      await this.$axios.get(path)
+          .then((res) => {
+            this.desserts = res.data;
+          })
+          .catch((err) => {
+            console.error(err);
+          })
+      this.loadingTable = false
     }
 
   }
