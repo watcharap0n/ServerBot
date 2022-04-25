@@ -289,7 +289,7 @@ export default {
 
       nameBar: 'PLATFORM CHATBOT',
       selectedItem: 0,
-      drawer: true,
+      drawer: false,
       itemsApp: [],
       itemsOther: [],
       itemsHome: []
