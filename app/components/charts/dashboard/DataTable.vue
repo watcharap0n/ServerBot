@@ -52,7 +52,7 @@
                     v-if="headers && headers[index]"
                 >
 
-                  <v-col v-if="!headers[index].default_field">
+                  <v-col v-if="headers[index].used">
                     <v-text-field
                         v-if="headers[index].type_field === 'default'"
                         rounded
@@ -193,10 +193,23 @@
         </v-card>
       </v-dialog>
     </template>
+
     <!--    <template v-for="(val, index) in headers"-->
     <!--              v-slot:[`item.${val.value}`]="{ item }"-->
     <!--    >-->
+    <!--      -->
     <!--    </template>-->
+
+    <template v-slot:item.tag="{ item }">
+      <v-chip
+          small
+          color="warning"
+          dark
+      >
+        {{ item.tag }}
+      </v-chip>
+    </template>
+
 
     <template v-slot:item.action="{ item }">
       <v-icon
@@ -406,6 +419,7 @@ export default {
             console.log(err);
           })
       this.dialogColumn = false;
+      this.loadingColumn = false;
     }
 
   }
