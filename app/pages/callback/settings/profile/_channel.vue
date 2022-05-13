@@ -11,11 +11,9 @@
       <v-col
           sm="9"
           cols="12">
-        <v-card flat>
-          <v-card-text>
-
-          </v-card-text>
-        </v-card>
+        <div>
+          <Profile/>
+        </div>
       </v-col>
     </v-row>
   </div>
@@ -23,10 +21,12 @@
 
 <script>
 import Settings from "@/components/app/Settings";
+import Profile from "@/components/settings/Profile"
 
 export default {
   components: {
     Settings,
+    Profile,
   },
   data() {
     return {}
