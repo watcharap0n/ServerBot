@@ -280,14 +280,39 @@ async def forgot(email: str):
     return {"message": "success", "status": True}
 
 
+
+
 @router.post('/settings/profile', response_model=UpdateSettingsProfile)
-async def settings_profile(payload: UpdateSettingsProfile, current_user: User = Depends(get_current_active)):
-    auth.update_user(
-        uid=current_user.data.uid,
-        email=payload.email,
-        password=payload.password,
-        display_name=payload.display_name,
-        photo_url=payload.photo_url,
-        phone_number=payload.phone_number
-    )
-    return payload
+async def settings_profile(
+        request: Request,
+        file: UploadFile = File(None),
+        display_name: str = Form(None),
+        full_name: str = Form(None),
+        phone_number: str = Form(None),
+        current_user: User = Depends(get_current_active)):
+    http = str()
+    if file:
+        upload_dir = os.path.join("static", "uploads")
+        file_input = os.path.join(upload_dir, uuid4().hex)
+        base_url = request.base_url
+        http += f"{base_url}{file_input}.jpg"
+        with open(f"{file_input}.jpg", "wb+") as upload_file:
+            upload_file.write(file.file.read())
+            upload_file.close()
+
+    # auth.update_user(
+    #     uid=current_user.data.uid,
+    #     display_name=display_name,
+    #     photo_url=None if not http else http,
+    #     phone_number=phone_number
+    # )
+
+    query = {'uid': current_user.data.uid}
+    values = {
+        'username': display_name,
+        'full_name': full_name,
+        'phone_number': phone_number,
+        'img_path': http
+    }
+    await db.update_one(collection='secure', query=query, values=values)
+    return {'settings': 'profile updated.'}

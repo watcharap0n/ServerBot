@@ -14,6 +14,7 @@ class Permission(BaseModel):
     img_path: Optional[str] = None
     date: str
     time: str
+    phone_number: Optional[str] = None
     disabled: Optional[bool] = None
     _data: Optional[dict] = None
 
