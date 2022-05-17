@@ -231,6 +231,7 @@
           small
           class="mr-2"
           @click="editItem(item)"
+          color="info"
       >
         mdi-pencil
       </v-icon>
@@ -239,6 +240,7 @@
           :loading="loading"
           small
           @click="deleteItem(item)"
+          color="red"
       >
         mdi-delete
       </v-icon>
