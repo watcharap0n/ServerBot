@@ -115,6 +115,8 @@
                     depressed
                     rounded
                     text
+                    :href="`/callback/settings/profile/${channel}`"
+                    class="text-decoration-none"
                 >
                   แก้ไขบัญชี
                 </v-btn>
@@ -280,6 +282,7 @@ export default {
 
   data() {
     return {
+      channel: '',
       onLine: navigator.onLine,
       isLoading: false,
       items: [],
@@ -314,6 +317,7 @@ export default {
       event.target.src = require(`~/assets/images/mango-profile.jpg`)
     },
     handler(router) {
+      this.channel = router.channel
       this.itemsApp = [
         {
           id: 'p1',
