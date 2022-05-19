@@ -11,6 +11,7 @@ class ColumnDataTable(BaseModel):
     text: Optional[str] = None
     value: str = Field(default_factory=uuid4)
     align: Optional[str] = None
+    box: Optional[bool] = False
     sortable: Optional[bool] = None
     filterable: Optional[bool] = None
     groupable: Optional[bool] = None
@@ -19,6 +20,8 @@ class ColumnDataTable(BaseModel):
     cellClass: Optional[str] = None
     width: Optional[str] = None
     filter: Optional[str] = None
+    chip: Optional[bool] = False
+    color_chip: Optional[str] = None
     sort: Optional[int] = None
     items_select: Optional[list] = []
     type_field: Optional[str] = None
@@ -35,6 +38,7 @@ class ColumnDataTable(BaseModel):
                 "value": "name",
                 "access_token": "token long live",
                 "align": "center",
+                "box": False,
                 "sortable": False,
                 "filterable": False,
                 "groupable": False,
@@ -44,6 +48,8 @@ class ColumnDataTable(BaseModel):
                 "width": 200,
                 "filter": "",
                 "sort": 10,
+                "chip": False,
+                "color_chip": "pink accent-2",
                 "items_select": ['name'],
                 "type_field": "default",
                 "status": True,
@@ -73,6 +79,7 @@ class UpdateDataTable(BaseModel):
     value: Optional[str] = None
     align: Optional[str] = None
     sortable: Optional[bool] = None
+    box: Optional[bool] = False
     filterable: Optional[bool] = None
     groupable: Optional[bool] = None
     divider: Optional[bool] = None
@@ -83,6 +90,8 @@ class UpdateDataTable(BaseModel):
     sort: Optional[int] = None
     items_select: Optional[list] = None
     type_field: Optional[str] = None
+    chip: Optional[bool] = False
+    color_chip: Optional[str] = None
     status: Optional[bool] = True
     default_field: Optional[bool] = False
     hint: Optional[str] = None
@@ -96,6 +105,9 @@ class UpdateDataTable(BaseModel):
                 "text": "First Name",
                 "value": "fname",
                 "align": "center",
+                "chip": False,
+                "box": False,
+                "color_chip": "pink accent-2",
                 "sortable": False,
                 "filterable": False,
                 "groupable": False,
