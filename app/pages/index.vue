@@ -77,12 +77,15 @@
                   </v-row>
                   <v-row class="m-2">
                     <div class="font-medium text-gray-800">endpoint:</div> &nbsp;
-                    <div @click="copyEndpoint(v.url)">
-                      copy
+                    <v-btn
+                        icon
+                        @click="copyEndpoint(v.url)"
+                        small
+                    >
                       <v-icon color="red">
                         mdi-content-copy
                       </v-icon>
-                    </div>
+                    </v-btn>
                   </v-row>
                 </v-container>
 
