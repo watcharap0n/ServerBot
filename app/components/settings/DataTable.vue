@@ -23,19 +23,49 @@
             <!--            ></v-switch>-->
 
             <v-row>
-              <v-col cols="12"
-                     sm="6"
+              <v-col
+                  cols="12"
+                  sm="6"
               >
                 <v-text-field
+                    class="m-2 p-2"
                     :rules="rules"
                     dense
-                    outlined
-                    rounded
                     :hint="!!v.default_field ? 'Set your name default field' : 'Set your name column, example Name'"
                     persistent-hint
                     label="Name Column"
                     v-model="v.text"
                     color="info"
+                >
+                  <template v-slot:append>
+                    <div>
+                      <v-checkbox
+                          color="pink accent-2"
+                          dense
+                          v-model="v.chip"
+                          label="Chip"
+                      ></v-checkbox>
+
+                      <v-checkbox
+                          color="pink accent-2"
+                          dense
+                          v-model="v.box"
+                          label="Box"
+                      ></v-checkbox>
+                    </div>
+                  </template>
+                </v-text-field>
+
+                <v-text-field
+                    v-if="v.chip"
+                    v-model="v.color_chip"
+                    dense
+                    color="info"
+                    outlined
+                    rounded
+                    hint="Input your color chip"
+                    persistent-hint
+                    label="Color chip"
                 ></v-text-field>
 
                 <div v-if="v.type_field === 'select'">
@@ -57,8 +87,9 @@
                 </div>
               </v-col>
 
-              <v-col cols="12"
-                     sm="6"
+              <v-col
+                  cols="12"
+                  sm="6"
               >
                 <v-select
                     :filled="!!v.default_field"

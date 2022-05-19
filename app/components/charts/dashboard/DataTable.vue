@@ -207,12 +207,39 @@
 
     </template>
 
+    <template>
 
-    <!--    <template v-for="(val, index) in headers"-->
-    <!--              v-slot:[`item.${val.value}`]="{ item }"-->
-    <!--    >-->
-    <!--      -->
-    <!--    </template>-->
+    </template>
+
+
+    <template v-for="(val, index) in headers"
+              v-slot:[`item.${val.value}`]="{ item }"
+    >
+      <div v-if="val.chip">
+        <v-chip
+            small
+            :color="val.color_chip"
+            dark
+        >
+          {{ item[val.value] }}
+        </v-chip>
+      </div>
+
+      <div v-else-if="val.box">
+        <v-list-group
+            color="#7A8FC0"
+            v-if="item[val.value]"
+            :value="false"
+            prepend-icon="mdi-message"
+        >
+          <v-list-item-content>
+            {{ item[val.value] }}
+          </v-list-item-content>
+        </v-list-group>
+      </div>
+
+      <div v-else>{{ item[val.value] }}</div>
+    </template>
 
     <template v-slot:item.tag="{ item }">
       <v-chip
