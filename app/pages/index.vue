@@ -79,7 +79,7 @@
                     <div class="font-medium text-gray-800">endpoint:</div> &nbsp;
                     <div @click="copyEndpoint(v.url)">
                       copy
-                      <v-icon>
+                      <v-icon color="red">
                         mdi-content-copy
                       </v-icon>
                     </div>
