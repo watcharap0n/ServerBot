@@ -1,6 +1,7 @@
+from datetime import datetime
 from bson import ObjectId
 from db import db, generate_token
-from typing import Optional, Any
+from typing import Optional, Any, List
 from starlette.responses import JSONResponse
 from modules.item_static import item_user
 from oauth2 import User, get_current_active
@@ -27,6 +28,24 @@ async def get_retrieve_data(access_token: str,
                           select_field={"_id": 0})
     items = list(items)
     return items
+
+
+@router.post('/filter/date')
+async def get_filter_date(
+        access_token: str,
+        dates: Optional[List] = Body(...),
+        current_user: User = Depends(get_current_active)
+):
+    if len(dates) == 2:
+        date_format = '%Y-%m-%d'
+        start_date = datetime.strptime(dates[0], date_format)
+        end_date = datetime.strptime(dates[1], date_format)
+        items = await db.find(collection='retrieve',
+                              query={'access_token': access_token, 'date': {'$lte': end_date, '$gte': start_date}},
+                              select_field={"_id": 0})
+        items = list(items)
+        return items
+    raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail='array invalid date.')
 
 
 @router.post("/create", status_code=status.HTTP_201_CREATED)
