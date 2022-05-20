@@ -36,6 +36,7 @@
             </v-btn>
           </template>
 
+
           <v-card>
             <v-toolbar>
               {{ formTitle }}
@@ -99,6 +100,48 @@
             </v-card-actions>
 
           </v-card>
+        </v-dialog>
+        &nbsp;
+        <v-dialog
+            ref="dialog"
+            v-model="modal"
+            persistent
+            width="290px"
+        >
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn
+                color="primary"
+                small
+                v-bind="attrs"
+                v-on="on"
+                text
+            >
+              <v-icon left>
+                mdi-calendar
+              </v-icon>
+              Picker date range
+            </v-btn>
+          </template>
+          <v-date-picker
+              v-model="dates"
+              range
+          >
+            <v-spacer></v-spacer>
+            <v-btn
+                text
+                color="red"
+                @click="modal = false"
+            >
+              Cancel
+            </v-btn>
+            <v-btn
+                text
+                color="primary"
+                @click="getFilterDate"
+            >
+              OK
+            </v-btn>
+          </v-date-picker>
         </v-dialog>
 
         <v-spacer></v-spacer>
@@ -194,29 +237,32 @@
 
       <v-spacer></v-spacer>
 
-      <v-btn
-          x-small
-          icon
-          color="info"
-          @click="initializeValue"
-      >
-        <v-icon>
-          mdi-refresh
-        </v-icon>
-      </v-btn>
+      <v-tooltip bottom>
+        <template v-slot:activator="{ on, attrs }">
+          <v-btn
+              v-bind="attrs"
+              v-on="on"
+              x-small
+              icon
+              color="info"
+              @click="initializeValue"
+          >
+            <v-icon>
+              mdi-refresh
+            </v-icon>
+          </v-btn>
+        </template>
+        <span>Refresh</span>
+      </v-tooltip>
 
     </template>
-
-    <template>
-
-    </template>
-
 
     <template v-for="(val, index) in headers"
               v-slot:[`item.${val.value}`]="{ item }"
     >
       <div v-if="val.chip">
         <v-chip
+            v-if="item[val.value]"
             small
             :color="val.color_chip"
             dark
@@ -241,12 +287,24 @@
       <div v-else>{{ item[val.value] }}</div>
     </template>
 
+    <template v-slot:item.date="{ item }">
+      <div>
+        {{ new Date(item.date).toLocaleDateString('th') }}
+      </div>
+    </template>
+
+    <template v-slot:item.time="{ item }">
+      <div>
+        {{ new Date(item.time).toLocaleTimeString('th') }}
+      </div>
+    </template>
+
     <template v-slot:item.tag="{ item }">
       <v-chip
+          v-if="item.tag"
           small
           color="warning"
           dark
-          v-if="item.tag"
           v-text="item.tag"
           @click="getByTag(item.tag)"
       ></v-chip>
@@ -280,6 +338,8 @@
 export default {
 
   data: () => ({
+    dates: [],
+    modal: false,
     selected: [],
     search: '',
     loadingColumn: false,
@@ -466,6 +526,20 @@ export default {
           })
       this.dialogColumn = false;
       this.loadingColumn = false;
+    },
+
+    async getFilterDate() {
+      this.loadingTable = true
+      const path = `/retrieve/filter/date?access_token=${this.accessToken}`;
+      await this.$axios.post(path, this.dates)
+          .then((res) => {
+            this.desserts = res.data;
+          })
+          .catch((err) => {
+            console.error(err);
+          })
+      this.modal = false;
+      this.loadingTable = false
     },
 
     async getByTag(tag) {
