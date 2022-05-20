@@ -1,3 +1,4 @@
+from datetime import datetime
 from db import PyObjectId
 from bson import ObjectId
 from typing import Optional, Any
@@ -51,8 +52,8 @@ class Post(BaseModel):
 
 class TokenUser(Post):
     uid: Optional[str] = None
-    date: Optional[str] = None
-    time: Optional[str] = None
+    date: Optional[datetime] = None
+    time: Optional[datetime] = None
 
     class Config:
         schema_extra = {

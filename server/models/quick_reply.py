@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import Optional
 from bson import ObjectId
 from pydantic import BaseModel, Field
@@ -29,8 +30,8 @@ class QuickReply(BaseModel):
 
 class TokenUser(QuickReply):
     uid: Optional[str] = None
-    date: Optional[str] = None
-    time: Optional[str] = None
+    date: Optional[datetime] = None
+    time: Optional[datetime] = None
 
     class Config:
         schema_extra = {
