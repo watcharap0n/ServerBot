@@ -204,8 +204,8 @@ async def register(
         )
         tz = pytz.timezone("Asia/Bangkok")
         _d = datetime.now(tz)
-        date = _d
-        time = _d
+        date = _d.strftime("%d/%m/%y")
+        time = _d.strftime("%H:%M:%S")
         Id = generate_token(engine=ObjectId())
         data = payload_register(
             id=Id,
