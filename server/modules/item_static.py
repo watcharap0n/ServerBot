@@ -24,8 +24,8 @@ def item_user(data: dict, current_user=None, url: Optional[bool] = False):
     try:
         tz = pytz.timezone('Asia/Bangkok')
         _d = datetime.now(tz)
-        data["date"] = _d.strftime("%d/%m/%y")
-        data["time"] = _d.strftime("%H:%M:%S")
+        data["date"] = _d
+        data["time"] = _d
         if current_user:
             data["uid"] = current_user.data.uid
         if url:
