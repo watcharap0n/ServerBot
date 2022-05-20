@@ -3,9 +3,10 @@ import pytz
 from uuid import uuid4
 from models.oauth2 import User, UpdateSettingsProfile
 from bson import ObjectId
+from db import db, generate_token
 from firebase_admin import auth, exceptions
-from db import db, generate_token, firebaseAuth, firebaseConfig
-from db.firebase_auth import ConfigFirebase
+from config import firebaseConfig, firebaseAuth
+from config.firebase_auth import ConfigFirebase
 from datetime import datetime, timedelta
 from passlib.context import CryptContext
 from starlette.responses import JSONResponse
@@ -133,7 +134,13 @@ async def authentication_cookie(
     session_cookie = auth.create_session_cookie(
         id_token=sign_user.get("idToken"), expires_in=timedelta(hours=6)
     )
-    response.set_cookie(key="session", value=str(session_cookie), expires=EXPIRES_TOKEN)
+    response.set_cookie(
+        key="session",
+        value=str(session_cookie),
+        expires=EXPIRES_TOKEN,
+        httponly=True,
+        secure=True,
+    )
     return {"access_token": session_cookie, "token_type": "bearer"}
 
 
@@ -274,12 +281,23 @@ async def logout():
     return response
 
 
-@router.get("/forgot")
+@router.get("/settings/forgot")
 async def forgot(email: str):
     pb.send_password_reset_email(email)
     return {"message": "success", "status": True}
 
 
+@router.delete("/settings/delete", status_code=status.HTTP_204_NO_CONTENT)
+async def revoke_user(uid: str):
+    try:
+        auth.delete_user(uid)
+        await db.delete_one(collection=collection, query={"uid": uid})
+        return {"detail": "revoke user success"}
+    except auth.UserNotFoundError:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="No user record found for the given identifier",
+        )
 
 
 @router.post('/settings/profile', response_model=UpdateSettingsProfile)
