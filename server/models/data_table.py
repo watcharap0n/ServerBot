@@ -1,3 +1,4 @@
+from datetime import datetime
 from db import PyObjectId
 from uuid import uuid4
 from typing import Optional, List
@@ -62,8 +63,8 @@ class ColumnDataTable(BaseModel):
 
 class TokenUser(ColumnDataTable):
     uid: Optional[str] = None
-    date: Optional[str] = None
-    time: Optional[str] = None
+    date: Optional[datetime] = None
+    time: Optional[datetime] = None
 
     class Config:
         schema_extra = {

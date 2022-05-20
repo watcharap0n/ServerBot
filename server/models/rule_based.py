@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import Optional, Any
 from bson import ObjectId
 from pydantic import BaseModel, Field
@@ -39,8 +40,8 @@ class RuleBased(BaseModel):
 
 class TokenUser(RuleBased):
     uid: Optional[str] = None
-    date: Optional[str] = None
-    time: Optional[str] = None
+    date: Optional[datetime] = None
+    time: Optional[datetime] = None
 
     class Config:
         schema_extra = {

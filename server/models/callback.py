@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import Optional, Dict
 from bson import ObjectId
 from pydantic import BaseModel, Field
@@ -43,8 +44,8 @@ class BotInfo(BaseModel):
 class Webhook(LineToken):
     uid: Optional[str] = None
     url: Optional[str] = None
-    date: Optional[str] = None
-    time: Optional[str] = None
+    date: Optional[datetime] = None
+    time: Optional[datetime] = None
     bot_info: Dict
 
     class Config:
