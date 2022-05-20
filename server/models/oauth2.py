@@ -13,8 +13,8 @@ class Permission(BaseModel):
     hashed_password: str
     full_name: Optional[str] = None
     img_path: Optional[str] = None
-    date: datetime
-    time: datetime
+    date: str
+    time: str
     phone_number: Optional[str] = None
     disabled: Optional[bool] = None
     _data: Optional[dict] = None
