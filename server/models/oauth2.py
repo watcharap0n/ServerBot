@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import Optional
 from bson import ObjectId
 from pydantic import BaseModel, Field, HttpUrl
@@ -12,8 +13,8 @@ class Permission(BaseModel):
     hashed_password: str
     full_name: Optional[str] = None
     img_path: Optional[str] = None
-    date: str
-    time: str
+    date: datetime
+    time: datetime
     phone_number: Optional[str] = None
     disabled: Optional[bool] = None
     _data: Optional[dict] = None
