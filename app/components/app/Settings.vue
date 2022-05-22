@@ -65,6 +65,9 @@ export default {
         {
           icon: 'mdi-account', title: 'Profile', router: `/callback/settings/profile/${this.$route.params.channel}`
         },
+        {
+          icon: 'mdi-bell', title: 'Notification', router: `/callback/settings/notification/${this.$route.params.channel}`
+        },
       ]
     }
   }
