@@ -1,10 +1,10 @@
 import json
 from db import db
-from typing import Optional
+from typing import Optional, Any
 from linebot import LineBotApi
 from models.notification import Post, TokenUser
 from oauth2 import User, get_current_active
-from fastapi import APIRouter, HTTPException, Depends, status
+from fastapi import APIRouter, HTTPException, Depends, status, Body
 from fastapi.responses import JSONResponse
 from models.callback import LineToken, Webhook, UpdateLineToken
 from modules.item_static import item_user
@@ -79,7 +79,28 @@ async def post_any(notify: Post = Depends(post_content),
     return item_store
 
 
-@router.get('/find/webhook/{id}', response_model=Webhook)
+@router.post('/post/condition/form')
+async def post_any_form(
+        id: str,
+        payload: Optional[Any] = Body(None)):
+    channel = await db.find_one('notification_webhook', query={'forms._id': id}, select_field={'_id': 0})
+    if channel:
+        keys = []
+        data_table = await db.find('data_table', query={'access_token': channel.get('base_access_token')})
+        for data in data_table:
+            if data['value'] in payload.keys():
+                keys.append(data['text'])
+        values = payload.values()
+        func, content = content_card_dynamic(
+            body_key=keys,
+            body_value=values,
+        )
+        line_bot_api = LineBotApi(channel.get('access_token'))
+        line_bot_api.broadcast(func)
+    return channel
+
+
+@router.get('/find/webhook', response_model=Webhook)
 async def get_webhook_notification(id: str, current_user: User = Depends(get_current_active)):
     notification = await db.find_one(collection='notification_webhook',
                                      query={'base_access_token': id})
