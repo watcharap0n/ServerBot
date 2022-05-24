@@ -18,8 +18,8 @@ class MongoDB:
     def find_dictionary(programming, query):
         return programming.find(query)
 
-    async def find_one(self, collection: str, query: dict):
-        return self.database[collection].find_one(query)
+    async def find_one(self, collection: str, query: dict, select_field: Optional[dict] = None):
+        return self.database[collection].find_one(query, select_field)
 
     async def find_one_lasted(self, collection: str, query: dict):
         return self.database[collection].find_one(
