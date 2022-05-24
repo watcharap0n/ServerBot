@@ -3,7 +3,7 @@
 
     <v-card-title>
       <v-icon
-          color="success"
+          color="info"
           class="p-2"
       >
         mdi-account-box-outline
