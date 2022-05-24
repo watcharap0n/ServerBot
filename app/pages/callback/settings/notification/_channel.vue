@@ -159,6 +159,7 @@
 
                   <v-spacer></v-spacer>
                   <v-btn
+                      :disabled="!valid"
                       class="mr-4"
                       color="red"
                       text
@@ -249,18 +250,19 @@ export default {
   async created() {
     this.overlay = true
     await this.$parent.$emit('routerHandle', this.$route.params);
-    await this.getChannel();
     const pathToken = `/callback/channel/info/${this.$route.params.channel}`;
     this.$store.commit('features/setDynamicPath', pathToken);
     await this.$store.dispatch('features/fetchToken');
     this.accessToken = this.$store.getters["features/getToken"];
+    await this.getChannel();
     await this.getForm();
     this.overlay = false
   },
 
   methods: {
     async getChannel() {
-      const path = `notification/find/webhook/${this.$route.params.channel}`;
+      let encoded = encodeURIComponent(this.accessToken);
+      const path = `notification/find/webhook?id=${encoded}`;
       await this.$axios.get(path)
           .then((res) => {
             this.botInfo = res.data;
@@ -290,7 +292,7 @@ export default {
       let form = this.$refs.form.validate();
       if (form) {
         this.overlay = true
-        this.webhook.base_access_token = this.$route.params.channel;
+        this.webhook.base_access_token = this.accessToken
         const path = '/notification/create/webhook';
         await this.$axios.post(path, this.webhook)
             .then((res) => {
@@ -330,12 +332,13 @@ export default {
               content: `delete to the channel LINE || ${res.status}`,
               color: 'red'
             })
-                .catch((err) => {
-                  console.error(err);
-                })
+          })
+          .catch((err) => {
+            console.error(err);
           })
       this.dialogRemove = false;
       await this.$router.push(`/callback/settings/datatable/${this.$route.params.channel}`)
+
     }
   }
 }
