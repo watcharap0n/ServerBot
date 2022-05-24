@@ -138,6 +138,7 @@ export default {
             console.error(err);
           })
     },
+
     async save() {
       const path = `/retrieve/create/public?access_token=${this.accessToken}`;
       await this.$axios.post(path, this.retrieves)
@@ -154,6 +155,9 @@ export default {
               color: 'red'
             })
           })
+      if (this.transaction.id_form) {
+        liff.closeWindow();
+      }
     }
   }
 
