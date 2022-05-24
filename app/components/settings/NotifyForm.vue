@@ -173,39 +173,22 @@ export default {
           })
     },
 
-    async api() {
-      this.spin = true;
-      const path = `/notification/update/webhook/${this.token}?id_form=${this.form ? this.form._id : null}`;
-      await this.$axios.put(path, this.botInfo)
-          .then((res) => {
-            console.log(res.data)
-          })
-          .catch((err) => {
-            console.log(err);
-          })
-    },
-
-    async createNotification() {
-      try {
-        let validate = this.$refs.form.validate();
-        if (validate) {
-          await this.api();
-        }
-      } catch {
-        await this.api();
-      }
-      this.dialog = false;
-      this.spin = false;
-    },
-
     async add() {
       this.botInfo.forms.push(this.form)
-      await this.createNotification();
-      this.$notifier.showMessage({
-        content: `add successfully `,
-        color: 'success'
-      })
-      this.form = null
+      const path = `/notification/update/webhook/${this.token}?id_form=${this.form._id}`;
+      this.$axios.put(path, this.botInfo)
+          .then((res) => {
+            console.log(res.data)
+            this.$notifier.showMessage({
+              content: `add successfully `,
+              color: 'success'
+            })
+          })
+          .catch((err) => {
+            console.error(err);
+          })
+      this.dialog = false;
+      this.form = null;
     },
 
     async update() {
@@ -219,11 +202,19 @@ export default {
     async remove(item) {
       let index = this.botInfo.forms.indexOf(item)
       this.botInfo.forms.splice(index, 1)
-      await this.createNotification();
-      this.$notifier.showMessage({
-        content: `deleted successfully `,
-        color: 'red'
-      })
+      const path = `/notification/update/webhook/${this.token}?id_form=null`;
+      await this.$axios.put(path, this.botInfo)
+          .then((res) => {
+            this.$notifier.showMessage({
+              content: `deleted successfully `,
+              color: 'red'
+            })
+          })
+          .catch((err) => {
+            console.error(err);
+          })
+      this.dialog = false;
+      this.spin = false;
     }
 
   },
