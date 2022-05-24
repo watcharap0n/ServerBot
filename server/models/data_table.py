@@ -145,8 +145,8 @@ class SelectColumn(BaseModel):
 
 class ColumnsToken(SelectColumn):
     uid: Optional[str] = None
-    date: Optional[str] = None
-    time: Optional[str] = None
+    date: Optional[datetime] = None
+    time: Optional[datetime] = None
 
     class Config:
         schema_extra = {
