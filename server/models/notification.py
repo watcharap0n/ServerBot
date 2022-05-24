@@ -16,7 +16,6 @@ class DefaultCard(BaseModel):
     url_btn: Optional[HttpUrl] = 'https://linecorp.com'
 
 
-
 class Post(BaseModel):
     id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
     user_id: str

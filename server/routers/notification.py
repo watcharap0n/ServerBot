@@ -1,9 +1,11 @@
 import json
 from db import db
+from typing import Optional
 from linebot import LineBotApi
 from models.notification import Post, TokenUser
 from oauth2 import User, get_current_active
 from fastapi import APIRouter, HTTPException, Depends, status
+from fastapi.responses import JSONResponse
 from models.callback import LineToken, Webhook, UpdateLineToken
 from modules.item_static import item_user
 from modules.flex_message import flex_dynamic, content_card_dynamic
@@ -77,7 +79,20 @@ async def post_any(notify: Post = Depends(post_content),
     return item_store
 
 
-@router.post('/create/webhook', response_model=LineToken)
+@router.get('/find/webhook/{id}', response_model=Webhook)
+async def get_webhook_notification(id: str, current_user: User = Depends(get_current_active)):
+    notification = await db.find_one(collection='notification_webhook',
+                                     query={'base_access_token': id})
+    if not notification:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"not found channel {id}",
+        )
+    item_store = Webhook(**notification)
+    return item_store
+
+
+@router.post('/create/webhook', response_model=Webhook)
 async def create_notification(payload: LineToken, current_user: User = Depends(get_current_active)):
     try:
         line_bot_api = LineBotApi(payload.access_token)
@@ -97,6 +112,7 @@ async def create_notification(payload: LineToken, current_user: User = Depends(g
 async def update_notification(
         token: str,
         payload: LineToken,
+        id_form: Optional[str] = None,
         current_user: User = Depends(get_current_active)
 ):
     try:
@@ -106,6 +122,12 @@ async def update_notification(
         query = {'token': token}
         values = {'$set': item_model}
 
+        if id_form:
+            item = await db.find_one('notification_webhook', query={'token': token,
+                                                                    'forms._id': id_form})
+            if item:
+                raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail='form is duplicate')
+
         if (await db.update_one('notification_webhook', query=query, values=values)) == 0:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
@@ -114,3 +136,13 @@ async def update_notification(
         return payload
     except LineBotApiError as ex:
         raise HTTPException(status_code=ex.status_code, detail=ex.message)
+
+
+@router.delete('/delete/webhook/{token}', status_code=status.HTTP_204_NO_CONTENT)
+async def delete_notification(token: str, current_user: User = Depends(get_current_active)):
+    if (await db.delete_one(collection='notification_webhook', query={"token": token})) == 0:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Callback not found {token} or Delete Already exits",
+        )
+    return JSONResponse(status_code=status.HTTP_204_NO_CONTENT)
