@@ -159,7 +159,6 @@
 
                   <v-spacer></v-spacer>
                   <v-btn
-                      :disabled="!valid"
                       class="mr-4"
                       color="red"
                       text
@@ -196,7 +195,6 @@
               <v-btn
                   color="success"
                   text
-
               >
                 save
               </v-btn>
@@ -338,7 +336,6 @@ export default {
           })
       this.dialogRemove = false;
       await this.$router.push(`/callback/settings/datatable/${this.$route.params.channel}`)
-
     }
   }
 }

@@ -148,6 +148,11 @@ export default {
                 'We will contact you back soon.',
                 'success'
             )
+                .then(() => {
+                  if (this.transaction.id_form) {
+                    liff.closeWindow();
+                  }
+                })
           })
           .catch((err) => {
             this.$notifier.showMessage({
@@ -155,9 +160,6 @@ export default {
               color: 'red'
             })
           })
-      if (this.transaction.id_form) {
-        liff.closeWindow();
-      }
     }
   }
 
