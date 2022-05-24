@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Optional, Dict
+from typing import Optional, Dict, List
 from bson import ObjectId
 from pydantic import BaseModel, Field
 from db import PyObjectId
@@ -7,14 +7,17 @@ from db import PyObjectId
 
 class LineToken(BaseModel):
     token: PyObjectId = Field(default_factory=PyObjectId, alias="token")
+    base_access_token: Optional[str] = None
     name: str
     access_token: str
     secret_token: str
+    forms: Optional[List] = []
 
     class Config:
         json_encoders = {ObjectId: str}
         schema_extra = {
             "example": {
+                "base_access_token": "(optional)",
                 "name": "name callback",
                 "access_token": "access token long live",
                 "secret_token": "secret token",
@@ -61,6 +64,7 @@ class UpdateLineToken(BaseModel):
     name: str
     access_token: str
     secret_token: str
+    forms: Optional[List] = []
 
     class Config:
         arbitrary_types_allowed = True
