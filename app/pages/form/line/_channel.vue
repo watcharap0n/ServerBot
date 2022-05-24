@@ -52,13 +52,6 @@
             submit
           </v-btn>
 
-          <v-btn
-              small
-              color="red"
-              dark
-          >
-            cancel
-          </v-btn>
         </v-card-actions>
 
       </v-card>
@@ -139,6 +132,17 @@ export default {
           })
     },
 
+    async notification() {
+      const path = `/notification/post/condition/form?id=${this.$route.params.channel}`;
+      this.$axios.post(path, this.retrieves)
+          .then((res) => {
+            console.log(res.data);
+          })
+          .catch((err) => {
+            console.error(err);
+          })
+    },
+
     async save() {
       const path = `/retrieve/create/public?access_token=${this.accessToken}`;
       await this.$axios.post(path, this.retrieves)
@@ -148,6 +152,12 @@ export default {
                 'We will contact you back soon.',
                 'success'
             )
+            .then(()=>{
+              if (this.transaction.id_form) {
+                liff.closeWindow();
+              }
+            })
+            this.notification();
           })
           .catch((err) => {
             this.$notifier.showMessage({
@@ -155,9 +165,6 @@ export default {
               color: 'red'
             })
           })
-      if (this.transaction.id_form) {
-        liff.closeWindow();
-      }
     }
   }
 
