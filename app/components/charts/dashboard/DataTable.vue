@@ -10,7 +10,6 @@
   >
     <template v-slot:top>
       <v-toolbar flat>
-
         <v-toolbar-title>Data Table</v-toolbar-title>
 
         <v-divider
@@ -36,17 +35,13 @@
             </v-btn>
           </template>
 
-
           <v-card>
             <v-toolbar>
               {{ formTitle }}
             </v-toolbar>
-
             <br>
-
             <v-card-text>
               <v-container>
-
                 <v-row
                     v-for="(field, index) in Object.keys(editedItem)"
                     :key="index"
@@ -77,9 +72,7 @@
                         item-color="info"
                     ></v-select>
                   </v-col>
-
                 </v-row>
-
               </v-container>
             </v-card-text>
 
@@ -98,9 +91,9 @@
                 Save
               </v-btn>
             </v-card-actions>
-
           </v-card>
         </v-dialog>
+
         &nbsp;
         <v-dialog
             ref="dialog"
@@ -143,7 +136,32 @@
             </v-btn>
           </v-date-picker>
         </v-dialog>
+        &nbsp;
 
+        <v-btn
+            color="info"
+            text
+            small
+            disabled
+        >
+          <v-icon left>
+            mdi-microsoft-excel
+          </v-icon>
+          export excel
+        </v-btn>
+        &nbsp;
+
+        <v-btn
+            color="info"
+            text
+            small
+            disabled
+        >
+          <v-icon left>
+            mdi-api
+          </v-icon>
+          APIs
+        </v-btn>
         <v-spacer></v-spacer>
 
         <v-text-field
@@ -153,7 +171,6 @@
             single-line
             hide-details
         ></v-text-field>
-
       </v-toolbar>
     </template>
 
@@ -184,14 +201,11 @@
           max-width="500px"
           persistent
       >
-
         <v-card>
           <v-toolbar>
             Select Your Columns
           </v-toolbar>
-
           <br>
-
           <v-card-text>
             <v-select
                 v-if="payloadSelectedHeaders"
@@ -213,7 +227,6 @@
 
           <v-card-actions>
             <v-spacer></v-spacer>
-
             <v-btn
                 @click="dialogColumn = false"
                 text
@@ -234,7 +247,6 @@
         </v-card>
 
       </v-dialog>
-
       <v-spacer></v-spacer>
 
       <v-tooltip bottom>
@@ -254,7 +266,6 @@
         </template>
         <span>Refresh</span>
       </v-tooltip>
-
     </template>
 
     <template v-for="(val, index) in headers"
