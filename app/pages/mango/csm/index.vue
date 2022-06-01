@@ -73,8 +73,9 @@ import liff from "@line/liff";
 
 export default {
   layout: 'public',
-  async created() {
-    await this.initialized();
+
+  created() {
+    this.initialized();
   },
 
   methods: {
