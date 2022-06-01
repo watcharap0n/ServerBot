@@ -79,21 +79,19 @@ export default {
 
   methods: {
     async initialized() {
-      if (this.transaction.id_form) {
-        await liff.init({liffId: '1655208213-27AWV1L3'},
-            () => {
-              if (liff.isLoggedIn()) {
-                liff.getProfile()
-                    .then((profile) => {
-                      console.log(profile)
-                    })
-              } else {
-                liff.login();
-              }
-            });
-      }
-    },
-  }
+      await liff.init({liffId: '1655208213-27AWV1L3'},
+          () => {
+            if (liff.isLoggedIn()) {
+              liff.getProfile()
+                  .then((profile) => {
+                    console.log(profile)
+                  })
+            } else {
+              liff.login();
+            }
+          });
+    }
+  },
 
 }
 </script>
