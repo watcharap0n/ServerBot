@@ -39,11 +39,13 @@
               ></v-radio>
               <br>
               <v-btn
+                  class="text-decoration-none"
                   dark
                   block
                   rounded
                   large
                   color="#00BF9D"
+                  to="/mango/csm/home"
               >
                 <small>เข้าสู่ระบบ</small>
               </v-btn>
@@ -67,8 +69,30 @@
 </template>
 
 <script>
+import liff from "@line/liff";
+
 export default {
   layout: 'public',
+
+  created() {
+    // this.initialized();
+  },
+
+  methods: {
+    async initialized() {
+      await liff.init({liffId: '1655208213-27AWV1L3'},
+          () => {
+            if (liff.isLoggedIn()) {
+              liff.getProfile()
+                  .then((profile) => {
+                    console.log(profile)
+                  })
+            } else {
+              liff.login();
+            }
+          });
+    }
+  },
 
 }
 </script>
