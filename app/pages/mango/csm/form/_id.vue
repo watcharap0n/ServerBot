@@ -306,6 +306,7 @@
       <v-card
           flat
           v-for="(item, k) in detailArray"
+          :key="k"
       >
         <v-card-actions>
           <v-subheader class="text-h6">รายละเอียดการแจ้งซ่อม</v-subheader>
