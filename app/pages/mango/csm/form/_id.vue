@@ -64,7 +64,6 @@
                 sm="6"
                 style="margin-top: 20px"
             >
-              <div>เบอร์โทรศัพท์</div>
             </v-col>
           </v-row>
 
@@ -73,8 +72,7 @@
               <v-text-field
                   outlined
                   rounded
-                  placeholder="ระบุชื่อผู้แจ้งซ่อม"
-                  hint="ระบุชื่อผู้แจ้งซ่อม"
+                  label="ระบุชื่อผู้แจ้งซ่อม"
                   persistent-hint
                   dense
               ></v-text-field>
@@ -84,8 +82,7 @@
               <v-text-field
                   outlined
                   rounded
-                  placeholder="0941499661"
-                  hint="เบอร์ติดต่อ"
+                  label="เบอร์ติดต่อ"
                   persistent-hint
                   dense
               ></v-text-field>
@@ -107,10 +104,10 @@
                       :value="computedDateFormattedMomentjs"
                       readonly
                       dense
+                      placeholder="dd/mm/yy"
                       v-bind="attrs"
                       v-on="on"
                       @click:clear="date1 = null"
-                      hint="วันที่"
                       persistent-hint
                   >
                   </v-text-field>
@@ -143,7 +140,7 @@
                       readonly
                       v-bind="attrs"
                       v-on="on"
-                      hint="เริ่มช่วงเวลา"
+                      placeholder="เริ่มต้น"
                       persistent-hint
                   ></v-text-field>
                 </template>
@@ -177,7 +174,7 @@
                       readonly
                       v-bind="attrs"
                       v-on="on"
-                      hint="จบช่วงเวลา"
+                      placeholder="สิ้นสุด"
                       persistent-hint
                   ></v-text-field>
                 </template>
@@ -204,12 +201,12 @@
                   <v-text-field
                       clearable
                       :value="computedDateFormattedMomentjs"
+                      placeholder="dd/mm/yy"
                       readonly
                       dense
                       v-bind="attrs"
                       v-on="on"
                       @click:clear="date2 = null"
-                      hint="วันที่"
                       persistent-hint
                   >
                   </v-text-field>
@@ -242,7 +239,7 @@
                       readonly
                       v-bind="attrs"
                       v-on="on"
-                      hint="เริ่มช่วงเวลา"
+                      placeholder="เริ่มต้น"
                       persistent-hint
                   ></v-text-field>
                 </template>
@@ -276,7 +273,7 @@
                       readonly
                       v-bind="attrs"
                       v-on="on"
-                      hint="จบช่วงเวลา"
+                      placeholder="สิ้นสุด"
                       persistent-hint
                   ></v-text-field>
                 </template>
@@ -295,11 +292,10 @@
           <v-row>
             <v-col cols="12" sm="12">
               <v-text-field
+                  label="หมายเหตุ"
                   outlined
                   rounded
                   dense
-                  hint="หมายเหตุ"
-                  persistent-hint
               ></v-text-field>
             </v-col>
           </v-row>
@@ -307,39 +303,65 @@
       </v-card>
       <br>
 
-      <v-card flat>
-        <v-subheader class="text-h6">รายละเอียดการแจ้งซ่อม</v-subheader>
+      <v-card
+          flat
+          v-for="(item, k) in detailArray"
+      >
+        <v-card-actions>
+          <v-subheader class="text-h6">รายละเอียดการแจ้งซ่อม</v-subheader>
+          <v-spacer></v-spacer>
+          <v-btn
+              small
+              color="red"
+              text
+              @click="remove(item)"
+          >
+            ลบ
+          </v-btn>
+        </v-card-actions>
         <v-card-text>
           <v-text-field
-              hint="เรื่อง"
+              label="เรื่อง"
               persistent-hint
               dense
               rounded
               outlined
+              v-model="item.topic"
           ></v-text-field>
 
           <v-textarea
-              hint="รายละเอียด"
+              label="รายละเอียด"
               persistent-hint
               dense
               rounded
               outlined
+              v-model="item.detail"
           ></v-textarea>
 
           <v-file-input
-              @change="previewImage"
-              v-model="files"
+              @change="previewImage(item)"
+              v-model="item.file"
               placeholder="Remark"
-              label="File input"
+              label="หมายเหตุไฟล์แนบ"
               prepend-icon="mdi-paperclip"
               rounded
               outlined
               dense
               counter
               accept="image/png, image/jpeg"
-              :rules="rulesImg"
+              :rules="item.rulesImg"
               :show-size="1000"
           >
+            <template v-slot:prepend-inner>
+              <v-btn
+                  small
+                  icon
+              >
+                <v-icon>
+                  mdi-camera
+                </v-icon>
+              </v-btn>
+            </template>
             <template v-slot:selection="{ text }">
               <v-chip
                   small
@@ -352,21 +374,31 @@
           </v-file-input>
 
           <img
-              v-if="files"
-              :src="url"
+              v-if="item.file"
+              :src="item.url"
           >
-
         </v-card-text>
-
-        <v-btn
-            block
-            color="#00BF9D"
-            dark
-        >
-          บันทึก
-        </v-btn>
-
       </v-card>
+
+      <v-btn
+          text
+          color="#00BF9D"
+          @click="add"
+      >
+        <v-icon left>
+          mdi-plus
+        </v-icon>
+        เพิ่มรายละเอียดแจ้งซ่อม
+      </v-btn>
+      <v-btn
+          block
+          color="#00BF9D"
+          dark
+      >
+        บันทึก
+      </v-btn>
+
+
     </v-card>
   </v-form>
 </template>
@@ -401,7 +433,26 @@ export default {
       rulesImg: [
         value => !value || value.size < 1000000 || 'image size should be less than 1 MB!',
       ],
+
+      isCameraOpen: false,
+      video: null,
+
+      detailArray: [],
     }
+  },
+
+  created() {
+    let item = {
+      id: this.detailArray.length + 1,
+      topic: '',
+      detail: '',
+      file: null,
+      url: null,
+      rulesImg: [
+        value => !value || value.size < 1000000 || 'image size should be less than 1 MB!',
+      ],
+    }
+    this.detailArray.push(item)
   },
 
   computed: {
@@ -418,10 +469,29 @@ export default {
   },
 
   methods: {
-    previewImage() {
-      if (this.files)
-        this.url = URL.createObjectURL(this.files);
+    previewImage(item) {
+      if (item.file)
+        return item.url = URL.createObjectURL(item.file);
     },
+
+    add() {
+      let item = {
+        id: this.detailArray.length + 1,
+        topic: '',
+        detail: '',
+        file: null,
+        url: null,
+        rulesImg: [
+          value => !value || value.size < 1000000 || 'image size should be less than 1 MB!',
+        ],
+      }
+      this.detailArray.push(item)
+    },
+
+    remove(item) {
+      this.detailArray.splice(this.detailArray.indexOf(item), 1)
+    }
+
   }
 
 
