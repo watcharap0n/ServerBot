@@ -3,7 +3,7 @@
     <v-card flat
             class="d-flex flex-column justify-space-between align-center">
       <v-img
-          style="margin-top: 50px"
+          style="margin-top: 100px"
           :src="require('assets/images/mango-profile.jpg')"
           width="157"
           height="72"
@@ -19,25 +19,13 @@
               small
               rounded
               outlined
-              label="ผู้ใช้งาน"
-          ></v-text-field>
-          <v-text-field
-              prepend-inner-icon="mdi-lock-outline"
-              small
-              rounded
-              outlined
-              label="รหัสผ่าน"
-              type="password"
+              label="เบอร์โทรศัพท์"
           ></v-text-field>
         </v-card-text>
 
         <v-card-actions>
           <v-row>
             <v-col sm="6">
-              <v-radio
-                  label="Remember"
-              ></v-radio>
-              <br>
               <v-btn
                   class="text-decoration-none"
                   dark
