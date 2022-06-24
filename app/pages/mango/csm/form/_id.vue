@@ -35,6 +35,7 @@
 
             <v-col cols="8" sm="8">
               <v-text-field
+                  v-model="name"
                   outlined
                   rounded
                   placeholder="แมงโก้ สีเขียว"
@@ -72,9 +73,11 @@
               <v-text-field
                   outlined
                   rounded
+                  v-model="name_cs"
                   label="ระบุชื่อผู้แจ้งซ่อม"
                   persistent-hint
                   dense
+                  :value="computedName"
               ></v-text-field>
             </v-col>
 
@@ -89,7 +92,7 @@
             </v-col>
           </v-row>
 
-          <v-subheader> วันที่สะดวกให้เจ้าหน้าที่เข้าไปตรวจสอบ</v-subheader>
+          <v-subheader>วันที่สะดวกให้เจ้าหน้าที่เข้าไปตรวจสอบ</v-subheader>
 
           <v-row>
             <v-col cols="6" sm="6">
@@ -101,7 +104,7 @@
                 <template v-slot:activator="{ on, attrs }">
                   <v-text-field
                       clearable
-                      :value="computedDateFormattedMomentjs"
+                      :value="computedDateOneFormattedMomentjs"
                       readonly
                       dense
                       placeholder="dd/mm/yy"
@@ -145,6 +148,7 @@
                   ></v-text-field>
                 </template>
                 <v-time-picker
+                    format="24hr"
                     color="#00BF9D"
                     v-if="menuTimeStart1"
                     v-model="start1"
@@ -179,6 +183,7 @@
                   ></v-text-field>
                 </template>
                 <v-time-picker
+                    format="24hr"
                     color="#00BF9D"
                     v-if="menuTimeEnd1"
                     v-model="end1"
@@ -200,7 +205,7 @@
                 <template v-slot:activator="{ on, attrs }">
                   <v-text-field
                       clearable
-                      :value="computedDateFormattedMomentjs"
+                      :value="computedDateTwoFormattedMomentsjs"
                       placeholder="dd/mm/yy"
                       readonly
                       dense
@@ -222,7 +227,7 @@
 
             <v-col cols="3" sm="3">
               <v-menu
-                  ref="menuStart1"
+                  ref="menuStart2"
                   v-model="menuTimeStart2"
                   :close-on-content-click="false"
                   :nudge-right="40"
@@ -244,19 +249,20 @@
                   ></v-text-field>
                 </template>
                 <v-time-picker
+                    format="24hr"
                     color="#00BF9D"
                     v-if="menuTimeStart2"
                     v-model="start2"
                     :max="end2"
                     full-width
-                    @click:minute="$refs.menuStart1.save(start2)"
+                    @click:minute="$refs.menuStart2.save(start2)"
                 ></v-time-picker>
               </v-menu>
             </v-col>
 
             <v-col cols="3" sm="3">
               <v-menu
-                  ref="menuEnd1"
+                  ref="menuEnd2"
                   v-model="menuTimeEnd2"
                   :close-on-content-click="false"
                   :nudge-right="40"
@@ -278,12 +284,13 @@
                   ></v-text-field>
                 </template>
                 <v-time-picker
+                    format="24hr"
                     color="#00BF9D"
                     v-if="menuTimeEnd2"
                     v-model="end2"
                     :min="start2"
                     full-width
-                    @click:minute="$refs.menuEnd1.save(end2)"
+                    @click:minute="$refs.menuEnd2.save(end2)"
                 ></v-time-picker>
               </v-menu>
             </v-col>
@@ -309,7 +316,7 @@
           :key="k"
       >
         <v-card-actions>
-          <v-subheader class="text-h6">รายละเอียดการแจ้งซ่อม</v-subheader>
+          <v-subheader class="text-h6">รายละเอียดการแจ้งซ่อม เรื่อง {{ k + 1 }}</v-subheader>
           <v-spacer></v-spacer>
           <v-btn
               small
@@ -399,7 +406,24 @@
         บันทึก
       </v-btn>
 
-
+      <div class="text-center">
+        <v-snackbar
+            color="red"
+            v-model="snackbar"
+            :timeout="timeout"
+        >
+          {{ text }}
+          <template v-slot:action="{ attrs }">
+            <v-btn
+                text
+                v-bind="attrs"
+                @click="snackbar = false"
+            >
+              Close
+            </v-btn>
+          </template>
+        </v-snackbar>
+      </div>
     </v-card>
   </v-form>
 </template>
@@ -439,6 +463,11 @@ export default {
       video: null,
 
       detailArray: [],
+      snackbar: false,
+      text: 'แจ้งเรื่องสูงสุดได้ 5 เรื่อง',
+      timeout: 2000,
+      name: '',
+      name_cs: '',
     }
   },
 
@@ -457,14 +486,26 @@ export default {
   },
 
   computed: {
-    computedDateFormattedMomentjs() {
+    computedDateOneFormattedMomentjs() {
       moment.locale('th');
       if (this.date1) {
         return moment(this.date1).format('dd D MMMM YYYY')
-      } else if (this.date2) {
+      } else {
+        return ''
+      }
+    },
+    computedDateTwoFormattedMomentsjs() {
+      if (this.date2) {
         return moment(this.date2).format('dd D MMMM YYYY')
       } else {
         return ''
+      }
+    },
+    computedName() {
+      if (this.checkout) {
+        return this.name_cs = this.name
+      } else {
+        return this.name_cs
       }
     }
   },
@@ -486,12 +527,16 @@ export default {
           value => !value || value.size < 1000000 || 'image size should be less than 1 MB!',
         ],
       }
-      this.detailArray.push(item)
+      if (this.detailArray.length >= 5) {
+        this.snackbar = true
+      } else {
+        this.detailArray.push(item)
+      }
     },
 
     remove(item) {
       this.detailArray.splice(this.detailArray.indexOf(item), 1)
-    }
+    },
 
   }
 
