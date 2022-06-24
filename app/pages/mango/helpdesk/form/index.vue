@@ -10,7 +10,7 @@
             small
             color="secondary"
             class="text-decoration-none"
-            to="/mango/csm/home"
+            to="/mango/helpdesk/home"
         >
           <v-icon>mdi-arrow-u-left-top</v-icon>
         </v-btn>
