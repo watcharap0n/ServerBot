@@ -9,7 +9,7 @@
           height="72"
       ></v-img>
 
-      <v-subheader class="text-h6">ระบบแจ้งซ่อม</v-subheader>
+      <v-subheader class="text-h6">ระบบแจ้งเคสและปัญหาการใช้งาน</v-subheader>
       <br>
       <br>
       <v-card flat>
@@ -19,7 +19,7 @@
               small
               rounded
               outlined
-              label="เบอร์โทรศัพท์"
+              label="กรุณากรอกรหัส Passcode"
           ></v-text-field>
         </v-card-text>
 
@@ -33,7 +33,7 @@
                   rounded
                   large
                   color="#00BF9D"
-                  to="/mango/csm/home"
+                  to="/mango/helpdesk/form"
               >
                 <small>เข้าสู่ระบบ</small>
               </v-btn>
@@ -68,7 +68,7 @@ export default {
 
   methods: {
     async initialized() {
-      await liff.init({liffId: '1655208213-27AWV1L3'},
+      await liff.init({liffId: '1657146709-qDv3w7aa'},
           () => {
             if (liff.isLoggedIn()) {
               liff.getProfile()
