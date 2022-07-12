@@ -43,7 +43,7 @@ export default {
   methods: {
     async submitForm(infoEle) {
       this.spinLoading = true
-      const path = `/authentication/forgot?email=${infoEle.ele1}`
+      const path = `/authentication/settings/forgot?email=${infoEle.ele1}`
       await this.$axios.get(path)
           .then((res) => {
             console.log(res.data)
